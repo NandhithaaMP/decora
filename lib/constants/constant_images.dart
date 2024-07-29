@@ -1,0 +1,1 @@
+const logo="assets/decora_logo.png";

@@ -1,0 +1,65 @@
+name: decora
+description: "A new Flutter project."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.2 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/logo.png
+    - assets/icons/
+
+  fonts:
+    - family: mukta
+      fonts:
+        - asset: assets/fonts/Mukta-Bold.ttf
+
+    - family: muktamedium
+      fonts:
+        - asset: assets/fonts/Mukta-Medium.ttf
+
+    - family: muktaregular
+      fonts:
+        - asset: assets/fonts/Mukta-Regular.ttf
+
+    - family: tradeWinds
+      fonts:
+        - asset: assets/fonts/TradeWinds-Regular.ttf
+
+    - family: philosopher
+      fonts:
+        - asset: assets/fonts/Philosopher-Regular.ttf
+
+    - family: mochiy
+      fonts:
+        - asset: assets/fonts/MochiyPopOne-Regular.ttf
+
+    - family: monoton
+      fonts:
+        - asset: assets/fonts/Monoton-Regular.ttf
+    - family: bakbak
+      fonts:
+        - asset: assets/fonts/BakbakOne-Regular.ttf
+    - family: astloch
+      fonts:
+        - asset: assets/fonts/Astloch-Regular.ttf
+    - family: swash
+      fonts:
+        - asset: assets/fonts/BerkshireSwash-Regular.ttf
