@@ -1,3 +1,4 @@
+import 'package:decora/admin/verifyDesigners.dart';
 import 'package:decora/user/buyNowScreen.dart';
 import 'package:decora/user/cartScreen.dart';
 import 'package:decora/user/chairScreen.dart';
@@ -17,6 +18,10 @@ import 'package:decora/user/verifypwdScreen.dart';
 import 'package:decora/user/wishListScreen.dart';
 import 'package:flutter/material.dart';
 
+import 'admin/AdminHomeScreen.dart';
+import 'admin/addCategoryScreen.dart';
+import 'admin/addProductScreen.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -34,10 +39,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: SplashScreen(),
+      // home: SplashScreen(),
 
       // home: WishList(),
-      // home: CreatepwdScreen(),
+      home: AddProductScreen(),
     );
   }
 }
