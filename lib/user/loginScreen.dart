@@ -1,10 +1,13 @@
 import 'package:decora/constants/constant_color.dart';
 import 'package:decora/constants/constant_images.dart';
+import 'package:decora/provider/mainProvider.dart';
 import 'package:decora/user/forgotPwdScreen.dart';
 import 'package:decora/user/homepageScreen.dart';
 import 'package:decora/user/registerScreen.dart';
+import 'package:decora/user/ubottomNavigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -51,22 +54,28 @@ class LoginScreen extends StatelessWidget {
               },
                 child: Center(child: Text("Foregotten your password ? ",style: TextStyle(color: Colors.white,fontFamily: "muktaregular"),))),
             SizedBox(height: height/5,),
-            InkWell(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
-              },
-              child: Center(
-                child: Container(
-                  height: height/14,
-                  width: width/1.38,
-                  decoration: BoxDecoration(
-                    gradient: cstgradient,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(child: Text("LOGIN",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.white,fontFamily: "mukta"),)),
+            Consumer<MainProvider>(
+              builder: (context,value,child) {
+                return InkWell(
+                  onTap: () {
+                    value.getAddedProduct();
+                    value.getCategory();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+                  },
+                  child: Center(
+                    child: Container(
+                      height: height/14,
+                      width: width/1.38,
+                      decoration: BoxDecoration(
+                        gradient: cstgradient,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(child: Text("LOGIN",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.white,fontFamily: "mukta"),)),
 
-                ),
-              ),
+                    ),
+                  ),
+                );
+              }
             ),
             SizedBox(height: 20,),
             Center(child: Row(mainAxisAlignment: MainAxisAlignment.center,

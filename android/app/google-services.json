@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "904792350518",
+    "project_id": "decora-3edd1",
+    "storage_bucket": "decora-3edd1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904792350518:android:bbcd7c5cf7b0be4eb95d97",
+        "android_client_info": {
+          "package_name": "com.example.decora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw_HntOWzYactj7vAVIAeo4n3knZtr_28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

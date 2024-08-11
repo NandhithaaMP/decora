@@ -4,6 +4,9 @@ import 'package:decora/constants/constant_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'cartScreen.dart';
+import 'homepageScreen.dart';
+
 class WishList extends StatelessWidget {
   const WishList({super.key});
 
@@ -80,7 +83,11 @@ class WishList extends StatelessWidget {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(right: 10),
-                                  child: Image.asset("assets/icons/delete.png",scale: 20,),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _showAlertDialog(context, "Delete");
+                                    },
+                                      child: Image.asset("assets/icons/delete.png",scale: 20,)),
                                 ),
 
                               ],
@@ -95,6 +102,88 @@ class WishList extends StatelessWidget {
           ),
         ),
       ),
+      bottomNavigationBar: Container(
+          height: 65,
+          width: 350,
+          color: green,
+
+          child:Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 70,top: 10),
+                child: InkWell(onTap:  () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+                },
+                  child: Column(
+                    children: [
+                      Icon(Icons.home,color:  textColor,),
+                      Text("Home",style: TextStyle(
+                          color:  textColor,fontFamily: "allerta"
+                      ),),
+                    ],
+                  ),
+                ),
+              ),
+
+              InkWell(onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => WishList(),));
+              },
+                child: Padding(
+                  padding: const EdgeInsets.only(right:80,top: 10),
+                  child: Column(
+                    children: [
+                      Image.asset("assets/icons/like.png",scale: 7,color: Colors.white,),
+                      Text("wish",style: TextStyle(
+                          color: Colors.white,fontFamily: "allerta"
+                      ),),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top:10),
+                child: InkWell(onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  CartScreen(),));
+                },
+                  child: Column(
+                    children: [
+                      Icon(Icons.shopping_cart_outlined,color: textColor,),
+                      Text("Cart",style: TextStyle(
+                          color:  textColor,fontFamily: "allerta"
+                      ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            ],
+          )
+      ),
     );
   }
+}
+void _showAlertDialog(BuildContext context,String action){
+  showDialog(context: context, builder: (BuildContext context){
+    return AlertDialog(
+      title: Text("Confirmation"),
+      content: Text("Are you sure want to $action"),
+      actions: <Widget>[
+        TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Cancel")
+        ),
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("You selected to $action!")),);
+            },
+            child: Text("Yes")
+        )
+      ],
+    );
+
+  });
 }

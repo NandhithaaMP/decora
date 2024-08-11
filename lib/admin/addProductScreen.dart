@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart'; // Import the intl package for DateFormat
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../constants/constant_color.dart'; // Adjust import as necessary
+import '../constants/constant_color.dart';
+import '../models/adminModel.dart';
+import '../provider/mainProvider.dart'; // Adjust import as necessary
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -12,8 +16,11 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
-  DateTime _selectedDate = DateTime.now();
+
+  DateTime selectedDate = DateTime.now();
   final DateFormat _dateFormatter = DateFormat('dd MMMM yyyy');
+  String? selectedCategory;
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,74 +49,228 @@ class _AddProductScreenState extends State<AddProductScreen> {
         child: Container(
           decoration: BoxDecoration(gradient: screenGradient),
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: height / 10),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Container(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextField(
-                          decoration: InputDecoration(
-                            label: Text("PRODUCT NAME", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                            border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        TextField(
-                          decoration: InputDecoration(
-                            label: Text("PRICE", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                            border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-
-
-                        SizedBox(height: 10),
-                        Row(
+            child: Consumer<MainProvider>(
+              builder: (context,value,child) {
+                return Column(
+                  children: [
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Container(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("DELIVERY DATE", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
-                            IconButton(onPressed: () =>_showCalendarPicker(context) , icon: Icon(Icons.calendar_today)),
-                            // SizedBox(width: 5),
-                            Text(
-                              'Selected Date: ${_dateFormatter.format(_selectedDate)}',
-                              style: TextStyle(fontSize: 12),
+                            TextField(
+                              controller: value.productnameController,
+                              decoration: InputDecoration(
+                                label: Text("PRODUCT NAME", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
+                                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                              ),
                             ),
+                            SizedBox(height: 10),
+
+                            Consumer<MainProvider>(
+                                builder: (context1,val,child) {
+                                  return Autocomplete<CategoryModel>(
+                                    optionsBuilder: (TextEditingValue textEditingValue) {
+                                      return value.categoryList
+                                          .where((CategoryModel item) => item. categoryName
+                                          .toLowerCase()
+                                          .contains(textEditingValue.text.toLowerCase()))
+                                          .toList();
+                                    },
+                                    displayStringForOption: (CategoryModel option) =>
+                                    option.categoryName,
+                                    fieldViewBuilder: (BuildContext context,
+                                        TextEditingController fieldTextEditingController,
+                                        FocusNode fieldFocusNode,
+                                        VoidCallback onFieldSubmitted) {
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        fieldTextEditingController.text = val.categoryNameController.text;
+                                      });
+
+                                      return Container(
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          gradient: containerGradient
+                                          // ,
+                                        ),
+
+                                        child: SizedBox(
+                                          width: MediaQuery.of(context).size.width / 1.1,
+                                          child: TextFormField(
+                                            // cursorColor: Colors.brown,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                                color: Colors.white, fontWeight: FontWeight.w500),
+                                            decoration: InputDecoration(
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide.none,
+                                                  borderRadius: BorderRadius.circular(10)
+                                              ),
+
+                                              hintText: "Select Category",
+                                              hintStyle: const TextStyle(
+
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                  height: 4,
+                                                  fontWeight: FontWeight.normal
+                                              ),
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(20),
+                                                borderSide: BorderSide.none,
+
+                                              ),
+                                            ),
+                                            onChanged: (txt) {},
+                                            controller: fieldTextEditingController,
+                                            focusNode: fieldFocusNode,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    onSelected: (CategoryModel selection) {
+                                      value.categoryNameController.text = selection.categoryName;
+                                      value.productSelectedcategoryid = selection.id;
+                                    },
+                                    optionsViewBuilder: (BuildContext context,
+                                        AutocompleteOnSelected<CategoryModel> onSelected,
+                                        Iterable<CategoryModel> options) {
+                                      return Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Material(
+                                          child: Container(
+
+                                            decoration: BoxDecoration(
+                                                // color:Color(0xff0C8290),
+                                              gradient: maingradient,
+                                                borderRadius: BorderRadius.circular(15)
+                                            ),
+                                            width: 200,
+                                            height: 200,
+                                            child: ListView.builder(
+                                              padding: const EdgeInsets.all(10.0),
+                                              itemCount: options.length,
+                                              itemBuilder: (BuildContext context, int index) {
+                                                final CategoryModel option = options.elementAt(index);
+
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    onSelected(option);
+                                                  },
+                                                  child: Column(
+                                                    children: [
+                                                      Container(
+                                                    
+                                                        decoration: BoxDecoration(
+                                                          // borderRadius: BorderRadius.circular(15)
+                                                          // border: Border(left: BorderSide(color: Colors.white,width: .6,
+                                                          // ))
+                                                        ),
+
+                                                        height: 30,
+                                                        width: 200,
+                                                        child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              Center(
+                                                                child: Text(option.categoryName,
+                                                                    style: const TextStyle(
+                                                                      fontFamily: 'muktaregular',
+                                                                      color: Colors.white,
+                                                                    )
+                                                                ),
+                                                              ),
+                                                            ]),
+                                                      ),
+                                                      Divider(
+                                                        thickness: 1,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
+                            ),
+                            SizedBox(height: 10),
+                            TextField(
+                            controller: value.priceController,
+                              decoration: InputDecoration(
+                                label: Text("PRICE", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
+                                prefixText: " ₹",
+                                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+
+                              ),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+
+                            ),
+                            SizedBox(height: 20),
+                            // SizedBox(height: 10),
+                            Row(
+                              children: [
+                                TextButton.icon(
+                                  onPressed: () =>_showCalendarPicker(context), icon: Icon(Icons.calendar_today_sharp,color: Colors.white,), label: Text("Choose Delivery date", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
+                                ),
+                                Text( ' ${_dateFormatter.format(value.selectedDate)}', style: TextStyle(fontSize: 15,color: Colors.white),),
+                              ],
+                            ),
+
+                            SizedBox(height: 20),
+                            Text("UPLOAD IMAGE", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
+                            Consumer<MainProvider>(
+                              builder: (context,value,child) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      showBottomSheet(context);
+                                    },
+                                    child: Container(
+                                      height: height/4,
+                                      width: width,
+                                      color: Colors.grey,
+                                      child: Center(child: Icon(Icons.upload)),
+                                    ),
+                                  ),
+                                );
+                              }
+                            )
                           ],
                         ),
-                        SizedBox(height: 20),
-                        Text("UPLOAD IMAGE", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            height: height/4,
-                            width: width,
-                            color: Colors.grey,
-                            child: Center(child: Icon(Icons.upload)),
-                          ),
-                        )
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 25),
-                SizedBox(
-                  height: height / 15,
-                  width: width / 3,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("SAVE", style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(backgroundColor: green),
-                  ),
-                ),
-              ],
+                    SizedBox(height: 25),
+                    SizedBox(
+                      height: height / 15,
+                      width: width / 3,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          value.addProduct();
+                          Navigator.pop(context);
+                        },
+                        child: Text("SAVE", style: TextStyle(color: Colors.white)),
+                        style: ElevatedButton.styleFrom(backgroundColor: green),
+                      ),
+                    ),
+                  ],
+                );
+              }
             ),
           ),
         ),
@@ -139,11 +300,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ),
               firstDay: DateTime.utc(2010, 10, 16),
               lastDay: DateTime.utc(2030, 3, 14),
-              focusedDay: _selectedDate,
-              selectedDayPredicate: (day) => isSameDay(day, _selectedDate),
+              focusedDay: selectedDate,
+              selectedDayPredicate: (day) => isSameDay(day, selectedDate),
               onDaySelected: (selectedDay, focusedDay) {
                 setState(() {
-                  _selectedDate = selectedDay;
+                  // selectedDate = selectedDay;
+                  context.read<MainProvider>().updateSelectedDate(selectedDay);
                 });
                 Navigator.of(context).pop();
               },
@@ -153,4 +315,39 @@ class _AddProductScreenState extends State<AddProductScreen> {
       },
     );
   }
+  void showBottomSheet(BuildContext context) {
+    MainProvider mainprovider =Provider.of<MainProvider>(context,listen:false);
+    showModalBottomSheet(
+        elevation: 10,
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0),
+              topRight: Radius.circular(10.0),
+            )),
+        context: context,
+        builder: (BuildContext bc) {
+          return Wrap(
+            children: <Widget>[
+              ListTile(
+                  leading:  Icon(
+                    Icons.camera_enhance_sharp,
+                    color: Colors.blue,
+                  ),
+                  title: const Text('Camera',),
+                  onTap: () => {
+                    mainprovider.getImgcamera(), Navigator.pop(context)
+                  }),
+              ListTile(
+                  leading:  Icon(Icons.photo, color: Colors.blue),
+                  title: const Text('Gallery',),
+                  onTap: () => {
+                    mainprovider.getImggallery(),Navigator.pop(context)
+                  }),
+            ],
+          );
+        });
+    // ImageSource
+  }
+
 }

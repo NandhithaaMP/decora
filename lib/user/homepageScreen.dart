@@ -1,12 +1,17 @@
 import 'package:decora/user/connectDesigners.dart';
 import 'package:decora/user/designerProfile.dart';
 import 'package:decora/user/profileScreen.dart';
+import 'package:decora/user/wishListScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/constant_color.dart';
+import '../models/adminModel.dart';
+import '../provider/mainProvider.dart';
+import 'cartScreen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -76,7 +81,8 @@ class HomePage extends StatelessWidget {
               tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             );
           },
-        ),),
+        ),
+        ),
 
         drawer: Drawer(
           backgroundColor: cstgreen,
@@ -200,15 +206,25 @@ class HomePage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10)
 
                               ),
-                              child: Row(mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: 10,),
-                                  Image.asset("assets/icons/search.png",scale: 22,),
-                                  SizedBox(width: 10,),
-                                  Text("Search here",style: TextStyle(color: Color(0xff10283A),fontFamily: "muktaregular",fontSize: 15),)
-                                ],
-                              ),
+                              child:TextField(
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.search),
+                                  hintText: "Search here",
+                                  
+                                ),
+                              )
+                              // Row(mainAxisAlignment: MainAxisAlignment.start,
+                              //   children: [
+                              //
+                              //     SizedBox(width: 10,),
+                              //     Image.asset("assets/icons/search.png",scale: 22,),
+                              //     SizedBox(width: 10,),
+                              //     Text("Search here",style: TextStyle(color: Color(0xff10283A),fontFamily: "muktaregular",fontSize: 15),)
+                              //   ],
+                              // ),
                             ),
+
+
                           ],
                         ),
                       ),
@@ -288,43 +304,52 @@ class HomePage extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(10, 15, 10, 1),
-                          child: GridView.builder(
-                            padding: EdgeInsets.zero,
-                            itemCount: recommendation.length,
-                              shrinkWrap: true,
-                              // scrollDirection:
-                            physics : NeverScrollableScrollPhysics(),
-                              gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 5,
-                                crossAxisSpacing: 12,
-                                  mainAxisExtent: 300,
-                                 // mainAxisExtent: 350,
-                                // childAspectRatio: 1
-                              ),
-                              itemBuilder: (context, index) {
-                                return Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                       height: 230,
-                                      // width: 10,
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue,
-                                        image: DecorationImage(
-                                          image: AssetImage(recommendation[index]),
-                                          fit: BoxFit.fill
+                          child:
+                          Consumer<MainProvider>(
+                            builder: (context,value,child) {
+                              return GridView.builder(
+                                padding: EdgeInsets.zero,
+                                itemCount: value.productList.length,
+                                  shrinkWrap: true,
+                                  // scrollDirection:
+                                physics : NeverScrollableScrollPhysics(),
+                                  gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 5,
+                                    crossAxisSpacing: 12,
+                                      mainAxisExtent: 300,
+                                     // mainAxisExtent: 350,
+                                    // childAspectRatio: 1
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    return Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Consumer<MainProvider>(
+                                          builder: (context,value,child) {
+                                            return Container(
+                                               height: 230,
+                                              // width: 10,
+                                              decoration: BoxDecoration(
+                                                color: Colors.blue,
+                                                image: DecorationImage(
+                                                  image: NetworkImage(value.productList[index].productImage),
+                                                  fit: BoxFit.fill
+                                                ),
+                                                borderRadius: BorderRadius.circular(15)
+                                              ),
+
+                                            );
+                                          }
                                         ),
-                                        borderRadius: BorderRadius.circular(15)
-                                      ),
+                                        Text(value.productList[index].productName,style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: "philosopher",),),
+                                        Text(value.productList[index].price,style: TextStyle(color: Colors.white,fontSize: 25,fontFamily: "bakbak",)),
+                                      ],
+                                    );
 
-                                    ),
-                                    Text(name[index],style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: "philosopher",),),
-                                    Text(price[index],style: TextStyle(color: Colors.white,fontSize: 25,fontFamily: "bakbak",)),
-                                  ],
-                                );
+                                  },
 
-                              },
-
+                              );
+                            }
                           ),
                         ),
                       ),
@@ -339,6 +364,65 @@ class HomePage extends StatelessWidget {
             ],
 
           ),
+        ),
+        bottomNavigationBar: Container(
+            height: 65,
+            width: 350,
+            color: green,
+
+            child:Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 70,top: 10),
+                  child: InkWell(onTap:  () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+                  },
+                    child: Column(
+                      children: [
+                        Icon(Icons.home,color:Colors.white,),
+                        Text("Home",style: TextStyle(
+                            color: Colors.white,fontFamily: "allerta"
+                        ),),
+                      ],
+                    ),
+                  ),
+                ),
+
+                InkWell(onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => WishList(),));
+                },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right:80,top: 10),
+                    child: Column(
+                      children: [
+                        Image.asset("assets/icons/like.png",scale: 7,color:  textColor,),
+                        // Icon(Icons.shopping_cart_outlined,color: Colors.white,),
+                        Text("Wish",style: TextStyle(
+                            color:  textColor,fontFamily: "allerta"
+                        ),),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top:10),
+                  child: InkWell(onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  CartScreen(),));
+                  },
+                    child: Column(
+                      children: [
+                        Icon(Icons.shopping_cart_outlined,color:  textColor,),
+                        Text("Cart",style: TextStyle(
+                            color:  textColor,fontFamily: "allerta"
+                        ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              ],
+            )
         ),
       ),
     );
