@@ -63,11 +63,11 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: SplashScreen(),
+        // home: SplashScreen(),
         // home: UBottomNavigation(),
         // home: AdminHomeScreen(),
 
-        // home: DBottomNav(),
+        home:NewEnquiryScreen(),
       ),
     );
   }

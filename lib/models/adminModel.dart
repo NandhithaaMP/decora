@@ -11,3 +11,8 @@ class ProductModel{
   String productImage;
   ProductModel(this.pid,this.productName,this.price,this.productImage);
 }
+class WorkModel{
+  String wid;
+  String workImage;
+  WorkModel(this.wid,this.workImage);
+}

@@ -1,8 +1,12 @@
+import 'package:decora/Designer/uploadWorkScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/constant_color.dart';
+import '../provider/mainProvider.dart';
 import 'editDprofile.dart';
+import 'newEnquiryScreen.dart';
 
 class DesignerProfileScreen extends StatelessWidget {
   const DesignerProfileScreen({super.key});
@@ -74,93 +78,157 @@ class DesignerProfileScreen extends StatelessWidget {
                 )
             ),
             child: SingleChildScrollView(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-
-                  Stack(
+              child: Consumer<MainProvider>(
+                builder: (context,value,child) {
+                  return Column(crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        height: 100,
-                        width: 100,
-                        child: CircleAvatar(
-                          radius: 80,
-                          backgroundColor: Colors.grey,
-                          backgroundImage: AssetImage("assets/PROFILE.jpg"),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 1, // Adjust the value as needed
-                        right: 6,  // Adjust the value as needed
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(context,MaterialPageRoute(builder: (context) =>EditDProfile() ,));
-                          },
-                            child: Image.asset("assets/icons/edit.png",scale: 20,color: Colors.black,)
-                        ),
-                      ),
-                    ],
-                  ),
 
-                  Text("Malhotra",style: TextStyle(fontFamily: "philosopher",fontSize: 30,color: Colors.white),),
-                  Text("Interior Designer",style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
-                  Row(mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.location_on_sharp,color: Colors.white,),
-                      Text("Kozhikode",style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
-                    ],
-                  ),
-                  Row(mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.call,color: Colors.white,),
-                      Text("987654321",style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
-                    ],
-                  ),
-                  SizedBox(height: 10,),
-                  Container(
-                    height: height/12,
-                    width: width,
-                    decoration: BoxDecoration(
-                        gradient: cstgradient
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0,top: 5),
-                      child: Text("Collections",style: TextStyle(fontFamily: "philosopher",fontSize: 30),),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: GridView.builder(
-                      padding: EdgeInsets.zero,
-                      itemCount: images.length,
-                      shrinkWrap: true,
-                      physics: ScrollPhysics(),
-                      gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 5,
-                          mainAxisSpacing: 5
-                      ),
-                      itemBuilder:(context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            _showFullScreenImage(context, images[index]);
-                          },
-                          child: Container(
-
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                image: DecorationImage(
-                                    image: AssetImage(images[index]),fit: BoxFit.fill
-                                )
+                      Stack(
+                        children: [
+                          Container(
+                            height: 100,
+                            width: 100,
+                            child: CircleAvatar(
+                              radius: 80,
+                              backgroundColor: Colors.grey,
+                              backgroundImage: AssetImage("assets/PROFILE.jpg"),
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  )
-                ],
+                          Positioned(
+                            bottom: 1, // Adjust the value as needed
+                            right: 6,  // Adjust the value as needed
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(context,MaterialPageRoute(builder: (context) =>EditDProfile() ,));
+                              },
+                                child: Image.asset("assets/icons/edit.png",scale: 20,color: Colors.black,)
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Text("Malhotra",style: TextStyle(fontFamily: "philosopher",fontSize: 30,color: Colors.white),),
+                      Text("Interior Designer",style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
+                      Row(mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.location_on_sharp,color: Colors.white,),
+                          Text("Kozhikode",style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
+                        ],
+                      ),
+                      Row(mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.call,color: Colors.white,),
+                          Text("987654321",style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
+                        ],
+                      ),
+                      SizedBox(height: 10,),
+                      Container(
+                        height: height/12,
+                        width: width,
+                        decoration: BoxDecoration(
+                            gradient: cstgradient
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0,top: 5),
+                          child: Text("Collections",style: TextStyle(fontFamily: "philosopher",fontSize: 30),),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: GridView.builder(
+                          padding: EdgeInsets.zero,
+                          itemCount: value.workList.length,
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 5
+                          ),
+                          itemBuilder:(context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                _showFullScreenImage(context, images[index]);
+                              },
+                              child: Container(
+
+                                decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    image: DecorationImage(
+                                        image: NetworkImage(value.workList[index].wid),fit: BoxFit.fill
+                                    )
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  );
+                }
               ),
             ),
           ),
+        ),
+        bottomNavigationBar: Container(
+            height: 65,
+            width: 350,
+            color: green,
+
+            child:Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 70,top: 10),
+                  child: InkWell(onTap:  () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => NewEnquiryScreen(),));
+                  },
+                    child: Column(
+                      children: [
+                        Icon(Icons.home,color:textColor,),
+                        Text("Home",style: TextStyle(
+                            color: textColor,fontFamily: "allerta"
+                        ),),
+                      ],
+                    ),
+                  ),
+                ),
+
+                InkWell(onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => UploadWorkScreen(),));
+                },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right:80,top: 10),
+                    child: Column(
+                      children: [
+                        // Image.asset("assets/icons/like.png",scale: 7,color:  textColor,),
+
+                        Icon(Icons.upload,color:  textColor,),
+                        Text("Work",style: TextStyle(
+                            color:  textColor,fontFamily: "allerta"
+                        ),),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top:10),
+                  child: InkWell(onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  DesignerProfileScreen(),));
+                  },
+                    child: Column(
+                      children: [
+                        Icon(Icons.account_circle_outlined,color:Colors.white,),
+                        Text("Profile",style: TextStyle(
+                            color:  Colors.white,fontFamily: "allerta"
+                        ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              ],
+            )
         ),
       ),
     );

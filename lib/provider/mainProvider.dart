@@ -219,4 +219,130 @@ class MainProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  // Designer----------------------------------------------------------------------------------------------------------------------------------------------------
+  File? addWorkFileImg;
+  String workFileUrl="";
+
+  // Future<void> addDesignerWork() async {
+  //   String id=DateTime.now().millisecondsSinceEpoch.toString();
+  //    HashMap<String,Object> addWork=HashMap();
+  //    if(addWorkFileImg!=null){
+  //      String photoId = DateTime.now().millisecondsSinceEpoch.toString();
+  //      ref = FirebaseStorage.instance.ref().child(photoId);
+  //      await ref.putFile(addProductFileImg!).whenComplete(() async {
+  //        await ref.getDownloadURL().then((value) {
+  //          addWork["PHOTO"] = value;
+  //
+  //          notifyListeners();
+  //        });
+  //        notifyListeners();
+  //      });
+  //    }
+  //    db.collection("DESIGNER_WORK").doc(id).set(addWork);
+  //    notifyListeners();
+  //
+  // }
+  Future<void> addDesignerWork() async {
+    if (addWorkFileImg == null) return;
+
+    String id = DateTime.now().millisecondsSinceEpoch.toString();
+    HashMap<String, Object> addWork = HashMap();
+
+    String photoId = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference ref = FirebaseStorage.instance.ref().child(photoId);
+
+    await ref.putFile(addWorkFileImg!).whenComplete(() async {
+      await ref.getDownloadURL().then((value) {
+        workFileUrl = value;
+        addWork["PHOTO"] = value;
+
+        // Save to Firestore
+        // FirebaseFirestore.instance.collection("DESIGNER_WORK").doc(id).set(addWork);
+
+        db.collection("DESIGNER_WORK").doc(id).set(addWork);
+        addWorkFileImg = null;
+        notifyListeners();
+      });
+    });
+  }
+  Future DesignerImgGallery() async {
+    final imagePicker = ImagePicker();
+    final pickedImage =
+    await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      designerCropImage(pickedImage.path, "");
+    } else {
+      print('No image selected.');
+    }
+  }
+
+  Future DesignerImgCamera() async {
+    final imgPicker = ImagePicker();
+    final pickedImage = await imgPicker.pickImage(source: ImageSource.camera);
+
+    if (pickedImage != null) {
+      designerCropImage(pickedImage.path, "");
+    } else {
+      print('No image selected.');
+    }
+  }
+
+  Future<void> designerCropImage(String path, String from) async {
+    final croppedFile = await ImageCropper().cropImage(
+      sourcePath: path,
+      aspectRatioPresets: Platform.isAndroid ? [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9,
+      ]
+          : [
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio5x3,
+        CropAspectRatioPreset.ratio5x4,
+        CropAspectRatioPreset.ratio7x5,
+        CropAspectRatioPreset.ratio16x9,
+        CropAspectRatioPreset.ratio16x9
+      ],
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.white,
+            toolbarWidgetColor: Colors.black,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        IOSUiSettings(
+          title: 'Cropper',
+        )
+      ],
+    );
+    if (croppedFile != null) {
+      addWorkFileImg = File(croppedFile.path);
+      // print(Registerfileimg.toString() + "fofiifi");
+      notifyListeners();
+    }
+  }
+  List<WorkModel>workList=[];
+  void getDesignerWork(){
+    db.collection("DEIGNER_WORK").get().then((value){
+      if(value.docs.isNotEmpty){
+        workList.clear();
+        for(var element in value.docs){
+          workList.add(WorkModel(
+              element.id,
+              element.get("PHOTO")
+          )
+          );
+        }
+        notifyListeners();
+      }
+    });
+    notifyListeners();
+  }
+
 }

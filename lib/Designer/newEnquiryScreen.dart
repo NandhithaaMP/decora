@@ -1,7 +1,13 @@
+import 'package:decora/Designer/uploadWorkScreen.dart';
+import 'package:decora/constants/constant_color.dart';
 import 'package:decora/constants/constant_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+
+import '../constants/constant_color.dart';
+import '../constants/constant_color.dart';
+import 'designerProfileScreen.dart';
 
 class NewEnquiryScreen extends StatelessWidget {
   const NewEnquiryScreen({super.key});
@@ -31,7 +37,101 @@ class NewEnquiryScreen extends StatelessWidget {
           centerTitle: true,
         ),
       ),
+      drawer: Drawer(
+        backgroundColor: cstgreen,
+        child: ListView(
+          children: [
 
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFFCBB480),
+                    Color(0xff16403B),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: UserAccountsDrawerHeader(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide.none,
+                  ),
+                  color: Colors.transparent, // Make the background transparent
+                ),
+
+                accountName: Text(
+                  "Nandhitha",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: "muktaregular",
+                    fontSize: 20,
+                  ),
+                ),
+                accountEmail: Text(
+                  "nandhithampnandhu@gmail.com",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: "muktaregular",
+                    fontSize: 16,
+                  ),
+                ),
+                currentAccountPicture: CircleAvatar(
+                  backgroundImage: AssetImage("assets/icons/profile-thin.png"),
+                  backgroundColor: cstgreen,
+                ),
+              ),
+            ),
+            // Container(color: Colors.red,height: 5,),
+            ListTile(
+              leading: Image.asset("assets/icons/profile-thin.png", scale: 15),
+              title: Text(
+                "PROFILE",
+                style: TextStyle(
+                  fontFamily: "philosopher",
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => DesignerProfileScreen(),
+                )
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.upload,color: textColor,),
+              title: Text(
+                "UPLOAD WORK",
+                style: TextStyle(
+                  fontFamily: "philosopher",
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder:(context) => UploadWorkScreen(),
+                )
+                );
+              },
+            ),
+            ListTile(
+              leading: Image.asset("assets/icons/signout.png", scale: 5),
+              title: Text(
+                "SIGN OUT",
+                style: TextStyle(
+                  fontFamily: "philosopher",
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -115,6 +215,66 @@ class NewEnquiryScreen extends StatelessWidget {
             )
           ],
         ),
+      ),
+      bottomNavigationBar: Container(
+          height: 65,
+          width: 350,
+          color: green,
+
+          child:Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 70,top: 10),
+                child: InkWell(onTap:  () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => NewEnquiryScreen(),));
+                },
+                  child: Column(
+                    children: [
+                      Icon(Icons.home,color:Colors.white,),
+                      Text("Home",style: TextStyle(
+                          color: Colors.white,fontFamily: "allerta"
+                      ),),
+                    ],
+                  ),
+                ),
+              ),
+
+              InkWell(onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UploadWorkScreen(),));
+              },
+                child: Padding(
+                  padding: const EdgeInsets.only(right:80,top: 10),
+                  child: Column(
+                    children: [
+                      // Image.asset("assets/icons/like.png",scale: 7,color:  textColor,),
+
+                      Icon(Icons.upload,color:  textColor,),
+                      Text("Work",style: TextStyle(
+                          color:  textColor,fontFamily: "allerta"
+                      ),),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top:10),
+                child: InkWell(onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  DesignerProfileScreen(),));
+                },
+                  child: Column(
+                    children: [
+                      Icon(Icons.account_circle_outlined,color:textColor,),
+                      Text("Profile",style: TextStyle(
+                          color:  textColor,fontFamily: "allerta"
+                      ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            ],
+          )
       ),
     );
   }
