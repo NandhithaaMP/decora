@@ -219,8 +219,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         value.getDesignerWork();
                         value.getDesignerData();
 
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => NewEnquiryScreen(),));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) => NewEnquiryScreen(),));
                     },
                     child: Container(
                       height: height/14,

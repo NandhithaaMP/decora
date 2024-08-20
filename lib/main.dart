@@ -6,6 +6,7 @@ import 'package:decora/user/chairScreen.dart';
 import 'package:decora/user/connectDesigners.dart';
 import 'package:decora/user/createpswdScreen.dart';
 import 'package:decora/user/designerProfile.dart';
+import 'package:decora/user/failedScreen.dart';
 import 'package:decora/user/forgotPwdScreen.dart';
 import 'package:decora/user/getStartedScreen.dart';
 import 'package:decora/user/homepageScreen.dart';
@@ -66,9 +67,10 @@ class MyApp extends StatelessWidget {
         // home: SplashScreen(),
         // home: UBottomNavigation(),
         // home: AdminHomeScreen(),
-
-        home:NewEnquiryScreen(),
+        //    home: UserHomePage(),
+        // home:NewEnquiryScreen(),
         // home:RegisterScreen(),
+home: FailedScreen(),
       ),
     );
   }

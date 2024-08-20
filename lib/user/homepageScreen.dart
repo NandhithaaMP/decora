@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../constants/constant_color.dart';
 import '../models/adminModel.dart';
 import '../provider/mainProvider.dart';
+import 'buyNowScreen.dart';
 import 'cartScreen.dart';
 
 class UserHomePage extends StatelessWidget {
@@ -310,45 +311,103 @@ class UserHomePage extends StatelessWidget {
                               return GridView.builder(
                                 padding: EdgeInsets.zero,
                                 itemCount: value.productList.length,
-                                  shrinkWrap: true,
-                                  // scrollDirection:
-                                physics : NeverScrollableScrollPhysics(),
-                                  gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    mainAxisSpacing: 5,
-                                    crossAxisSpacing: 12,
-                                      mainAxisExtent: 300,
-                                     // mainAxisExtent: 350,
-                                    // childAspectRatio: 1
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    return Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Consumer<MainProvider>(
-                                          builder: (context,value,child) {
-                                            return Container(
-                                               height: 230,
-                                              // width: 10,
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue,
-                                                image: DecorationImage(
-                                                  image: NetworkImage(value.productList[index].productImage),
-                                                  fit: BoxFit.fill
-                                                ),
-                                                borderRadius: BorderRadius.circular(15)
-                                              ),
-
-                                            );
-                                          }
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 5,
+                                  crossAxisSpacing: 12,
+                                  mainAxisExtent: 300,
+                                ),
+                                itemBuilder: (context, index) {
+                                  final product = value.productList[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      print("Product tapped: ${product.productName}");
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => BuyNowScreen(
+                                            productName: product.productName,
+                                            productImage: product.productImage,
+                                            productPrice: product.price,
+                                          ),
                                         ),
-                                        Text(value.productList[index].productName,style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: "philosopher",),),
-                                        Text(value.productList[index].price,style: TextStyle(color: Colors.white,fontSize: 25,fontFamily: "bakbak",)),
-                                      ],
-                                    );
-
-                                  },
-
+                                      );
+                                    },
+                                    // onTap: () {
+                                    //   Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //       builder: (context) => BuyNowScreen(
+                                    //         productName: product.productName,
+                                    //         productImage: product.productImage,
+                                    //         productPrice: product.price,
+                                    //       ),
+                                    //     ),
+                                    //   );
+                                    // },
+                                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                      Container(
+                                        height: 230,
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue,
+                                          image: DecorationImage(
+                                            image: NetworkImage(product.productImage),
+                                            fit: BoxFit.fill,
+                                          ),
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                      ),
+                                      Text(product.productName, style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: "philosopher")),
+                                      Text(product.price, style: TextStyle(color: Colors.white, fontSize: 25, fontFamily: "bakbak")),
+                                    ]),
+                                  );
+                                },
                               );
+
+                              //   GridView.builder(
+                              //   padding: EdgeInsets.zero,
+                              //   itemCount: value.productList.length,
+                              //     shrinkWrap: true,
+                              //     // scrollDirection:
+                              //   physics : NeverScrollableScrollPhysics(),
+                              //     gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
+                              //       crossAxisCount: 2,
+                              //       mainAxisSpacing: 5,
+                              //       crossAxisSpacing: 12,
+                              //         mainAxisExtent: 300,
+                              //        // mainAxisExtent: 350,
+                              //       // childAspectRatio: 1
+                              //     ),
+                              //     itemBuilder: (context, index) {
+                              //       return Column(crossAxisAlignment: CrossAxisAlignment.start,
+                              //         children: [
+                              //           Consumer<MainProvider>(
+                              //             builder: (context,value,child) {
+                              //               return Container(
+                              //                  height: 230,
+                              //                 // width: 10,
+                              //                 decoration: BoxDecoration(
+                              //                   color: Colors.blue,
+                              //                   image: DecorationImage(
+                              //                     image: NetworkImage(value.productList[index].productImage),
+                              //                     fit: BoxFit.fill
+                              //                   ),
+                              //                   borderRadius: BorderRadius.circular(15)
+                              //                 ),
+                              //
+                              //               );
+                              //             }
+                              //           ),
+                              //           Text(value.productList[index].productName,style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: "philosopher",),),
+                              //           Text(value.productList[index].price,style: TextStyle(color: Colors.white,fontSize: 25,fontFamily: "bakbak",)),
+                              //         ],
+                              //       );
+                              //
+                              //     },
+                              //
+                              // );
                             }
                           ),
                         ),
