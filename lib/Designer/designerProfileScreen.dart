@@ -107,6 +107,7 @@ class DesignerProfileScreen extends StatelessWidget {
                         ],
                       ),
 
+                      // Text("Malhotra",style: TextStyle(fontFamily: "philosopher",fontSize: 30,color: Colors.white),),
                       Text("Malhotra",style: TextStyle(fontFamily: "philosopher",fontSize: 30,color: Colors.white),),
                       Text("Interior Designer",style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
                       Row(mainAxisAlignment: MainAxisAlignment.center,

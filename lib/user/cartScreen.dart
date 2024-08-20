@@ -143,7 +143,7 @@ class CartScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 70,top: 10),
                 child: InkWell(onTap:  () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
                 },
                   child: Column(
                     children: [

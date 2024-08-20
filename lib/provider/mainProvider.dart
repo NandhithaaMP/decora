@@ -344,5 +344,38 @@ class MainProvider extends ChangeNotifier{
     });
     notifyListeners();
   }
+// --------------USER/DESIGNER-------------------------------------------------
 
+
+  TextEditingController usersNameController=TextEditingController();
+  TextEditingController usersPhoneController=TextEditingController();
+  TextEditingController usersPasswordContoller=TextEditingController();
+  TextEditingController usersTypeController=TextEditingController();
+void addUsers(){
+    String id=DateTime.now().millisecondsSinceEpoch.toString();
+    HashMap<String,Object>addUsers=HashMap();
+    addUsers["USERS_NAME"]=usersNameController.text;
+    addUsers["USERS_PHONENUMBER"]=usersPhoneController.text;
+    addUsers["USERS_PASSWORD"]=usersPasswordContoller.text;
+    addUsers["USERS_DESIGNATION"]=usersTypeController.text;
+    db.collection("USERS").doc(id).set(addUsers);
+    notifyListeners();
+}
+List<DesignerData>designerdataList=[];
+void getDesignerData(){
+  db.collection("USERS").get().then((value){
+    if(value.docs.isNotEmpty){
+      designerdataList.clear();
+      for(var element in value.docs){
+        designerdataList.add(DesignerData(
+            element.id,
+            element.get("USERS_NAME"),
+            element.get("USERS_PHONENUMBER"),
+            element.get("USERS_DESIGNATION")
+
+        ));
+      }
+    }
+  });
+}
 }

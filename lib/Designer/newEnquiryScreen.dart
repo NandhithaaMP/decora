@@ -121,7 +121,7 @@ class NewEnquiryScreen extends StatelessWidget {
             ListTile(
               leading: Image.asset("assets/icons/signout.png", scale: 5),
               title: Text(
-                "SIGN OUT",
+                "SIGN OUT ",
                 style: TextStyle(
                   fontFamily: "philosopher",
                   fontSize: 16,

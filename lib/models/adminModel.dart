@@ -11,8 +11,17 @@ class ProductModel{
   String productImage;
   ProductModel(this.pid,this.productName,this.price,this.productImage);
 }
-class WorkModel{
+class WorkModel {
   String wid;
   String workImage;
-  WorkModel(this.wid,this.workImage);
+
+  WorkModel(this.wid, this.workImage);
+}
+
+class DesignerData{
+  String id;
+  String designerName;
+  String designerEmail;
+  String designerType;
+  DesignerData(this.id,this.designerName,this.designerEmail,this.designerType);
 }

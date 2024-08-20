@@ -60,7 +60,7 @@ class LoginScreen extends StatelessWidget {
                   onTap: () {
                     value.getAddedProduct();
                     value.getCategory();
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
                   },
                   child: Center(
                     child: Container(

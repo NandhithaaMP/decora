@@ -68,6 +68,7 @@ class MyApp extends StatelessWidget {
         // home: AdminHomeScreen(),
 
         home:NewEnquiryScreen(),
+        // home:RegisterScreen(),
       ),
     );
   }

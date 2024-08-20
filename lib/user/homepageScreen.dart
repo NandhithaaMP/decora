@@ -13,8 +13,8 @@ import '../models/adminModel.dart';
 import '../provider/mainProvider.dart';
 import 'cartScreen.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class UserHomePage extends StatelessWidget {
+  const UserHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -375,7 +375,7 @@ class HomePage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 70,top: 10),
                   child: InkWell(onTap:  () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
                   },
                     child: Column(
                       children: [
