@@ -1,7 +1,10 @@
 
 import 'package:decora/constants/constant_color.dart';
+import 'package:decora/user/successScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'failedScreen.dart';
 
 class ordersummery extends StatefulWidget {
   ordersummery({super.key});
@@ -40,7 +43,7 @@ class _ordersummeryState extends State<ordersummery> {
                   Padding(
                     padding: const EdgeInsets.only(left: 18,top: 30),
                     child: InkWell(onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => successpage(),));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SuccesScreen(),));
                     },
                       child: Container(
                         height: 150,
@@ -95,7 +98,7 @@ class _ordersummeryState extends State<ordersummery> {
                   ),
                   GestureDetector(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ErrorPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>FailedScreen()));
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 18,top: 30),
@@ -485,7 +488,7 @@ class _ordersummeryState extends State<ordersummery> {
                               Padding(
                                 padding: const EdgeInsets.only(left:10,top: 20),
                                 child: InkWell(onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => successpage(),));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => SuccesScreen(),));
                                 },
                                   child: Container(
                                     height: 40,
