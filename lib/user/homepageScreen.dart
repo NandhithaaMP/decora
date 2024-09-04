@@ -308,7 +308,8 @@ class UserHomePage extends StatelessWidget {
                           child:
                           Consumer<MainProvider>(
                             builder: (context,value,child) {
-                              return GridView.builder(
+                              return
+                                GridView.builder(
                                 padding: EdgeInsets.zero,
                                 itemCount: value.productList.length,
                                 shrinkWrap: true,

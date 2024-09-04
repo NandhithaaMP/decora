@@ -1,4 +1,5 @@
 import 'package:decora/admin/verifyDesigners.dart';
+import 'package:decora/provider/loginProvider.dart';
 import 'package:decora/provider/mainProvider.dart';
 import 'package:decora/user/buyNowScreen.dart';
 import 'package:decora/user/cartScreen.dart';
@@ -12,10 +13,15 @@ import 'package:decora/user/getStartedScreen.dart';
 import 'package:decora/user/homepageScreen.dart';
 import 'package:decora/user/lampScreen.dart';
 import 'package:decora/user/loginScreen.dart';
+import 'package:decora/user/myOrderScreen.dart';
+import 'package:decora/user/orderDetailsScreen.dart';
 import 'package:decora/user/orderSummary.dart';
+
+import 'package:decora/user/orderSummaryScreen.dart';
 import 'package:decora/user/profileScreen.dart';
 import 'package:decora/user/registerScreen.dart';
 import 'package:decora/user/splashScreen.dart';
+import 'package:decora/user/successScreen.dart';
 import 'package:decora/user/ubottomNavigation.dart';
 import 'package:decora/user/verifypwdScreen.dart';
 import 'package:decora/user/wishListScreen.dart';
@@ -54,7 +60,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => MainProvider(),)
+        ChangeNotifierProvider(create: (context) => MainProvider(),),
+        ChangeNotifierProvider(create: (context) => LoginProvider(),)
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -66,11 +73,11 @@ class MyApp extends StatelessWidget {
         ),
         // home: SplashScreen(),
         // home: UBottomNavigation(),
-        // home: AdminHomeScreen(),
+        home: AdminHomeScreen(),
         //    home: UserHomePage(),
         // home:NewEnquiryScreen(),
         // home:RegisterScreen(),
-home: FailedScreen(),
+        //   home: OrderDetails(),
       ),
     );
   }

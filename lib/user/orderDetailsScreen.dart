@@ -3,155 +3,142 @@ import 'package:decora/constants/constant_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class OrederDetails extends StatefulWidget {
-  const OrederDetails({super.key});
+class OrderDetails extends StatefulWidget {
+  const OrderDetails({super.key});
 
   @override
-  State<OrederDetails> createState() => _OrederDetailsState();
+  State<OrderDetails> createState() => _OrderDetailsState();
 }
 
-class _OrederDetailsState extends State<OrederDetails> {
+class _OrderDetailsState extends State<OrderDetails> {
   @override
   Widget build(BuildContext context) {
+    var height=MediaQuery.of(context).size.height;
+    var width=MediaQuery.of(context).size.width;
     return Scaffold(backgroundColor: green,
-      appBar: AppBar(backgroundColor: Colors.red,
-        title: Text("Order Detailes",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            fontFamily: "allerta",
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(40),
+        child: AppBar(
+          backgroundColor:  Color(0xffCBB480),
+
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: cstgradient,
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(5),
+                    bottomRight: Radius.circular(5))),
           ),
-        ),
-        centerTitle:true,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20)
-            )
+          title: Text(
+            "ORDER DETAILS",
+            style: TextStyle(fontFamily: "tradeWinds", fontSize: 20,color:Color(0xff16403B)),
+          ),
+          centerTitle: true,
         ),
       ),
-      body: Column(
-        children: [
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
 
 
-          Padding(
-            padding: const EdgeInsets.only(top: 50),
-            child: Container(
-              height: 80,
-              width: 330,
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                height: height/8,
+                width: width,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: cstText
+                ),
+                child:Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Image(image: AssetImage("assets/lamp1.jpg")),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10,top: 10),
+                            child: Column(
+                              children: [
+                                Text("Lamp",style: TextStyle(fontFamily: "muktamedium",fontSize: 15,fontWeight: FontWeight.w600),),
+                                Text("Qty:1",style: TextStyle(fontFamily: "muktamedium",fontSize: 15,fontWeight: FontWeight.w600),),
+                                Text("300",style: TextStyle(fontFamily: "muktamedium",fontSize: 15,fontWeight: FontWeight.w600),),
+                              ],
+                            ),
+                          ),
+
+                        ],
+                      ),
+                      Icon(Icons.navigate_next_sharp)
+                    ],
+                  ),
+                )
+
+            ),
+            SizedBox(height: 10,),
+            Container(
+              height: height/5,
+              width:width,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color:Colors.pink,
+                  borderRadius: BorderRadius.circular(16),
+                  color: cstText,
                   border: Border.all(color: Colors.black26),
                   boxShadow: [
                     BoxShadow(
                         color: Colors.black26,
                         spreadRadius: 1,
-                        blurRadius: 3),
+                        blurRadius: 3)
                   ]
               ),
               child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Container(
-                        height: 70,
-                        width: 60,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white
-                        ),
-
-                        child:
-                        Row(
-                          children: [
-                            Image.asset("assets/images/en 6.png",fit: BoxFit.fill),
-                            Text("   The Secret",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "aleo",
-                              ),
-                            ),
-                          ],
-                        ),
-
-                      ),
-                    ),
-                  ]
-              ),
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Container(
-              height: 120,
-              width: 330,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color:Colors.purple,
-                  border: Border.all(color: Colors.black26),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black26,
-                        spreadRadius: 1,
-                        blurRadius: 3),
-                  ]
-              ),
-              child: Column(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      SizedBox(width:10),
-                      Text("Deliver to:",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "aleo",
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold
-                        ),
-                      ),
-                      SizedBox(width: 180),
-                      Text("Change",
-                        style: TextStyle(
-                            color: Colors.black38,
-                            fontFamily: "aleo",
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold
-                        ),
-                      )
-                    ],
-                  ),
+                  SizedBox(height: 10,),
+
                   Padding(
-                    padding: const EdgeInsets.only(left:20,top: 10),
-                    child: Text("Perinthalmanna , Angadippuram,\nIn harinagar,House Number88,pin :679338 ",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "aleo",
-                          fontSize: 18,
+                    padding: const EdgeInsets.only(left: 10,right: 10),
+                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Deliver To :",
+                          style: TextStyle(color: Colors.black,
+                              fontFamily:"mukta",
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        Text("Change",
+                          style: TextStyle(color: Colors.black,
+                              fontFamily:"mukta",
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600
+                          ),)
+                      ],
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Perinthalmanna , Angadippuram , \nIn harinagar ,House Number 88,Malappuram,pin :679338,kerala,India",
+                      style: TextStyle(color: Colors.black,
+                          fontFamily:"muktaregular",
+                          fontSize: 16,
                           fontWeight: FontWeight.normal
                       ),
                     ),
-                  ),
-
+                  )
                 ],
               ),
             ),
-          ),
-// ............................................................................................................
-          Padding(
-            padding: const EdgeInsets.only(top: 20,left: 20),
-            child: Column(
+            SizedBox(height: 10,),
+            Column(
               children: [
                 Container(
                   // height: 300,
-                  width: 330,
+                  width: width,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      color: Colors.yellow,
+                      color: cstText,
                       border: Border.all(
                         color: Colors.black26,
                       ),
@@ -220,7 +207,7 @@ class _OrederDetailsState extends State<OrederDetails> {
 
 
 
-// ..................................................................................................
+            // ..................................................................................................
 
 
                       Stack(
@@ -279,7 +266,7 @@ class _OrederDetailsState extends State<OrederDetails> {
 
 
 
-// .................................................................................................
+            // .................................................................................................
 
 
 
@@ -335,7 +322,7 @@ class _OrederDetailsState extends State<OrederDetails> {
                                   )
                                 ],
                               ),
-// .....................................................................................................
+            // .....................................................................................................
 
                               Padding(
                                 padding: const EdgeInsets.only(left: 41,top: 220),
@@ -390,11 +377,11 @@ class _OrederDetailsState extends State<OrederDetails> {
                 ),
               ],
             ),
-          ),
 
 
 
-        ],
+          ],
+        ),
       ),
     );
   }

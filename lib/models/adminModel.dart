@@ -25,3 +25,9 @@ class DesignerData{
   String designerType;
   DesignerData(this.id,this.designerName,this.designerEmail,this.designerType);
 }
+class UserData{
+  String id;
+  String username;
+  String userphonenumber;
+  UserData(this.id,this.username,this.userphonenumber);
+}

@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/adminModel.dart';
 
@@ -345,37 +346,63 @@ class MainProvider extends ChangeNotifier{
     notifyListeners();
   }
 // --------------USER/DESIGNER-------------------------------------------------
+  List<DesignerData>designerdataList=[];
+  void getDesignerData(){
+    db.collection("USERS").get().then((value){
+      if(value.docs.isNotEmpty){
+        designerdataList.clear();
+        for(var element in value.docs){
+          designerdataList.add(DesignerData(
+              element.id,
+              element.get("REGISTER_NAME"),
+              element.get("REGISTER_PHONENUMBER"),
+              element.get("DESIGNATION")
 
-
-  TextEditingController usersNameController=TextEditingController();
-  TextEditingController usersPhoneController=TextEditingController();
-  TextEditingController usersPasswordContoller=TextEditingController();
-  TextEditingController usersTypeController=TextEditingController();
-void addUsers(){
-    String id=DateTime.now().millisecondsSinceEpoch.toString();
-    HashMap<String,Object>addUsers=HashMap();
-    addUsers["USERS_NAME"]=usersNameController.text;
-    addUsers["USERS_PHONENUMBER"]=usersPhoneController.text;
-    addUsers["USERS_PASSWORD"]=usersPasswordContoller.text;
-    addUsers["USERS_DESIGNATION"]=usersTypeController.text;
-    db.collection("USERS").doc(id).set(addUsers);
-    notifyListeners();
-}
-List<DesignerData>designerdataList=[];
-void getDesignerData(){
-  db.collection("USERS").get().then((value){
-    if(value.docs.isNotEmpty){
-      designerdataList.clear();
-      for(var element in value.docs){
-        designerdataList.add(DesignerData(
-            element.id,
-            element.get("USERS_NAME"),
-            element.get("USERS_PHONENUMBER"),
-            element.get("USERS_DESIGNATION")
-
-        ));
+          ));
+        }
       }
-    }
-  });
-}
+    });
+  }
+
+  // /---------------------------------------------------------------------------------------------------------------------------------------
+
+  TextEditingController RegisterNameController=TextEditingController();
+  TextEditingController RegisterPhoneController=TextEditingController();
+  TextEditingController RegisterPasswordController=TextEditingController();
+  TextEditingController designationController=TextEditingController();
+  Future<void> addRegistration() async {
+    String id=DateTime.now().microsecondsSinceEpoch.toString();
+    HashMap<String,dynamic>registermap=HashMap();
+    registermap["REGISTER_ID"]=id;
+    registermap["REGISTER_NAME"]=RegisterNameController.text;
+    registermap["REGISTER_PHONENUMBER"]=RegisterPhoneController.text;
+    registermap["REGISTER_PASSWORD"]=RegisterPasswordController.text;
+    registermap["DESIGNATION"]=designationController.text;
+    db.collection("USERS").doc(id).set(registermap);
+    SharedPreferences  prefs = await SharedPreferences.getInstance();
+    await prefs.setString("REGISTER_NAME", RegisterNameController.text);
+    await prefs.setString("REGISTER_PHONENUMBER", RegisterPhoneController.text);
+    await prefs.setString("REGISTER_PASSWORD", RegisterPasswordController.text);
+    notifyListeners();
+
+  }
+  void updateUserDetails({  required String userId,String? place,  }){
+
+  }
+  List<UserData> userdataList=[];
+  void getUserdetails(){
+    db.collection("USERS").get().then((onValue){
+      if(onValue.docs.isNotEmpty){
+          userdataList.clear();
+          for(var element in onValue.docs){
+            userdataList.add(UserData(
+              element.id,
+              element.get("REGISTER_NAME"),
+              element.get("REGISTER_PHONENUMBER"),
+            ));
+          }
+      }
+    });
+  }
+
 }

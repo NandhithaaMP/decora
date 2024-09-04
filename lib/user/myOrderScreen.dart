@@ -15,27 +15,35 @@ class MyOrder extends StatefulWidget {
 class _MyOrderState extends State<MyOrder> {
   @override
   Widget build(BuildContext context) {
+    var height=MediaQuery.of(context).size.height;
+    var width=MediaQuery.of(context).size.width;
     return Scaffold(
         backgroundColor: green,
-        appBar: AppBar(
-          backgroundColor: Colors.red,
-          title: Center(
-            child: Text(
-              "My Order",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  fontFamily: "allerta"),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(40),
+          child: AppBar(
+            backgroundColor:  Color(0xffCBB480),
+
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                  gradient: cstgradient,
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(5),
+                      bottomRight: Radius.circular(5))),
             ),
+            title: Text(
+              "MY ORDER",
+              style: TextStyle(fontFamily: "tradeWinds", fontSize: 20,color:Color(0xff16403B)),
+            ),
+            centerTitle: true,
           ),
         ),
-        body: Column(children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 10, top: 20),
-            child: Container(
-              height: 45,
-              width: 340,
+        body: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(children: [
+            Container(
+              height: height/15,
+              width: width,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20), color: Colors.white),
               child: Row(
@@ -44,55 +52,75 @@ class _MyOrderState extends State<MyOrder> {
                   Icon(Icons.search_rounded),
                   SizedBox(width: 15),
                   Text(
-                    "Search Your Order her.....",
-                    style: TextStyle(color: Colors.black26, fontSize: 14),
+                    "Search Your Order here.....",
+                    style: TextStyle(fontFamily:"muktaregular",color: Colors.black26, fontSize: 14),
                   )
                 ],
               ),
             ),
-          ),
-          Padding(
-              padding: const EdgeInsets.only(left: 8, top: 20),
-              child: InkWell(onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => OrederDetails(),));
-              },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  height: 80,
-                  width: 350,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.black26),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            SizedBox(height: 10,),
+               Container(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                height: height/8,
+                width: width,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: textColor),
+                child:Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        height: 70,
-                        width: 60,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
-                        ),
-                        child:
-                        Row(
-                          children: [
-                            Image.asset("assets/images/en 6.png",fit: BoxFit.fill),
-                            Text("   The Secret\n   Qty: 1\n   ₹310",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "aleo",
-                              ),
-                            ),SizedBox(width:150),
-                            Icon(Icons.arrow_forward_ios)
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          Image(image: AssetImage("assets/lamp1.jpg")),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10,top: 10),
+                            child: Column(
+                              children: [
+                                Text("Lamp",style: TextStyle(fontFamily: "muktamedium",fontSize: 15,fontWeight: FontWeight.w600),),
+                                Text("Qty:1",style: TextStyle(fontFamily: "muktamedium",fontSize: 15,fontWeight: FontWeight.w600),),
+                                Text("300",style: TextStyle(fontFamily: "muktamedium",fontSize: 15,fontWeight: FontWeight.w600),),
+                              ],
+                            ),
+                          ),
+
+                        ],
                       ),
+                      Icon(Icons.navigate_next_sharp)
                     ],
                   ),
-                ),
-              ))
-        ]));
+                )
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Container(
+                //       height: height/10,
+                //       width: 60,
+                //       decoration: BoxDecoration(
+                //         borderRadius: BorderRadius.circular(12),
+                //         color: Colors.white,
+                //       ),
+                //       child:
+                //       Row(
+                //         children: [
+                //           Image.asset("assets/lamp4.jpg",fit: BoxFit.fill),
+                //           Text("   The Secret\n   Qty: 1\n   ₹310",
+                //             style: TextStyle(
+                //               color: Colors.black,
+                //               fontSize: 15,
+                //               fontWeight: FontWeight.bold,
+                //               fontFamily: "aleo",
+                //             ),
+                //           ),SizedBox(width:150),
+                //           Icon(Icons.arrow_forward_ios)
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                // ),
+              ),
+
+          ]),
+        ));
   }
 }
