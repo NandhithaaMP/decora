@@ -564,61 +564,110 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(
                     height: height / 13,
                   ),
-                  Consumer<MainProvider>(builder: (context, value1, child) {
-                    return InkWell(
-                      onTap: () {
-                        if (value.RegisterNameController.text.isNotEmpty &&
-                            value.RegisterPhoneController.text.isNotEmpty &&
-                            value.RegisterPasswordController.text.isNotEmpty &&
-                            selectDesignation != null) {
-                          // Registration process
-                          value.addRegistration();
-                          value1.getAddedProduct();
-                          value1.getDesignerWork();
-                          value1.getDesignerData();
 
-                          // Navigate based on designation
-                          if (selectDesignation == "USER") {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => UserHomePage(),
-                              ),
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NewEnquiryScreen(),
-                              ),
-                            );
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text("Please fill all fields correctly"),
-                            duration: Duration(seconds: 2),
-                          ));
-                        }
-                      },
-                      child: Container(
-                        height: height / 14,
-                        width: width,
-                        decoration: BoxDecoration(
-                          gradient: cstgradient,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Center(
-                            child: Text(
-                              "REGISTER",
-                              style: TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontFamily: "mukta"),
-                            )),
+
+                    //   InkWell(
+                    //   onTap: () {
+                    //     if (value.RegisterNameController.text.isNotEmpty &&
+                    //         value.RegisterPhoneController.text.isNotEmpty &&
+                    //         value.RegisterPasswordController.text.isNotEmpty &&
+                    //         selectDesignation != null) {
+                    //       // Registration process
+                    //       // value.addRegistration();
+                    //       // value.getAddedProduct();
+                    //       // value.getDesignerWork();
+                    //       // value.getDesignerData();
+                    //
+                    //       // Navigate based on designation
+                    //       if (selectDesignation == "USER") {
+                    //         Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //             builder: (context) => UserHomePage(),
+                    //           ),
+                    //         );
+                    //       } else {
+                    //         Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //             builder: (context) => NewEnquiryScreen(),
+                    //           ),
+                    //         );
+                    //       }
+                    //     } else {
+                    //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    //         content: Text("Please fill all fields correctly"),
+                    //         duration: Duration(seconds: 2),
+                    //       ));
+                    //     }
+                    //   },
+                    //   child: Container(
+                    //     height: height / 14,
+                    //     width: width,
+                    //     decoration: BoxDecoration(
+                    //       gradient: cstgradient,
+                    //       borderRadius: BorderRadius.circular(20),
+                    //     ),
+                    //     child: Center(
+                    //         child: Text(
+                    //           "REGISTER",
+                    //           style: TextStyle(
+                    //               fontSize: 25,
+                    //               fontWeight: FontWeight.bold,
+                    //               color: Colors.white,
+                    //               fontFamily: "mukta"),
+                    //         )),
+                    //   ),
+                    // ),
+                  InkWell(
+                    onTap: () {
+                      // Simple validation before submitting registration
+                      if (value.RegisterNameController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Please enter a valid name")),
+                        );
+                      } else if (value.RegisterPhoneController.text.isEmpty ||
+                          value.RegisterPhoneController.text.length != 10) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Please enter a valid phone number")),
+                        );
+                      } else if (value.RegisterPasswordController.text.isEmpty ||
+                          value.RegisterPasswordController.text.length < 6) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Password must be at least 6 characters")),
+                        );
+                      } else if (selectDesignation == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Please select a designation")),
+                        );
+                      } else {
+                        // Registration process
+                        value.addRegistration(context);
+                        value.getAddedProduct();
+                        value.getWishList();
+                      }
+                    },
+                    child: Container(
+                      height: height / 15,
+                      width: width / 1.2,
+                      decoration: BoxDecoration(
+                        gradient: cstgradient,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    );
-                  }),
+                      child: Center(
+                        child: Text(
+                          "REGISTER",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "muktarbold",
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

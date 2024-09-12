@@ -240,58 +240,65 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Center(child: Text("Forgotten your password?", style: TextStyle(color: Colors.white, fontFamily: "muktaregular"),)),
               ),
               SizedBox(height: height / 6,),
-              Consumer<MainProvider>(
-                builder: (context,value1,child) {
-                  return InkWell(
-                    onTap: () async {
-                      value1.getAddedProduct();
-                      value1.getDesignerWork();
-                      value1.getDesignerData();
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                      String? registeredPhoneNumber = prefs.getString("REGISTER_PHONENUMBER");
-                      String? registeredPassword = prefs.getString("REGISTER_PASSWORD");
 
-                      String inputPhoneNumber = phoneController.text;
-                      String inputPassword = passwordController.text;
 
-                      // Debugging outputs
-                      print("Stored Phone Number: $registeredPhoneNumber");
-                      print("Stored Password: $registeredPassword");
-                      print("Input Phone Number: $inputPhoneNumber");
-                      print("Input Password: $inputPassword");
+                    Consumer<MainProvider>(
+                      builder: (context,value,child) {
+                        return InkWell(
+                        onTap: () async {
 
-                      if (registeredPhoneNumber != null && registeredPassword != null) {
-                        if (registeredPhoneNumber == inputPhoneNumber && registeredPassword == inputPassword) {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text("Invalid phone number or password"),
-                            duration: Duration(seconds: 2),
-                          ));
-                        }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("No registered user found"),
-                          duration: Duration(seconds: 2),
-                        ));
-                      }
-                    },
-                    child: Center(
-                      child: Container(
-                        height: height / 14,
-                        width: width / 1.38,
-                        decoration: BoxDecoration(
-                          gradient: cstgradient,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                          // value.addRegistration();
+                          value.getWishList();
+                          value.getAddedProduct();
+                          value.getDesignerWork();
+                          value.getDesignerData();
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          String? registeredPhoneNumber = prefs.getString("REGISTER_PHONENUMBER");
+                          String? registeredPassword = prefs.getString("REGISTER_PASSWORD");
+
+                          String inputPhoneNumber = phoneController.text;
+                          String inputPassword = passwordController.text;
+
+                          // Debugging outputs
+                          print("Stored Phone Number: $registeredPhoneNumber");
+                          print("Stored Password: $registeredPassword");
+                          print("Input Phone Number: $inputPhoneNumber");
+                          print("Input Password: $inputPassword");
+
+                          if (registeredPhoneNumber != null && registeredPassword != null) {
+                            if (registeredPhoneNumber == inputPhoneNumber && registeredPassword == inputPassword) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text("Invalid phone number or password"),
+                                duration: Duration(seconds: 2),
+                              ));
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("No registered user found"),
+                              duration: Duration(seconds: 2),
+                            ));
+                          }
+                        },
                         child: Center(
-                          child: Text("LOGIN", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: "mukta"),),
+                          child: Container(
+                            height: height / 14,
+                            width: width / 1.38,
+                            decoration: BoxDecoration(
+                              gradient: cstgradient,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Center(
+                              child: Text("LOGIN", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: "mukta"),),
+                            ),
+                          ),
                         ),
-                      ),
+                                          );
+                      }
                     ),
-                  );
-                }
-              ),
+
+
               SizedBox(height: 20,),
               Center(
                 child: Row(

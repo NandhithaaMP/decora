@@ -1,25 +1,33 @@
 import 'dart:ui';
 
 import 'package:decora/constants/constant_color.dart';
+import 'package:decora/provider/mainProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'cartScreen.dart';
 import 'homepageScreen.dart';
 
 class WishList extends StatelessWidget {
-  const WishList({super.key});
+  final String productName;
+  final String productImage;
+  final String productPrice;
+  const WishList(
+      {super.key,
+      required this.productName,
+      required this.productImage,
+      required this.productPrice});
 
   @override
   Widget build(BuildContext context) {
-    var width=MediaQuery.of(context).size.width;
-    var height=MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(40),
         child: AppBar(
-          backgroundColor:  Color(0xff16403B),
-
+          backgroundColor: Color(0xff16403B),
           flexibleSpace: Container(
             decoration: BoxDecoration(
                 gradient: cstgradient,
@@ -29,75 +37,96 @@ class WishList extends StatelessWidget {
           ),
           title: Text(
             "WISH LIST",
-            style: TextStyle(fontFamily: "tradeWinds", fontSize: 20,color:Color(0xff16403B)),
+            style: TextStyle(
+                fontFamily: "tradeWinds",
+                fontSize: 20,
+                color: Color(0xff16403B)),
           ),
           centerTitle: true,
         ),
       ),
       body: SizedBox.expand(
         child: Container(
-          decoration: BoxDecoration(
-              gradient:screenGradient
-
-          ),
-          child:  SingleChildScrollView(
-            child: Column(
-              children: [
-                ListView.builder(
-                  shrinkWrap: true,
-                    itemCount: 5,
-                    physics: ScrollPhysics(),
-                    itemBuilder: (context, index) {
-
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                            height: 100,
-                            width: width,
-                            decoration: BoxDecoration(
-                                color:Color(0xffB6A683)
-                            ),
-                            child:
-                            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(8,8,8,8),
-                                      child: Image.asset('assets/sofa4.jpg',),
-
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          // SizedBox(height: 5,),
-                                          Text("Widsor Chair",style: TextStyle(fontFamily: "muktamedium",fontSize: 20),),
-
-
-                                        ],
+          decoration: BoxDecoration(gradient: screenGradient),
+          child: SingleChildScrollView(
+            child: Consumer<MainProvider>(
+              builder: (context,value,child) {
+                if(value.wishList.isEmpty){
+                  return Center(
+                    child: Text("No items in wishlist"),
+                  );
+                }
+                return Column(
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: value.wishList.length,
+                      physics: ScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                              height: 100,
+                              width: width,
+                              decoration: BoxDecoration(color: Color(0xffB6A683)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.fromLTRB(8, 8, 8, 8),
+                                        child: Image.network(
+                                          productImage,
+                                          fit: BoxFit.cover,
+                                          height: 80,
+                                          width: 80,
+                                        ),
                                       ),
-                                    ),
-
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _showAlertDialog(context, "Delete");
-                                    },
-                                      child: Image.asset("assets/icons/delete.png",scale: 20,)),
-                                ),
-
-                              ],
-                            )
-
-                        ),
-                      );
-                    },
-                )
-              ],
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            // SizedBox(height: 5,),
+                                            Text(
+                                              productName,
+                                              style: TextStyle(
+                                                  fontFamily: "muktamedium",
+                                                  fontSize: 20),
+                                            ),
+                                            Text(
+                                              productPrice,
+                                              style: TextStyle(
+                                                  fontFamily: "muktamedium",
+                                                  fontSize: 20),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          _showAlertDialog(context, "Delete");
+                                        },
+                                        child: Image.asset(
+                                          "assets/icons/delete.png",
+                                          scale: 20,
+                                        )),
+                                  ),
+                                ],
+                              )),
+                        );
+                      },
+                    )
+                  ],
+                );
+              }
             ),
           ),
         ),
@@ -106,84 +135,117 @@ class WishList extends StatelessWidget {
           height: 65,
           width: 350,
           color: green,
-
-          child:Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 70,top: 10),
-                child: InkWell(onTap:  () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
-                },
+                padding: const EdgeInsets.only(right: 70, top: 10),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserHomePage(),
+                        ));
+                  },
                   child: Column(
                     children: [
-                      Icon(Icons.home,color:  textColor,),
-                      Text("Home",style: TextStyle(
-                          color:  textColor,fontFamily: "allerta"
-                      ),),
+                      Icon(
+                        Icons.home,
+                        color: textColor,
+                      ),
+                      Text(
+                        "Home",
+                        style:
+                            TextStyle(color: textColor, fontFamily: "allerta"),
+                      ),
                     ],
                   ),
                 ),
               ),
-
-              InkWell(onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => WishList(),));
-              },
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WishList(
+                          productName: productName,
+                          productImage: productImage,
+                          productPrice: productPrice,
+                        ),
+                      ));
+                },
                 child: Padding(
-                  padding: const EdgeInsets.only(right:80,top: 10),
+                  padding: const EdgeInsets.only(right: 80, top: 10),
                   child: Column(
                     children: [
-                      Image.asset("assets/icons/like.png",scale: 7,color: Colors.white,),
-                      Text("wish",style: TextStyle(
-                          color: Colors.white,fontFamily: "allerta"
-                      ),),
+                      Image.asset(
+                        "assets/icons/like.png",
+                        scale: 7,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        "wish",
+                        style: TextStyle(
+                            color: Colors.white, fontFamily: "allerta"),
+                      ),
                     ],
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top:10),
-                child: InkWell(onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  CartScreen(),));
-                },
+                padding: const EdgeInsets.only(top: 10),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CartScreen(),
+                        ));
+                  },
                   child: Column(
                     children: [
-                      Icon(Icons.shopping_cart_outlined,color: textColor,),
-                      Text("Cart",style: TextStyle(
-                          color:  textColor,fontFamily: "allerta"
+                      Icon(
+                        Icons.shopping_cart_outlined,
+                        color: textColor,
                       ),
+                      Text(
+                        "Cart",
+                        style:
+                            TextStyle(color: textColor, fontFamily: "allerta"),
                       ),
                     ],
                   ),
                 ),
               ),
-
             ],
-          )
-      ),
+          )),
     );
   }
 }
-void _showAlertDialog(BuildContext context,String action){
-  showDialog(context: context, builder: (BuildContext context){
-    return AlertDialog(
-      title: Text("Confirmation"),
-      content: Text("Are you sure want to $action"),
-      actions: <Widget>[
-        TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text("Cancel")
-        ),
-        TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("You selected to $action!")),);
-            },
-            child: Text("Yes")
-        )
-      ],
-    );
 
-  });
+void _showAlertDialog(BuildContext context, String action) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirmation"),
+          content: Text("Are you sure want to $action"),
+          actions: <Widget>[
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel")),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("You selected to $action!")),
+                  );
+                },
+                child: Text("Yes"))
+          ],
+        );
+      });
 }

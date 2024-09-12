@@ -2,6 +2,8 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:decora/Designer/newEnquiryScreen.dart';
+import 'package:decora/user/homepageScreen.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -278,6 +280,7 @@ class MainProvider extends ChangeNotifier{
     }
   }
 
+
   Future DesignerImgCamera() async {
     final imgPicker = ImagePicker();
     final pickedImage = await imgPicker.pickImage(source: ImageSource.camera);
@@ -370,39 +373,164 @@ class MainProvider extends ChangeNotifier{
   TextEditingController RegisterPhoneController=TextEditingController();
   TextEditingController RegisterPasswordController=TextEditingController();
   TextEditingController designationController=TextEditingController();
-  Future<void> addRegistration() async {
-    String id=DateTime.now().microsecondsSinceEpoch.toString();
-    HashMap<String,dynamic>registermap=HashMap();
-    registermap["REGISTER_ID"]=id;
-    registermap["REGISTER_NAME"]=RegisterNameController.text;
-    registermap["REGISTER_PHONENUMBER"]=RegisterPhoneController.text;
-    registermap["REGISTER_PASSWORD"]=RegisterPasswordController.text;
-    registermap["DESIGNATION"]=designationController.text;
-    db.collection("USERS").doc(id).set(registermap);
-    SharedPreferences  prefs = await SharedPreferences.getInstance();
-    await prefs.setString("REGISTER_NAME", RegisterNameController.text);
-    await prefs.setString("REGISTER_PHONENUMBER", RegisterPhoneController.text);
-    await prefs.setString("REGISTER_PASSWORD", RegisterPasswordController.text);
-    notifyListeners();
+  Future<void> addRegistration(BuildContext context) async {
+    try {
+      String id = DateTime.now().microsecondsSinceEpoch.toString();
+      Map<String, dynamic> registerMap = {
+        "REGISTER_ID": id,
+        "REGISTER_NAME": RegisterNameController.text,
+        "REGISTER_PHONENUMBER": RegisterPhoneController.text,
+        "REGISTER_PASSWORD": RegisterPasswordController.text,
+        "DESIGNATION": designationController.text,
+      };
 
-  }
-  void updateUserDetails({  required String userId,String? place,  }){
+      // Add the registration data to Firestore
+      await db.collection("USERS").doc(id).set(registerMap);
 
-  }
-  List<UserData> userdataList=[];
-  void getUserdetails(){
-    db.collection("USERS").get().then((onValue){
-      if(onValue.docs.isNotEmpty){
-          userdataList.clear();
-          for(var element in onValue.docs){
-            userdataList.add(UserData(
-              element.id,
-              element.get("REGISTER_NAME"),
-              element.get("REGISTER_PHONENUMBER"),
-            ));
-          }
+      // Save user data in SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("REGISTER_NAME", RegisterNameController.text);
+      await prefs.setString("REGISTER_PHONENUMBER", RegisterPhoneController.text);
+      await prefs.setString("REGISTER_PASSWORD", RegisterPasswordController.text);
+
+      // Navigate based on designation
+      if (designationController.text == "USER") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => UserHomePage()),
+        );
+      } else if (designationController.text == "DESIGNER") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => NewEnquiryScreen()),
+        );
+      } else {
+        // Handle unknown designation
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("Registration Error"),
+            content: Text("Unknown designation. Please select a valid option."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("OK"),
+              ),
+            ],
+          ),
+        );
       }
+
+      notifyListeners();
+    } catch (e) {
+      print("Error during registration: $e");
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Registration Error"),
+          content: Text("There was an error during registration. Please try again."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+  // -------------------------------------GET THE LIKE PRODUCT IN WISHLIST-------------------------------------------------------------------------------------------
+
+  Future<void> addToWishList(String productName,String productImage,String productPrice)async {
+    await FirebaseFirestore.instance.collection("WISHLIST").add({
+      'productName':productName,
+      'productImage':productImage,
+      'productPrice':productPrice,
+    });
+    print("Product added to wishlist");
+    getWishList();
+  }
+
+  List<WishList> wishList=[];
+  void getWishList(){
+    db.collection("WISHLIST").get().then((value){
+      if(value.docs.isNotEmpty){
+        wishList.clear();
+        for(var element  in value.docs){
+          wishList.add(WishList(
+              element.id,
+              element.get('PRODUCT_NAME'),
+              element.get('PRICE'),
+              element.get("PHOTO")
+          )
+          );
+          notifyListeners();
+        }
+      }
+      notifyListeners();
     });
   }
+
+
+// Future<void> addRegistration(BuildContext context) async {
+  //   try{
+  //     String id=DateTime.now().microsecondsSinceEpoch.toString();
+  //     HashMap<String,dynamic>registermap=HashMap();
+  //     registermap["REGISTER_ID"]=id;
+  //     registermap["REGISTER_NAME"]=RegisterNameController.text;
+  //     registermap["REGISTER_PHONENUMBER"]=RegisterPhoneController.text;
+  //     registermap["REGISTER_PASSWORD"]=RegisterPasswordController.text;
+  //     registermap["DESIGNATION"]=designationController.text;
+  //
+  //     await db.collection("USERS").doc(id).set(registermap);
+  //
+  //     SharedPreferences  prefs = await SharedPreferences.getInstance();
+  //     await prefs.setString("REGISTER_NAME", RegisterNameController.text);
+  //     await prefs.setString("REGISTER_PHONENUMBER", RegisterPhoneController.text);
+  //     await prefs.setString("REGISTER_PASSWORD", RegisterPasswordController.text);
+  //     // notifyListeners();
+  //     if(designationController.text=="USER"){
+  //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
+  //     }
+  //     else if(designationController.text=="DESIGNER"){
+  //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NewEnquiryScreen(),));
+  //     }
+  //     notifyListeners();
+  //   }catch(e){
+  //     print("Errors during registration:$e");
+  //     showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //           title: Text("Registration Error"),
+  //           content: Text("There was an error during registration .Please try again."),
+  //           actions: [
+  //             TextButton(onPressed: () => Navigator.pop(context),
+  //                 child: Text("OK")
+  //             )
+  //           ],
+  //         ),
+  //     );
+  //   }
+  //
+  //
+  // }
+  // void updateUserDetails({  required String userId,String? place,  }){
+  //
+  // }
+  // List<UserData> userdataList=[];
+  // void getUserdetails(){
+  //   db.collection("USERS").get().then((onValue){
+  //     if(onValue.docs.isNotEmpty){
+  //         userdataList.clear();
+  //         for(var element in onValue.docs){
+  //           userdataList.add(UserData(
+  //             element.id,
+  //             element.get("REGISTER_NAME"),
+  //             element.get("REGISTER_PHONENUMBER"),
+  //           ));
+  //         }
+  //     }
+  //   });
+  // }
 
 }

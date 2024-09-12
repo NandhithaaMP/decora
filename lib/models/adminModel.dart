@@ -31,3 +31,10 @@ class UserData{
   String userphonenumber;
   UserData(this.id,this.username,this.userphonenumber);
 }
+class WishList{
+  String id;
+  String productName;
+  String productImage;
+  String productPrice;
+  WishList(this.id,this.productName,this.productImage,this.productPrice);
+}

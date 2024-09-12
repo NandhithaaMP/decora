@@ -7,9 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-
 import '../constants/constant_color.dart';
-import '../models/adminModel.dart';
+
 import '../provider/mainProvider.dart';
 import 'buyNowScreen.dart';
 import 'cartScreen.dart';
@@ -21,43 +20,7 @@ class UserHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var width=MediaQuery.of(context).size.width;
     var height=MediaQuery.of(context).size.height;
-    List<String> recommendation=[
-      "assets/lamp1.jpg",
-      "assets/lamp2.jpg",
-      "assets/lamp3.jpg",
-      "assets/lamp4.jpg",
-      "assets/lamp5.jpg",
-      "assets/lamp6.jpg",
-      "assets/lamp7.jpg",
-      "assets/lamp8.jpg",
-      "assets/lamp9.jpg",
-      "assets/lamp10.jpg",
 
-    ];
-    List<String> name=[
-      "Lamp",
-      "Lamp",
-      "Lamp",
-      "Lamp",
-      "Lamp",
-      "Lamp",
-      "Lamp",
-      "Lamp",
-      "Lamp",
-      "Lamp",
-    ];
-    List<String> price=[
-      "₹ 499",
-      "₹ 499",
-      "₹ 499",
-      "₹ 499",
-      "₹ 499",
-      "₹ 499",
-      "₹ 499",
-      "₹ 499",
-      "₹ 499",
-      "₹ 499",
-        ];
     return Container(
       decoration: BoxDecoration(
         gradient: maingradient,
@@ -214,15 +177,7 @@ class UserHomePage extends StatelessWidget {
                                   
                                 ),
                               )
-                              // Row(mainAxisAlignment: MainAxisAlignment.start,
-                              //   children: [
-                              //
-                              //     SizedBox(width: 10,),
-                              //     Image.asset("assets/icons/search.png",scale: 22,),
-                              //     SizedBox(width: 10,),
-                              //     Text("Search here",style: TextStyle(color: Color(0xff10283A),fontFamily: "muktaregular",fontSize: 15),)
-                              //   ],
-                              // ),
+
                             ),
 
 
@@ -336,18 +291,7 @@ class UserHomePage extends StatelessWidget {
                                         ),
                                       );
                                     },
-                                    // onTap: () {
-                                    //   Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //       builder: (context) => BuyNowScreen(
-                                    //         productName: product.productName,
-                                    //         productImage: product.productImage,
-                                    //         productPrice: product.price,
-                                    //       ),
-                                    //     ),
-                                    //   );
-                                    // },
+
                                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                       Container(
                                         height: 230,
@@ -367,48 +311,6 @@ class UserHomePage extends StatelessWidget {
                                 },
                               );
 
-                              //   GridView.builder(
-                              //   padding: EdgeInsets.zero,
-                              //   itemCount: value.productList.length,
-                              //     shrinkWrap: true,
-                              //     // scrollDirection:
-                              //   physics : NeverScrollableScrollPhysics(),
-                              //     gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
-                              //       crossAxisCount: 2,
-                              //       mainAxisSpacing: 5,
-                              //       crossAxisSpacing: 12,
-                              //         mainAxisExtent: 300,
-                              //        // mainAxisExtent: 350,
-                              //       // childAspectRatio: 1
-                              //     ),
-                              //     itemBuilder: (context, index) {
-                              //       return Column(crossAxisAlignment: CrossAxisAlignment.start,
-                              //         children: [
-                              //           Consumer<MainProvider>(
-                              //             builder: (context,value,child) {
-                              //               return Container(
-                              //                  height: 230,
-                              //                 // width: 10,
-                              //                 decoration: BoxDecoration(
-                              //                   color: Colors.blue,
-                              //                   image: DecorationImage(
-                              //                     image: NetworkImage(value.productList[index].productImage),
-                              //                     fit: BoxFit.fill
-                              //                   ),
-                              //                   borderRadius: BorderRadius.circular(15)
-                              //                 ),
-                              //
-                              //               );
-                              //             }
-                              //           ),
-                              //           Text(value.productList[index].productName,style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: "philosopher",),),
-                              //           Text(value.productList[index].price,style: TextStyle(color: Colors.white,fontSize: 25,fontFamily: "bakbak",)),
-                              //         ],
-                              //       );
-                              //
-                              //     },
-                              //
-                              // );
                             }
                           ),
                         ),
@@ -449,7 +351,7 @@ class UserHomePage extends StatelessWidget {
                 ),
 
                 InkWell(onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => WishList(),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => WishList(productName: '', productImage: '', productPrice: '',),));
                 },
                   child: Padding(
                     padding: const EdgeInsets.only(right:80,top: 10),

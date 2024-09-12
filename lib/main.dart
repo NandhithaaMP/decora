@@ -61,19 +61,19 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => MainProvider(),),
-        ChangeNotifierProvider(create: (context) => LoginProvider(),)
+        // ChangeNotifierProvider(create: (context) => LoginProvider(),)
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Decora',
         theme: ThemeData(
       
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        // home: SplashScreen(),
+        home: SplashScreen(),
         // home: UBottomNavigation(),
-        home: AdminHomeScreen(),
+        // home: AdminHomeScreen(),
         //    home: UserHomePage(),
         // home:NewEnquiryScreen(),
         // home:RegisterScreen(),
