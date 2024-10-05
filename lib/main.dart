@@ -11,7 +11,7 @@ import 'package:decora/user/failedScreen.dart';
 import 'package:decora/user/forgotPwdScreen.dart';
 import 'package:decora/user/getStartedScreen.dart';
 import 'package:decora/user/homepageScreen.dart';
-import 'package:decora/user/lampScreen.dart';
+import 'package:decora/user/categoryDetailsScreen.dart';
 import 'package:decora/user/loginScreen.dart';
 import 'package:decora/user/myOrderScreen.dart';
 import 'package:decora/user/orderDetailsScreen.dart';
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => MainProvider(),),
-        // ChangeNotifierProvider(create: (context) => LoginProvider(),)
+        ChangeNotifierProvider(create: (context) => LoginProvider(),)
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -74,10 +74,10 @@ class MyApp extends StatelessWidget {
         home: SplashScreen(),
         // home: UBottomNavigation(),
         // home: AdminHomeScreen(),
-        //    home: UserHomePage(),
+        // home: UserHomePage(),
         // home:NewEnquiryScreen(),
         // home:RegisterScreen(),
-        //   home: OrderDetails(),
+        // home: MyOrder(),
       ),
     );
   }

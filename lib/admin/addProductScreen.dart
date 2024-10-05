@@ -245,12 +245,39 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                       height: height/4,
                                       width: width,
                                       color: Colors.grey,
-                                      child: Center(child: Icon(Icons.upload)),
+                                      child: value.addProductFileImg!=null?Image.file(value.addProductFileImg!,fit: BoxFit.fill,): Center(child: Icon(Icons.upload)),
                                     ),
                                   ),
                                 );
                               }
-                            )
+                            ),
+                            TextField(
+                              controller: value.productDescriptionController,
+                              decoration: InputDecoration(
+                                label: Text("PRODUCT DESCRIPTION", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
+                                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                              ),
+                            ),
+                            TextField(
+                              controller: value.totalProductController,
+                              decoration: InputDecoration(
+                                label: Text("TOTAL NO OF PRODUCT", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
+                                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                              ),
+                            ),
+                            TextField(
+                              controller: value.currentStatusContoller,
+                              decoration: InputDecoration(
+                                label: Text("CURRENT STATUS", style: TextStyle(fontFamily: "muktaregular", fontSize: 15, color: Colors.white)),
+                                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -305,7 +332,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
               onDaySelected: (selectedDay, focusedDay) {
                 setState(() {
                   // selectedDate = selectedDay;
-                  context.read<MainProvider>().updateSelectedDate(selectedDay);
+                  context.read<MainProvider>().getDeliveryDate();
+                  // context.read<MainProvider>().updateSelectedDate(selectedDay);
                 });
                 Navigator.of(context).pop();
               },

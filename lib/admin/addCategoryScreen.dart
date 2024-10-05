@@ -38,7 +38,8 @@ class AddCategoryScreen extends StatelessWidget {
             onPressed: () {
               // String category = '';
             showDialog(context: context, builder: (context) {
-              return AlertDialog(
+              return
+                AlertDialog(
                 title: Text("Add Category"),
                   content: TextField(
                     controller: value.categorynameController,
@@ -58,7 +59,9 @@ class AddCategoryScreen extends StatelessWidget {
               )
               ],
               );
-            },);
+            },
+
+            );
             },
             child: Icon(Icons.add),
             // tooltip: 'Increment',

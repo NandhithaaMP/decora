@@ -38,3 +38,19 @@ Widget btn (double height,double width,Color mycolor,double radius ){
 //     ),
 //   );
 // }
+// Widget textWidPopins(String text, Color colors, double textsize, FontWeight fontWeight ) {
+//   return Text(
+//       text,
+//       style: GoogleFonts.poppins(
+//           fontSize: textsize,  // Ensure textsize is a double
+//           color: colors,
+//           fontWeight: fontWeight,
+//           ),
+//   );
+//   textWidPopins(
+//     item.name,
+//     cl202020,
+//     12,
+//     FontWeight.w500,
+//   ),
+// }

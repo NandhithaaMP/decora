@@ -152,6 +152,7 @@
 //     );
 //   }
 // }
+import 'package:decora/constants/call_functions.dart';
 import 'package:decora/constants/constant_color.dart';
 import 'package:decora/provider/loginProvider.dart';
 import 'package:decora/provider/mainProvider.dart';
@@ -239,47 +240,50 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 child: Center(child: Text("Forgotten your password?", style: TextStyle(color: Colors.white, fontFamily: "muktaregular"),)),
               ),
-              SizedBox(height: height / 6,),
+              SizedBox(height: height / 10,),
 
 
-                    Consumer<MainProvider>(
+                    Consumer<LoginProvider>(
                       builder: (context,value,child) {
                         return InkWell(
                         onTap: () async {
 
-                          // value.addRegistration();
-                          value.getWishList();
-                          value.getAddedProduct();
-                          value.getDesignerWork();
-                          value.getDesignerData();
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                          String? registeredPhoneNumber = prefs.getString("REGISTER_PHONENUMBER");
-                          String? registeredPassword = prefs.getString("REGISTER_PASSWORD");
+                          value.usersAuthorized(phoneController.text, passwordController.text, context);
 
-                          String inputPhoneNumber = phoneController.text;
-                          String inputPassword = passwordController.text;
-
-                          // Debugging outputs
-                          print("Stored Phone Number: $registeredPhoneNumber");
-                          print("Stored Password: $registeredPassword");
-                          print("Input Phone Number: $inputPhoneNumber");
-                          print("Input Password: $inputPassword");
-
-                          if (registeredPhoneNumber != null && registeredPassword != null) {
-                            if (registeredPhoneNumber == inputPhoneNumber && registeredPassword == inputPassword) {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text("Invalid phone number or password"),
-                                duration: Duration(seconds: 2),
-                              ));
-                            }
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("No registered user found"),
-                              duration: Duration(seconds: 2),
-                            ));
-                          }
+                          // callNextReplacement(context, className)
+                          // // value.addRegistration();
+                          // // value.getWishList();
+                          // value.getAddedProduct();
+                          // value.getDesignerWork();
+                          // value.getDesignerData();
+                          // SharedPreferences prefs = await SharedPreferences.getInstance();
+                          // String? registeredPhoneNumber = prefs.getString("REGISTER_PHONENUMBER");
+                          // String? registeredPassword = prefs.getString("REGISTER_PASSWORD");
+                          //
+                          // String inputPhoneNumber = phoneController.text;
+                          // String inputPassword = passwordController.text;
+                          //
+                          // // Debugging outputs
+                          // print("Stored Phone Number: $registeredPhoneNumber");
+                          // print("Stored Password: $registeredPassword");
+                          // print("Input Phone Number: $inputPhoneNumber");
+                          // print("Input Password: $inputPassword");
+                          //
+                          // if (registeredPhoneNumber != null && registeredPassword != null) {
+                          //   if (registeredPhoneNumber == inputPhoneNumber && registeredPassword == inputPassword) {
+                          //     Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
+                          //   } else {
+                          //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          //       content: Text("Invalid phone number or password"),
+                          //       duration: Duration(seconds: 2),
+                          //     ));
+                          //   }
+                          // } else {
+                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          //     content: Text("No registered user found"),
+                          //     duration: Duration(seconds: 2),
+                          //   ));
+                          // }
                         },
                         child: Center(
                           child: Container(

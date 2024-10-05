@@ -1,3 +1,4 @@
+import 'package:decora/constants/call_functions.dart';
 import 'package:decora/constants/constant_color.dart';
 import 'package:decora/constants/constant_images.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,7 +18,8 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState(){
     super.initState();
     Future.delayed(Duration(seconds: 2),() {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
+      callNextReplacement(context, LoginScreen());
+
       },);
     }
   @override

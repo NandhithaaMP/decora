@@ -10,7 +10,8 @@ import '../constants/constant_color.dart';
 import 'designerProfileScreen.dart';
 
 class NewEnquiryScreen extends StatelessWidget {
-  const NewEnquiryScreen({super.key});
+
+  NewEnquiryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -216,66 +217,7 @@ class NewEnquiryScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-          height: 65,
-          width: 350,
-          color: green,
 
-          child:Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 70,top: 10),
-                child: InkWell(onTap:  () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => NewEnquiryScreen(),));
-                },
-                  child: Column(
-                    children: [
-                      Icon(Icons.home,color:Colors.white,),
-                      Text("Home",style: TextStyle(
-                          color: Colors.white,fontFamily: "allerta"
-                      ),),
-                    ],
-                  ),
-                ),
-              ),
-
-              InkWell(onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => UploadWorkScreen(),));
-              },
-                child: Padding(
-                  padding: const EdgeInsets.only(right:80,top: 10),
-                  child: Column(
-                    children: [
-                      // Image.asset("assets/icons/like.png",scale: 7,color:  textColor,),
-
-                      Icon(Icons.upload,color:  textColor,),
-                      Text("Work",style: TextStyle(
-                          color:  textColor,fontFamily: "allerta"
-                      ),),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top:10),
-                child: InkWell(onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  DesignerProfileScreen(),));
-                },
-                  child: Column(
-                    children: [
-                      Icon(Icons.account_circle_outlined,color:textColor,),
-                      Text("Profile",style: TextStyle(
-                          color:  textColor,fontFamily: "allerta"
-                      ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-            ],
-          )
-      ),
     );
   }
 

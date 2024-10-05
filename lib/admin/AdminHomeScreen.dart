@@ -13,7 +13,7 @@ import '../provider/mainProvider.dart';
 import 'adminProfileScreen.dart';
 
 class AdminHomeScreen extends StatelessWidget {
-  const AdminHomeScreen({super.key});
+  AdminHomeScreen( {super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -59,6 +59,9 @@ class MainProvider extends ChangeNotifier{
   TextEditingController productnameController=TextEditingController();
   TextEditingController priceController=TextEditingController();
   TextEditingController categoryNameController=TextEditingController();
+  TextEditingController productDescriptionController=TextEditingController();
+  TextEditingController totalProductController=TextEditingController();
+  TextEditingController currentStatusContoller=TextEditingController();
   DateTime selectedDate=DateTime.now();
   String productSelectedcategoryid = "";
   File?  addProductFileImg;
@@ -66,8 +69,7 @@ class MainProvider extends ChangeNotifier{
 
   Future getImggallery() async {
     final imagePicker = ImagePicker();
-    final pickedImage =
-    await imagePicker.pickImage(source: ImageSource.gallery);
+    final pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
       cropImage(pickedImage.path, "");
@@ -134,7 +136,13 @@ class MainProvider extends ChangeNotifier{
     productDetails["CATEROGY_NAME"]=categoryNameController.text;
     productDetails["CATEROGYID"]=productSelectedcategoryid;
     productDetails["PRICE"]=priceController.text;
-    productDetails["DELIVERY_DATE"]=selectedDate;
+
+    //calcute delivery date
+    productDetails["DELIVERY_DURATION"]=selectedDate.add(Duration(days: 5));
+    productDetails["PRODUCT_DESCRIPTION"]=productDescriptionController.text;
+    productDetails["TOTAL_NUMBER OF PRODUCTS"]=totalProductController.text;
+    productDetails["STATUS"]="Ongoing";
+
     if (addProductFileImg != null) {
       String photoId = DateTime.now().millisecondsSinceEpoch.toString();
       ref = FirebaseStorage.instance.ref().child(photoId);
@@ -148,12 +156,26 @@ class MainProvider extends ChangeNotifier{
       });
     }
     db.collection("PRODUCT").doc(id).set(productDetails);
+    print("Product added :${productDetails}");
     notifyListeners();
   }
-  void updateSelectedDate(DateTime date){
-    selectedDate=date;
+  // Method to update the product status to sold out when required
+  Future<void> markProductAsSoldOut(String productId) async {
+    await db.collection("PRODUCT").doc(productId).update({
+      "CURRENT_STATUS": "Sold Out",
+    });
     notifyListeners();
   }
+
+  // Function to retrieve delivery date
+  DateTime getDeliveryDate() {
+    return selectedDate.add(Duration(days: 5)); // Calculate delivery date as needed
+  }
+
+  // void updateSelectedDate(DateTime date){
+  //   selectedDate=date;
+  //   notifyListeners();
+  // }
 
   // List<ProductModel> productList = [];
   //
@@ -206,13 +228,16 @@ class MainProvider extends ChangeNotifier{
         notifyListeners();
         productList.clear();
         for(var element in value.docs){
-          notifyListeners();
-          productList.add(ProductModel(
+          Map<dynamic,dynamic>map=element.data();
+            productList.add(ProductModel(
             element.id,
-            element.get("PRODUCT_NAME"),
-            element.get("PRICE"),
-            // element.get("DELIVERY_DATE"),
-            element.get("PHOTO"),
+            map["PRODUCT_NAME"].toString()??"",
+            map["PRICE"].toString()??"",
+            map["PRODUCT_DESCRIPTION"].toString()??"",
+            map["DELIVERY_DURATION"].toString()??"",
+            map["PHOTO"].toString()??"",
+                map["CURRENT_STATUS"].toString()??""
+
           )
           );
         }
@@ -333,13 +358,14 @@ class MainProvider extends ChangeNotifier{
   }
   List<WorkModel>workList=[];
   void getDesignerWork(){
-    db.collection("DEIGNER_WORK").get().then((value){
+    db.collection("DESIGNER_WORK").get().then((value){
       if(value.docs.isNotEmpty){
         workList.clear();
         for(var element in value.docs){
+          Map<dynamic,dynamic>designerwork=element.data();
           workList.add(WorkModel(
               element.id,
-              element.get("PHOTO")
+              designerwork["PHOTO"]??""
           )
           );
         }
@@ -349,30 +375,33 @@ class MainProvider extends ChangeNotifier{
     notifyListeners();
   }
 // --------------USER/DESIGNER-------------------------------------------------
-  List<DesignerData>designerdataList=[];
-  void getDesignerData(){
-    db.collection("USERS").get().then((value){
-      if(value.docs.isNotEmpty){
-        designerdataList.clear();
-        for(var element in value.docs){
-          designerdataList.add(DesignerData(
-              element.id,
-              element.get("REGISTER_NAME"),
-              element.get("REGISTER_PHONENUMBER"),
-              element.get("DESIGNATION")
-
-          ));
-        }
-      }
-    });
-  }
+//   List<DesignerData>designerdataList=[];
+//   void getDesignerData(){
+//     db.collection("USERS").get().then((value){
+//       if(value.docs.isNotEmpty){
+//         designerdataList.clear();
+//         for(var element in value.docs){
+//           designerdataList.add(DesignerData(
+//               element.id,
+//               element.get("REGISTER_NAME"),
+//               element.get("REGISTER_PHONENUMBER"),
+//               element.get("DESIGNATION")
+//
+//           ));
+//         }
+//       }
+//     });
+//   }
 
   // /---------------------------------------------------------------------------------------------------------------------------------------
 
   TextEditingController RegisterNameController=TextEditingController();
   TextEditingController RegisterPhoneController=TextEditingController();
   TextEditingController RegisterPasswordController=TextEditingController();
-  TextEditingController designationController=TextEditingController();
+  TextEditingController DesignationController=TextEditingController();
+  TextEditingController PlaceController=TextEditingController();
+  TextEditingController AddressController=TextEditingController();
+  // TextEditingController ProfilePictureController=TextEditingController();
   Future<void> addRegistration(BuildContext context) async {
     try {
       String id = DateTime.now().microsecondsSinceEpoch.toString();
@@ -381,7 +410,9 @@ class MainProvider extends ChangeNotifier{
         "REGISTER_NAME": RegisterNameController.text,
         "REGISTER_PHONENUMBER": RegisterPhoneController.text,
         "REGISTER_PASSWORD": RegisterPasswordController.text,
-        "DESIGNATION": designationController.text,
+        "DESIGNATION": DesignationController.text,
+        "PLACE": PlaceController.text,
+        "ADDRESS": AddressController.text,
       };
 
       // Add the registration data to Firestore
@@ -394,12 +425,12 @@ class MainProvider extends ChangeNotifier{
       await prefs.setString("REGISTER_PASSWORD", RegisterPasswordController.text);
 
       // Navigate based on designation
-      if (designationController.text == "USER") {
+      if (DesignationController.text == "USER") {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => UserHomePage()),
+          MaterialPageRoute(builder: (context) => UserHomePage(user_Name: '', phone_Number: '', pass_word: '', place_: '', address_: '', userId: '',)),
         );
-      } else if (designationController.text == "DESIGNER") {
+      } else if (DesignationController.text == "DESIGNER") {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => NewEnquiryScreen()),
@@ -439,98 +470,207 @@ class MainProvider extends ChangeNotifier{
       );
     }
   }
-  // -------------------------------------GET THE LIKE PRODUCT IN WISHLIST-------------------------------------------------------------------------------------------
-
-  Future<void> addToWishList(String productName,String productImage,String productPrice)async {
-    await FirebaseFirestore.instance.collection("WISHLIST").add({
-      'productName':productName,
-      'productImage':productImage,
-      'productPrice':productPrice,
-    });
-    print("Product added to wishlist");
-    getWishList();
-  }
-
-  List<WishList> wishList=[];
-  void getWishList(){
-    db.collection("WISHLIST").get().then((value){
+  List<UsersModel> usersList=[];
+  void getUsers(){
+    db.collection("USERS").get().then((value){
       if(value.docs.isNotEmpty){
-        wishList.clear();
-        for(var element  in value.docs){
-          wishList.add(WishList(
-              element.id,
-              element.get('PRODUCT_NAME'),
-              element.get('PRICE'),
-              element.get("PHOTO")
-          )
-          );
-          notifyListeners();
+        usersList.clear();
+        for(var element in value.docs){
+          Map<dynamic,dynamic>userdata=element.data();
+         usersList.add(UsersModel(
+             element.id,
+             userdata["REGISTER_NAME"]??"",
+             userdata["REGISTER_PHONENUMBER"]??"",
+             userdata["REGISTER_PASSWORD"]??"",
+             userdata["DESIGNATION"]??"",
+             userdata["PLACE"]??"",
+             userdata["ADDRESS"]??"",
+         ));
         }
       }
+    });
+  }
+
+  // -------------------------------------------Add to cart......................................................................
+
+  List<ProductModel>cartList=[];
+
+  int item_Count = 1; // Initial count
+  TextEditingController countController=TextEditingController();
+  TextEditingController totalPriceController=TextEditingController();
+
+  // Initialize countController with the current value of item_Count
+  void initController(){
+    countController.text=item_Count.toString();
+  }
+  void increment() {
+    item_Count++;
+    countController.text=item_Count.toString();
+    notifyListeners();
+  }
+
+  void decrement() {
+    if (item_Count > 1) {
+      item_Count--;
+      countController.text=item_Count.toString();
       notifyListeners();
+    }
+  }
+
+  void addToCart(String userId,String productId,String img,price,name){
+    HashMap<String,dynamic>cart=HashMap();
+    cart["PRODUCT_NAME"]=name;
+    cart["PRODUCT_IMAGE"]=img;
+    cart["PRODUCT_PRICE"]=price;
+    cart["PRODUCT_COUNT"]=countController.text;
+    cart["TOTAL_PRICE"]=totalPriceController.text;
+    db.collection("USERS").doc(userId).collection("CART").doc(productId).set(cart);
+    print("rrrrrrrr  :"+cartList.length.toString());
+    getAddedCart(userId);
+    notifyListeners();
+  }
+
+  void getAddedCart(String userId){
+    db.collection("USERS").doc(userId).collection("CART").get().then((value){
+
+      if(value.docs.isNotEmpty){
+        cartList.clear();
+        for(var element in value.docs){
+          Map<dynamic,dynamic>cart=element.data();
+          cartList.add(ProductModel(
+              element.id,
+              cart["PRODUCT_NAME"]??"",
+              cart["PRODUCT_PRICE"]??"",
+              cart["PRODUCT_DESCRIPTION"]??"",
+              cart["DELIVERY_DURATION"]??"",
+              cart["PRODUCT_IMAGE"]??"",
+              cart["CURRENT_STATUS"]??""
+          ));
+          notifyListeners();
+          print("cart details"+cartList.toString());
+          print("rrrrrrrr  :"+cartList.length.toString());
+          print("Product Price:${cart["PRICE"]}");
+
+        }
+      }
     });
   }
 
 
-// Future<void> addRegistration(BuildContext context) async {
-  //   try{
-  //     String id=DateTime.now().microsecondsSinceEpoch.toString();
-  //     HashMap<String,dynamic>registermap=HashMap();
-  //     registermap["REGISTER_ID"]=id;
-  //     registermap["REGISTER_NAME"]=RegisterNameController.text;
-  //     registermap["REGISTER_PHONENUMBER"]=RegisterPhoneController.text;
-  //     registermap["REGISTER_PASSWORD"]=RegisterPasswordController.text;
-  //     registermap["DESIGNATION"]=designationController.text;
-  //
-  //     await db.collection("USERS").doc(id).set(registermap);
-  //
-  //     SharedPreferences  prefs = await SharedPreferences.getInstance();
-  //     await prefs.setString("REGISTER_NAME", RegisterNameController.text);
-  //     await prefs.setString("REGISTER_PHONENUMBER", RegisterPhoneController.text);
-  //     await prefs.setString("REGISTER_PASSWORD", RegisterPasswordController.text);
-  //     // notifyListeners();
-  //     if(designationController.text=="USER"){
-  //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
-  //     }
-  //     else if(designationController.text=="DESIGNER"){
-  //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NewEnquiryScreen(),));
-  //     }
-  //     notifyListeners();
-  //   }catch(e){
-  //     print("Errors during registration:$e");
-  //     showDialog(
-  //         context: context,
-  //         builder: (context) => AlertDialog(
-  //           title: Text("Registration Error"),
-  //           content: Text("There was an error during registration .Please try again."),
-  //           actions: [
-  //             TextButton(onPressed: () => Navigator.pop(context),
-  //                 child: Text("OK")
-  //             )
-  //           ],
-  //         ),
-  //     );
-  //   }
-  //
-  //
+  // ------------------------------------- TO GET THE LIKED PRODUCT IN WISHLIST-------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  void addToFavorite(String userId,String productId){
+    db.collection("USERS").doc(userId).get().then((value){
+      if(value.exists){
+        HashMap<String,Object>addToFav=HashMap();
+        db.collection("USERS").doc(userId).set({"WISHLIST":FieldValue.arrayUnion([productId])},SetOptions(merge: true));
+        db.collection("PRODUCT").doc(userId).set({"FAVOURITED_PRODUCT":FieldValue.arrayUnion([productId])},SetOptions(merge: true));
+        notifyListeners();
+      }
+    });
+    notifyListeners();
+  }
+  List<WishList> wishList = [];
+
+  int Activeindex=0;
+  void carouselIndex(int index) {
+    Activeindex=index;
+    notifyListeners();
+  }
+
+
+  // Future<void> addToWishList(String productName,String productImage,String productPrice)async {
+  //   await FirebaseFirestore.instance.collection("WISHLIST").add({
+  //     'productName':productName,
+  //     'productImage':productImage,
+  //     'productPrice':productPrice,
+  //   });
+  //   print("Product added to wishlist");
+  //   getWishList();
   // }
-  // void updateUserDetails({  required String userId,String? place,  }){
   //
-  // }
-  // List<UserData> userdataList=[];
-  // void getUserdetails(){
-  //   db.collection("USERS").get().then((onValue){
-  //     if(onValue.docs.isNotEmpty){
-  //         userdataList.clear();
-  //         for(var element in onValue.docs){
-  //           userdataList.add(UserData(
-  //             element.id,
-  //             element.get("REGISTER_NAME"),
-  //             element.get("REGISTER_PHONENUMBER"),
-  //           ));
-  //         }
+  // List<WishList> wishList = [];
+  //
+  // void getWishList() {
+  //   db.collection("WISHLIST").get().then((value) {
+  //     print("==============================Fetched wishlist : ${value.docs.length} items==================================");
+  //     if (value.docs.isNotEmpty) {
+  //       wishList.clear();
+  //       for (var element in value.docs) {
+  //         print("------------------Product fetched :${element.get('productName')}=====================");
+  //         wishList.add(WishList(
+  //                       element.id,
+  //                       element.get('productName'),
+  //                       element.get('productImage'),
+  //                       element.get('productPrice')
+  //         ));
+  //       }
+  //       notifyListeners();
+  //     }
+  //     else{
+  //       wishList.clear();
+  //       notifyListeners();
   //     }
   //   });
   // }
+  // void deleteWishList(String id){
+  // db.collection("WISHLIST").doc(id).delete();
+  // getWishList();
+  // notifyListeners();
+  // }
 
-}
+// -----------------------------ADD TO CART----------------------------------------------------
+
+  // void addToCart(String productImage,productName,productPrice){
+  //   FirebaseFirestore.instance.collection("ADD_TO_CART").add({
+  //     'productImage':productImage,
+  //     'productName':productName,
+  //     'productPrice':productPrice,
+  //   });
+  //   print(".................Product added to cart........");
+  //   getCartProduct();
+  //   notifyListeners();
+  // }
+
+  // List<CartList> cartList=[];
+  // void getCartProduct(){
+  //   db.collection("CART").get().then((value) {
+  //     if(value.docs.isNotEmpty){
+  //       cartList.clear();
+  //       for(var element in value.docs){
+  //         cartList.add(CartList(
+  //             element.id,
+  //             element.get('productName'),
+  //             element.get('productImage'),
+  //             element.get('productPrice')
+  //         ));
+  //       }
+  //       notifyListeners();
+  //     }
+  //     else{
+  //       cartList.clear();
+  //       notifyListeners();
+  //     }
+  //   },);
+  // }
+  }
+

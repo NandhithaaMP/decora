@@ -547,7 +547,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (newValue != null) {
                           setState(() {
                             selectDesignation = newValue;
-                            value.designationController.text =
+                            value.DesignationController.text =
                                 newValue; // Update the controller here
                           });
                         }
@@ -644,7 +644,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         // Registration process
                         value.addRegistration(context);
                         value.getAddedProduct();
-                        value.getWishList();
+                        // value.getWishList();
                       }
                     },
                     child: Container(
