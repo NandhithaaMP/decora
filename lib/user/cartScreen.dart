@@ -8,9 +8,9 @@ import '../provider/mainProvider.dart';
 
 
 class CartScreen extends StatefulWidget {
-
+  final String userId;
   CartScreen({super.key,
-
+    required this.userId
   });
 
   @override
@@ -53,6 +53,9 @@ class _CartScreenState extends State<CartScreen> {
           child:  SingleChildScrollView(
             child: Consumer<MainProvider>(
                 builder: (context,value,child) {
+                  if(value.cartList.isEmpty){
+                    return Center(child: Text("Your cart is empty"));
+                  }
                   return Column(
                     children: [
                       ListView.builder(
@@ -65,6 +68,7 @@ class _CartScreenState extends State<CartScreen> {
                           double unitPrice=double.parse(product.price);
                           // Initialize controllers for each product
                           mprovider.initController(productId, unitPrice);
+
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
@@ -113,7 +117,7 @@ class _CartScreenState extends State<CartScreen> {
                                                     IconButton(
 
                                                       onPressed: () {
-                                                        mprovider.decrement(productId, unitPrice);
+                                                        mprovider.decrement(productId, unitPrice, widget.userId);
                                                       },
                                                       icon: Icon(Icons.remove),
                                                       color: Colors.red,
@@ -122,13 +126,13 @@ class _CartScreenState extends State<CartScreen> {
                                                       width: width/10,
                                                       child: TextFormField(
                                                         controller: value.countController[productId],
+                                                        readOnly: true, // Make it read-only
                                                       ),
                                                     ) ,
 
                                                     IconButton(
                                                       onPressed: () {
-                                                        mprovider.increment(productId, unitPrice);
-                                                      },
+                                                        mprovider.increment(productId, unitPrice, widget.userId) ;                                                     },
                                                       icon: Icon(Icons.add),
                                                       color: Colors.green,
                                                     ),
@@ -161,7 +165,7 @@ class _CartScreenState extends State<CartScreen> {
                           );
                         },
                       ),
-                      SizedBox(height: height/2.2,),
+                      SizedBox(height: height/5,),
                       Padding(
                         padding: const EdgeInsets.only(left: 30,right: 30),
                         child: Row(
@@ -174,6 +178,7 @@ class _CartScreenState extends State<CartScreen> {
                                     color: Color(0xffB6A683)
                                 ),
                                 child: Center(child:
+                                // Text("Grand Total : ${value.calculateGrandTotal().toStringAsFixed(2)}",style: TextStyle(fontFamily: "muktabold",fontSize: 20,fontWeight: FontWeight.w500),)),
                                 Text("Grand Total : ${value.calculateGrandTotal().toStringAsFixed(2)}",style: TextStyle(fontFamily: "muktabold",fontSize: 20,fontWeight: FontWeight.w500),)),
                               ),
                             ),

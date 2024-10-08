@@ -274,7 +274,7 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => CartScreen()));
+                                        builder: (context) => CartScreen(userId: widget.userId)));
                               },
                               child: Container(
                                 height: 50,

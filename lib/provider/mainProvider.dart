@@ -507,36 +507,59 @@ class MainProvider extends ChangeNotifier{
       totalPriceController[productId]=TextEditingController(text: price.toStringAsFixed(2));
     }
   }
-  void increment(String productId,double unitPrice) {
+  void increment(String productId,double unitPrice,String userId) {
     int item_Count=int.parse(countController[productId]!.text);
     item_Count++;
     countController[productId]!.text=item_Count.toString();
-    totalPriceController[productId]!.text=(item_Count*unitPrice).toStringAsFixed(2);// Update total price
+    double totalPrice=item_Count*unitPrice;
+    totalPriceController[productId]!.text=totalPrice.toStringAsFixed(2);
+
+    //Update Firebase with new count and total price
+    db.collection("USERS").doc(userId).collection("CART").doc(productId).update({
+      "PRODUCT_COUNT":item_Count,
+      "TOTAL_PRICE":totalPrice
+    });
+    updateGrandTotal();
     notifyListeners();
   }
 
-  void decrement(String productId,double unitPrice) {
+  void decrement(String productId,double unitPrice,String userId) {
     int item_Count=int.parse(countController[productId]!.text);
     if (item_Count > 1) {
       item_Count--;
       countController[productId]!.text=item_Count.toString();
-      totalPriceController[productId]!.text=(item_Count*unitPrice).toStringAsFixed(2);
+      double totalPrice=item_Count*unitPrice;
+      totalPriceController[productId]!.text=totalPrice.toStringAsFixed(2);
+
+      //update firebase with new count and total price
+
+      db.collection("USERS").doc(userId).collection("CART").doc(productId).update({
+        "PRODUCT_COUNT":item_Count,
+        "TOTAL_PRICE":totalPrice
+      });
+      updateGrandTotal();
       notifyListeners();
     }
   }
 
   void addToCart(String userId,String productId,String img,String price,String name){
+    int productCount=int.parse(countController[productId]!.text);
+    double totalPrice=double.parse(totalPriceController[productId]!.text);
+
     print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm $productId ${totalPriceController[productId]}");
     HashMap<String,dynamic>cart=HashMap();
     cart["PRODUCT_NAME"]=name;
     cart["PRODUCT_IMAGE"]=img;
     cart["PRODUCT_PRICE"]=price; // Save the price as a string with 2 decimal places
-    cart["PRODUCT_COUNT"]=countController[productId]==null?0:countController[productId]!.text;
-    cart["TOTAL_PRICE"]=totalPriceController[productId]==null?0:totalPriceController[productId]!.text;
+    // cart["PRODUCT_COUNT"]=countController[productId]==null?0:countController[productId]!.text;
+    cart["PRODUCT_COUNT"]=productCount;
+    // cart["TOTAL_PRICE"]=totalPriceController[productId]==null?0:totalPriceController[productId]!.text;
+    cart["TOTAL_PRICE"]=totalPrice;
     print("Total_price ----------${cart["TOTAL_PRICE"]}");
     db.collection("USERS").doc(userId).collection("CART").doc(productId).set(cart,SetOptions(merge: true));
     print("rrrrrrrr  :"+cartList.length.toString());
     getAddedCart(userId);
+    updateGrandTotal();
     notifyListeners();
   }
 
@@ -568,14 +591,21 @@ class MainProvider extends ChangeNotifier{
   }
   double calculateGrandTotal(){
     double grandTotal=0.0;
+    // Sum up the total price of all products in the cart
     for(var product in cartList){
       double price=double.tryParse(product.price)??0.0;
-      // int count=int.tryParse(product.count)??0;
       int count = product.count;
       // Add to grand total
       grandTotal+=price*count;
     }
     return grandTotal;
+  }
+
+  void updateGrandTotal(){
+    double grandTotal=calculateGrandTotal();
+    // Optionally, you can update Firebase with the grand total or display it in the UI
+    print("Grand total+++++++:$grandTotal");
+
   }
 
   // ------------------------------------- TO GET THE LIKED PRODUCT IN WISHLIST-------------------------------------------------------------------------------------------

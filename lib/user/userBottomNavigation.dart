@@ -27,7 +27,7 @@ class _UserBottomNavigationState extends State<UserBottomNavigation> {
     return [
       UserHomePage(user_Name: widget.user_Name, phone_Number: widget.phone_Number, pass_word: widget.pass_word, place_: widget.place_, address_: widget.address_, userId: widget.userId,),
       WishList(),
-      CartScreen(),
+      CartScreen(userId: widget.userId,),
     ];
   }
   @override
