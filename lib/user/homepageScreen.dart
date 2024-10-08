@@ -383,7 +383,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                           Container(
                                             height: 230,
                                             decoration: BoxDecoration(
-                                              color: Colors.blue,
+                                              color: cstgreen,
                                               image: DecorationImage(
                                                 image: NetworkImage(product.productImage),
                                                 fit: BoxFit.fill,

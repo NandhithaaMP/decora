@@ -11,9 +11,26 @@ class ProductModel{
   String deliveryDuration;
   String productImage;
   String status;
+  int count;
 
-  ProductModel(this.pid,this.productName,this.price,this.productDescription,this.deliveryDuration,this.productImage,this.status);
+
+  ProductModel(this.pid,this.productName,this.price,this.productDescription,this.deliveryDuration,this.productImage,this.status,this.count);
 }
+// class ProductModel{
+//   String pid;
+//   String productName;
+//   String price;
+//   String productDescription;
+//   String deliveryDuration;
+//   String productImage;
+//   String status;
+//   // int quantity;
+//
+//   ProductModel(this.pid,this.productName,this.price,this.productDescription,this.deliveryDuration,this.productImage,this.status,
+//       // {this.quantity=1}
+//       );
+//   // double get totalPrice=>quantity*double.parse(price);// Calculate total price based on quantity
+// }
 class WorkModel {
   String wid;
   String workImage;

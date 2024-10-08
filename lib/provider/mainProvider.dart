@@ -236,8 +236,8 @@ class MainProvider extends ChangeNotifier{
             map["PRODUCT_DESCRIPTION"].toString()??"",
             map["DELIVERY_DURATION"].toString()??"",
             map["PHOTO"].toString()??"",
-                map["CURRENT_STATUS"].toString()??""
-
+            map["CURRENT_STATUS"].toString()??"",
+            int.tryParse(map["PRODUCT_COUNT"].toString())??0,
           )
           );
         }
@@ -495,36 +495,46 @@ class MainProvider extends ChangeNotifier{
 
   List<ProductModel>cartList=[];
 
-  int item_Count = 1; // Initial count
-  TextEditingController countController=TextEditingController();
-  TextEditingController totalPriceController=TextEditingController();
+  // Map to hold TextEditingControllers for each product
+  Map<String,TextEditingController>countController={};
+  Map<String,TextEditingController>totalPriceController={};
 
-  // Initialize countController with the current value of item_Count
-  void initController(){
-    countController.text=item_Count.toString();
+  // Initialize Controller with the current value
+  void initController(String productId,double price){
+    // Create controllers for each product
+    if(!countController.containsKey(productId)){
+      countController[productId]=TextEditingController(text: "1");
+      totalPriceController[productId]=TextEditingController(text: price.toStringAsFixed(2));
+    }
   }
-  void increment() {
+  void increment(String productId,double unitPrice) {
+    int item_Count=int.parse(countController[productId]!.text);
     item_Count++;
-    countController.text=item_Count.toString();
+    countController[productId]!.text=item_Count.toString();
+    totalPriceController[productId]!.text=(item_Count*unitPrice).toStringAsFixed(2);// Update total price
     notifyListeners();
   }
 
-  void decrement() {
+  void decrement(String productId,double unitPrice) {
+    int item_Count=int.parse(countController[productId]!.text);
     if (item_Count > 1) {
       item_Count--;
-      countController.text=item_Count.toString();
+      countController[productId]!.text=item_Count.toString();
+      totalPriceController[productId]!.text=(item_Count*unitPrice).toStringAsFixed(2);
       notifyListeners();
     }
   }
 
-  void addToCart(String userId,String productId,String img,price,name){
+  void addToCart(String userId,String productId,String img,String price,String name){
+    print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm $productId ${totalPriceController[productId]}");
     HashMap<String,dynamic>cart=HashMap();
     cart["PRODUCT_NAME"]=name;
     cart["PRODUCT_IMAGE"]=img;
-    cart["PRODUCT_PRICE"]=price;
-    cart["PRODUCT_COUNT"]=countController.text;
-    cart["TOTAL_PRICE"]=totalPriceController.text;
-    db.collection("USERS").doc(userId).collection("CART").doc(productId).set(cart);
+    cart["PRODUCT_PRICE"]=price; // Save the price as a string with 2 decimal places
+    cart["PRODUCT_COUNT"]=countController[productId]==null?0:countController[productId]!.text;
+    cart["TOTAL_PRICE"]=totalPriceController[productId]==null?0:totalPriceController[productId]!.text;
+    print("Total_price ----------${cart["TOTAL_PRICE"]}");
+    db.collection("USERS").doc(userId).collection("CART").doc(productId).set(cart,SetOptions(merge: true));
     print("rrrrrrrr  :"+cartList.length.toString());
     getAddedCart(userId);
     notifyListeners();
@@ -544,18 +554,29 @@ class MainProvider extends ChangeNotifier{
               cart["PRODUCT_DESCRIPTION"]??"",
               cart["DELIVERY_DURATION"]??"",
               cart["PRODUCT_IMAGE"]??"",
-              cart["CURRENT_STATUS"]??""
+              cart["CURRENT_STATUS"]??"",
+            cart["PRODUCT_COUNT"]??0
           ));
           notifyListeners();
           print("cart details"+cartList.toString());
           print("rrrrrrrr  :"+cartList.length.toString());
-          print("Product Price:${cart["PRICE"]}");
+          print("Product Price:${cart["PRODUCT_PRICE"]}");
 
         }
       }
     });
   }
-
+  double calculateGrandTotal(){
+    double grandTotal=0.0;
+    for(var product in cartList){
+      double price=double.tryParse(product.price)??0.0;
+      // int count=int.tryParse(product.count)??0;
+      int count = product.count;
+      // Add to grand total
+      grandTotal+=price*count;
+    }
+    return grandTotal;
+  }
 
   // ------------------------------------- TO GET THE LIKED PRODUCT IN WISHLIST-------------------------------------------------------------------------------------------
 

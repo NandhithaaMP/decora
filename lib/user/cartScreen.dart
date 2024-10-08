@@ -52,143 +52,149 @@ class _CartScreenState extends State<CartScreen> {
           ),
           child:  SingleChildScrollView(
             child: Consumer<MainProvider>(
-              builder: (context,value,child) {
-                return Column(
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      // itemCount:6,
-                      itemCount:value.cartList.length ,
-                      physics: ScrollPhysics(),
-                      itemBuilder: (context, index) {
+                builder: (context,value,child) {
+                  return Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount:value.cartList.length ,
+                        physics: ScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          var product=value.cartList[index];
+                          String productId=product.pid;
+                          double unitPrice=double.parse(product.price);
+                          // Initialize controllers for each product
+                          mprovider.initController(productId, unitPrice);
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                                height: height/6,
+                                width: width,
+                                decoration: BoxDecoration(
+                                    color:Color(0xffB6A683)
+                                ),
+                                child:
+                                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SingleChildScrollView(
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                              padding: const EdgeInsets.fromLTRB(8,8,8,8),
+                                              // child: Image.asset('assets/sofa4.jpg',),
+                                              child: Container(
+                                                height: height/8,
+                                                width: width/5,
 
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                              height: height/6,
-                              width: width,
-                              decoration: BoxDecoration(
-                                  color:Color(0xffB6A683)
-                              ),
-                              child:
-                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SingleChildScrollView(
-                                    child: Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(8,8,8,8),
-                                          // child: Image.asset('assets/sofa4.jpg',),
-                                          child: Container(
-                                            height: height/8,
-                                            width: width/5,
-                                    
-                                            decoration: BoxDecoration(
-                                                color: Colors.pink,
-                                              image: DecorationImage(
-                                                  image: NetworkImage(value.cartList.isNotEmpty?value.cartList[index].productImage:""),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.grey,
+                                                    image: DecorationImage(
+                                                        image: NetworkImage(value.cartList.isNotEmpty?value.cartList[index].productImage:""),
 
-                                                  fit: BoxFit.fill
+                                                        fit: BoxFit.fill
+                                                    )
+                                                ),
                                               )
-                                            ),
-                                          )
-                                    
-                                    
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              // Text("Widsor Chair",style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
-                                              Text(value.cartList[index].productName,style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
-                                              // Text("Qty : 1",style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                children: [
-                                                  Text("Qty :",style: TextStyle(fontFamily: "muktamedium",fontSize: 18)),
-                                                  IconButton(
 
-                                                    onPressed: () {
-                                                      mprovider.decrement();
-                                                    },
-                                                    icon: Icon(Icons.remove),
-                                                    color: Colors.red,
-                                                  ),
-                                              Container(
-                                                width: width/10,
-                                                child: TextFormField(
-                                                         controller: value.countController,
-                                                        ),
-                                              ) ,
-                                    
-                                                  IconButton(
-                                                    onPressed: () {
-                                                        mprovider.increment();
-                                                    },
-                                                    icon: Icon(Icons.add),
-                                                    color: Colors.green,
-                                                  ),
-                                                ],
-                                              ),
-                                              Text("₹ "+value.cartList[index].price,style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
 
-                                    
-                                            ],
                                           ),
-                                        ),
-                                    
-                                      ],
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // Text("Widsor Chair",style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
+                                                Text(value.cartList[index].productName,style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
+                                                // Text("Qty : 1",style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    Text("Qty :",style: TextStyle(fontFamily: "muktamedium",fontSize: 18)),
+                                                    // Text("Price :${product.price}",style: TextStyle(fontFamily: "muktamedium",fontSize: 18)),
+                                                    IconButton(
+
+                                                      onPressed: () {
+                                                        mprovider.decrement(productId, unitPrice);
+                                                      },
+                                                      icon: Icon(Icons.remove),
+                                                      color: Colors.red,
+                                                    ),
+                                                    Container(
+                                                      width: width/10,
+                                                      child: TextFormField(
+                                                        controller: value.countController[productId],
+                                                      ),
+                                                    ) ,
+
+                                                    IconButton(
+                                                      onPressed: () {
+                                                        mprovider.increment(productId, unitPrice);
+                                                      },
+                                                      icon: Icon(Icons.add),
+                                                      color: Colors.green,
+                                                    ),
+                                                  ],
+                                                ),
+                                                // Text("₹ "+value.cartList[index].price,style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
+                                                Text("Total:₹ ${value.totalPriceController[productId]?.text??"0.00"}",style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
+
+
+                                              ],
+                                            ),
+                                          ),
+
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        _showAlertDialog(context,"Delete");
-                                      },
-                                        child: Image.asset("assets/icons/delete.png",scale: 20,)),
-                                  ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: GestureDetector(
+                                          onTap: () {
+                                            _showAlertDialog(context,"Delete");
+                                          },
+                                          child: Image.asset("assets/icons/delete.png",scale: 20,)),
+                                    ),
 
-                                ],
-                              )
-
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: height/2.2,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30,right: 30),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              height: 50,
-                              // width: 100,
-                              decoration: BoxDecoration(
-                                color: Color(0xffB6A683)
-                              ),
-                              child: Center(child: Text("Total : 998",style: TextStyle(fontFamily: "muktabold",fontSize: 20,fontWeight: FontWeight.w500),)),
-                            ),
-                          ),
-                          SizedBox(width: 20,),
-                          Expanded(
-                            child: Container(
-                              height: 50,
-                              // width: 100,
-                              decoration: BoxDecoration(
-                                color: Color(0xffB6A683)
-                              ),
-                              child: Center(child: Text("Place Order",style: TextStyle(fontFamily: "muktabold",fontSize: 20,fontWeight: FontWeight.w500),)),
+                                  ],
+                                )
 
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    ),
-                  ],
-                );
-              }
+                      SizedBox(height: height/2.2,),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 30,right: 30),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 50,
+                                // width: 100,
+                                decoration: BoxDecoration(
+                                    color: Color(0xffB6A683)
+                                ),
+                                child: Center(child:
+                                Text("Grand Total : ${value.calculateGrandTotal().toStringAsFixed(2)}",style: TextStyle(fontFamily: "muktabold",fontSize: 20,fontWeight: FontWeight.w500),)),
+                              ),
+                            ),
+                            SizedBox(width: 20,),
+                            Expanded(
+                              child: Container(
+                                height: 50,
+                                // width: 100,
+                                decoration: BoxDecoration(
+                                    color: Color(0xffB6A683)
+                                ),
+                                child: Center(child: Text("Place Order",style: TextStyle(fontFamily: "muktabold",fontSize: 20,fontWeight: FontWeight.w500),)),
+
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }
             ),
           ),
         ),
