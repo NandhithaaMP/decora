@@ -1,10 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:decora/constants/call_functions.dart';
 import 'package:decora/models/adminModel.dart';
 import 'package:decora/provider/loginProvider.dart';
 import 'package:decora/user/connectDesigners.dart';
 import 'package:decora/user/designerProfile.dart';
 import 'package:decora/user/myOrderScreen.dart';
 import 'package:decora/user/profileScreen.dart';
+import 'package:decora/user/verifypwdScreen.dart';
 import 'package:decora/user/wishListScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,8 @@ import '../provider/mainProvider.dart';
 import 'buyNowScreen.dart';
 import 'cartScreen.dart';
 import 'categoryScreen.dart';
+import 'package:decora/user/wishListScreen.dart';
+
 
 class UserHomePage extends StatefulWidget {
 
@@ -143,10 +147,10 @@ class _UserHomePageState extends State<UserHomePage> {
                     },
                   ),
                   ListTile(
-                    leading:Icon(Icons.category_outlined,color: cstText,),
+                    leading:Icon(Icons.favorite_border,color: cstText,),
                     // Image.asset("assets/icons/profile-thin.png", scale: 15),
                     title: Text(
-                      "CATEGORY",
+                      "WISHLIST",
                       style: TextStyle(
                         fontFamily: "philosopher",
                         fontSize: 16,
@@ -154,11 +158,8 @@ class _UserHomePageState extends State<UserHomePage> {
                       ),
                     ),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => CategoryScreen(userId: widget.userId,),
-                      )
-                      );
-                    },
+                      callNext(context, WishListScreen());
+                      },
                   ),
                   ListTile(
                     leading:Icon(Icons.card_giftcard,color: cstText,),

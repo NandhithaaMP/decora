@@ -1,10 +1,12 @@
 import 'dart:ui';
+import 'package:decora/constants/call_functions.dart';
 import 'package:decora/constants/constant_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import '../provider/mainProvider.dart';
+import 'orderSummaryScreen.dart';
 
 
 class CartScreen extends StatefulWidget {
@@ -24,6 +26,7 @@ class _CartScreenState extends State<CartScreen> {
     var width=MediaQuery.of(context).size.width;
     var height=MediaQuery.of(context).size.height;
     MainProvider mprovider =Provider.of<MainProvider>(context,listen: false);
+    mprovider.getGrandTotal(widget.userId);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(40),
@@ -153,7 +156,7 @@ class _CartScreenState extends State<CartScreen> {
                                       padding: const EdgeInsets.only(right: 10),
                                       child: GestureDetector(
                                           onTap: () {
-                                            _showAlertDialog(context,"Delete");
+                                            _showAlertDialog(context,"Delete",widget.userId,productId);
                                           },
                                           child: Image.asset("assets/icons/delete.png",scale: 20,)),
                                     ),
@@ -184,14 +187,20 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                             SizedBox(width: 20,),
                             Expanded(
-                              child: Container(
-                                height: 50,
-                                // width: 100,
-                                decoration: BoxDecoration(
-                                    color: Color(0xffB6A683)
-                                ),
-                                child: Center(child: Text("Place Order",style: TextStyle(fontFamily: "muktabold",fontSize: 20,fontWeight: FontWeight.w500),)),
+                              child: GestureDetector(
+                                onTap: () {
+                                  mprovider.addGrandTotalToUsers(widget.userId);
+                                  callNext(context, OrderSummaryScreen());
+                                },
+                                child: Container(
+                                  height: 50,
+                                  // width: 100,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xffB6A683)
+                                  ),
+                                  child: Center(child: Text("Place Order",style: TextStyle(fontFamily: "muktabold",fontSize: 20,fontWeight: FontWeight.w500),)),
 
+                                ),
                               ),
                             ),
                           ],
@@ -208,8 +217,10 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 }
-void _showAlertDialog(BuildContext context,String action){
+void _showAlertDialog(BuildContext context,String action,String userId,String productId){
   showDialog(context: context, builder: (BuildContext context){
+
+    MainProvider deleteProvider=Provider.of<MainProvider>(context,listen: false);
     return AlertDialog(
       title: Text("Confirmation"),
       content: Text("Are you sure want to $action"),
@@ -222,6 +233,7 @@ void _showAlertDialog(BuildContext context,String action){
         ),
         TextButton(
             onPressed: () {
+              deleteProvider.deleteProductFromCart(userId, productId);
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("You selected to $action!")),);
             },

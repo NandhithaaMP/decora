@@ -69,7 +69,7 @@ class AddCategoryScreen extends StatelessWidget {
           );
         }
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
       body: SizedBox.expand(
         child: Container(
           decoration: BoxDecoration(

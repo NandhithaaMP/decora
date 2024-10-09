@@ -283,26 +283,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'cartScreen.dart';
-import 'homepageScreen.dart';
 
-class WishList extends StatefulWidget {
-   // String productName;
-   // String productImage;
-   // String productPrice;
+class WishListScreen extends StatefulWidget {
 
-  const WishList({
+  const WishListScreen({
     super.key,
-    // required this.productName,
-    // required this.productImage,
-    // required this.productPrice,
+
   });
 
   @override
-  _WishListState createState() => _WishListState();
+  _WishListScreenState createState() => _WishListScreenState();
 }
 
-class _WishListState extends State<WishList> {
+class _WishListScreenState extends State<WishListScreen> {
   @override
   void initState() {
     super.initState();
@@ -432,98 +425,7 @@ class _WishListState extends State<WishList> {
           ),
         ),
       ),
-      // bottomNavigationBar: Container(
-      //   height: 65,
-      //   width: 350,
-      //   color: green,
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //     children: [
-      //       Padding(
-      //         padding: const EdgeInsets.only(right: 70, top: 10),
-      //         child: InkWell(
-      //           onTap: () {
-      //             Navigator.push(
-      //               context,
-      //               MaterialPageRoute(
-      //                 builder: (context) =>  UserHomePage(
-      //                   // userId: '',
-      //                 ),
-      //               ),
-      //             );
-      //           },
-      //           child: Column(
-      //             children: const [
-      //               Icon(
-      //                 Icons.home,
-      //                 color: textColor,
-      //               ),
-      //               Text(
-      //                 "Home",
-      //                 style: TextStyle(color: textColor, fontFamily: "allerta"),
-      //               ),
-      //             ],
-      //           ),
-      //         ),
-      //       ),
-      //       InkWell(
-      //         onTap: () {
-      //           Navigator.push(
-      //             context,
-      //             MaterialPageRoute(
-      //               builder: (context) => WishList(
-      //                 // productName: widget.productName,
-      //                 // productImage: widget.productImage,
-      //                 // productPrice: widget.productPrice,
-      //               ),
-      //             ),
-      //           );
-      //         },
-      //         child: Padding(
-      //           padding: const EdgeInsets.only(right: 80, top: 10),
-      //           child: Column(
-      //             children: [
-      //               Image.asset(
-      //                 "assets/icons/like.png",
-      //                 scale: 7,
-      //                 color: Colors.white,
-      //               ),
-      //               const Text(
-      //                 "Wish",
-      //                 style: TextStyle(color: Colors.white, fontFamily: "allerta"),
-      //               ),
-      //             ],
-      //           ),
-      //         ),
-      //       ),
-      //       Padding(
-      //         padding: const EdgeInsets.only(top: 10),
-      //         child: InkWell(
-      //           onTap: () {
-      //             Navigator.push(
-      //               context,
-      //               MaterialPageRoute(
-      //                 builder: (context) => CartScreen(),
-      //               ),
-      //             );
-      //           },
-      //           child: Column(
-      //             children: const [
-      //               Icon(
-      //                 Icons.shopping_cart_outlined,
-      //                 color: textColor,
-      //               ),
-      //               Text(
-      //                 "Cart",
-      //                 style: TextStyle(color: textColor, fontFamily: "allerta"),
-      //               ),
-      //             ],
-      //           ),
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
+
     );
   }
 

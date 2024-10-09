@@ -5,6 +5,8 @@ import 'package:decora/user/wishListScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'categoryScreen.dart';
+
 class UserBottomNavigation extends StatefulWidget {
   String user_Name,phone_Number,pass_word,place_,address_,userId;
    UserBottomNavigation({super.key,
@@ -26,7 +28,7 @@ class _UserBottomNavigationState extends State<UserBottomNavigation> {
   List<Widget> getScreens(){
     return [
       UserHomePage(user_Name: widget.user_Name, phone_Number: widget.phone_Number, pass_word: widget.pass_word, place_: widget.place_, address_: widget.address_, userId: widget.userId,),
-      WishList(),
+      CategoryScreen(userId: widget.userId,),
       CartScreen(userId: widget.userId,),
     ];
   }
@@ -49,8 +51,8 @@ class _UserBottomNavigationState extends State<UserBottomNavigation> {
               backgroundColor: cstgreen
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.favorite_border),
-              label: "Wish",
+                icon: Icon(Icons.category_outlined),
+              label: "Category",
               backgroundColor: Colors.red
             ),
             BottomNavigationBarItem(

@@ -52,9 +52,10 @@ class CategoryScreen extends StatelessWidget {
                       physics:NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 20,
+                          crossAxisSpacing: 1,
                           mainAxisSpacing: 20,
-                          mainAxisExtent: 150
+                          mainAxisExtent: 100,
+
 
                       ),
                       itemBuilder: (context, index) {
@@ -62,25 +63,28 @@ class CategoryScreen extends StatelessWidget {
                           onTap: () {
                             callNext(context, CategoryDetailsScreen( categoryTitle: value.categoryList[index].categoryName, userId: userId,));
                           },
-                          child: Container(
-                            height: height/10,
-                            width: width/10,
-                            // height: 80,
-                            // width: 30,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: cstText,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2), // Shadow color with opacity
-                                  spreadRadius: 6,  // How much the shadow spreads
-                                  blurRadius: 15,   // The softness of the shadow
-                                  offset: Offset(0, 5), // Horizontal and vertical offset of the shadow
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Container(
+                              height: height/10,
+                              width: width/10,
+                              // height: 80,
+                              // width: 30,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: cstText,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2), // Shadow color with opacity
+                                    spreadRadius: 6,  // How much the shadow spreads
+                                    blurRadius: 15,   // The softness of the shadow
+                                    offset: Offset(0, 5), // Horizontal and vertical offset of the shadow
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Text(value.categoryList[index].categoryName,style: TextStyle(fontFamily: "philosopher",fontSize: 20,),
                                 ),
-                              ],
-                            ),
-                            child: Center(
-                              child: Text(value.categoryList[index].categoryName,style: TextStyle(fontFamily: "philosopher",fontSize: 20,),
                               ),
                             ),
                           ),

@@ -498,50 +498,44 @@ class MainProvider extends ChangeNotifier{
   // Map to hold TextEditingControllers for each product
   Map<String,TextEditingController>countController={};
   Map<String,TextEditingController>totalPriceController={};
-
-  // Initialize Controller with the current value
-  void initController(String productId,double price){
-    // Create controllers for each product
-    if(!countController.containsKey(productId)){
-      countController[productId]=TextEditingController(text: "1");
-      totalPriceController[productId]=TextEditingController(text: price.toStringAsFixed(2));
-    }
+// Method to initialize controllers
+  void initController(String productId, double unitPrice) {
+    countController[productId] ??= TextEditingController(text: '1'); // Default quantity 1
+    totalPriceController[productId] ??= TextEditingController(text: unitPrice.toStringAsFixed(2));
   }
-  void increment(String productId,double unitPrice,String userId) {
-    int item_Count=int.parse(countController[productId]!.text);
-    item_Count++;
-    countController[productId]!.text=item_Count.toString();
-    double totalPrice=item_Count*unitPrice;
-    totalPriceController[productId]!.text=totalPrice.toStringAsFixed(2);
+  // Increment function
+  void increment(String productId, double unitPrice, String userId) {
+    int currentCount = int.parse(countController[productId]?.text ?? '1');
+    currentCount++;
+    countController[productId]?.text = currentCount.toString();
 
-    //Update Firebase with new count and total price
-    db.collection("USERS").doc(userId).collection("CART").doc(productId).update({
-      "PRODUCT_COUNT":item_Count,
-      "TOTAL_PRICE":totalPrice
-    });
+    // Update total price for that product
+    double totalPrice = currentCount * unitPrice;
+    totalPriceController[productId]?.text = totalPrice.toStringAsFixed(2);
+
+    // Call to update the grand total
     updateGrandTotal();
-    notifyListeners();
+
+    notifyListeners(); // Notify UI about changes
   }
 
-  void decrement(String productId,double unitPrice,String userId) {
-    int item_Count=int.parse(countController[productId]!.text);
-    if (item_Count > 1) {
-      item_Count--;
-      countController[productId]!.text=item_Count.toString();
-      double totalPrice=item_Count*unitPrice;
-      totalPriceController[productId]!.text=totalPrice.toStringAsFixed(2);
+  // Decrement function
+  void decrement(String productId, double unitPrice, String userId) {
+    int currentCount = int.parse(countController[productId]?.text ?? '1');
+    if (currentCount > 1) {
+      currentCount--;
+      countController[productId]?.text = currentCount.toString();
 
-      //update firebase with new count and total price
+      // Update total price for that product
+      double totalPrice = currentCount * unitPrice;
+      totalPriceController[productId]?.text = totalPrice.toStringAsFixed(2);
 
-      db.collection("USERS").doc(userId).collection("CART").doc(productId).update({
-        "PRODUCT_COUNT":item_Count,
-        "TOTAL_PRICE":totalPrice
-      });
+      // Call to update the grand total
       updateGrandTotal();
-      notifyListeners();
+
+      notifyListeners(); // Notify UI about changes
     }
   }
-
   void addToCart(String userId,String productId,String img,String price,String name){
     int productCount=int.parse(countController[productId]!.text);
     double totalPrice=double.parse(totalPriceController[productId]!.text);
@@ -589,24 +583,62 @@ class MainProvider extends ChangeNotifier{
       }
     });
   }
-  double calculateGrandTotal(){
-    double grandTotal=0.0;
-    // Sum up the total price of all products in the cart
-    for(var product in cartList){
-      double price=double.tryParse(product.price)??0.0;
-      int count = product.count;
-      // Add to grand total
-      grandTotal+=price*count;
+
+
+  // Function to calculate and add grand total to Firestore
+  void addGrandTotalToUsers(String userId){
+    // First, calculate the grand total
+    double grandTotal=calculateGrandTotal();
+    // Prepare the data to store in Firestore
+    Map<String,dynamic>cart_total={
+      "CART_GRANDTOTAL":grandTotal
+    };
+    db.collection("USERS").doc(userId).set(cart_total,SetOptions(merge: true)).then((value) {
+      print("GRAND TOTAL UPDATED SUCCESSFULLY!----");
+    },).catchError((error){
+      print("FAILED TO UPDATE GRAND TOTAL :$error");
+    });
+  }
+
+  // Grand total calculation
+  double calculateGrandTotal() {
+    double grandTotal = 0.0;
+    for (var product in cartList) {
+      String productId = product.pid;
+      double productTotal = double.parse(totalPriceController[productId]?.text ?? '0');
+      grandTotal += productTotal;
     }
     return grandTotal;
   }
 
-  void updateGrandTotal(){
-    double grandTotal=calculateGrandTotal();
-    // Optionally, you can update Firebase with the grand total or display it in the UI
-    print("Grand total+++++++:$grandTotal");
+  // Method to update grand total
+  void updateGrandTotal() {
+    notifyListeners(); // Notify the UI that the grand total has changed
+  }
+  double grandTotal=0.0;
+  void getGrandTotal(String userId)async{
+  try{
+    DocumentSnapshot doc=await db.collection("USERS").doc(userId).get();
+    if (doc.exists){
+      if(doc.data()!=null&&doc["CART_GRANDTOTAL"]!=null){
+        grandTotal=doc["CART_GRANDTOTAL"];
+        notifyListeners();
+      }
+    }
+  }
+  catch(e){
+    print("Failed to fetch grand total:$e");
+  }
 
   }
+
+  void deleteProductFromCart(String userId,String productId){
+    db.collection("USERS").doc(userId).collection("CART").doc(productId).delete();
+    print("You deleted product from cart-----------------");
+    getAddedCart(userId);
+    notifyListeners();
+  }
+
 
   // ------------------------------------- TO GET THE LIKED PRODUCT IN WISHLIST-------------------------------------------------------------------------------------------
 
