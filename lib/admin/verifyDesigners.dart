@@ -1,7 +1,9 @@
 import 'package:decora/constants/constant_color.dart';
+import 'package:decora/provider/mainProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 class VerifyDesignersScreen extends StatelessWidget {
   const VerifyDesignersScreen({super.key});
@@ -25,7 +27,7 @@ class VerifyDesignersScreen extends StatelessWidget {
                     bottomRight: Radius.circular(20))),
           ),
           title: Text(
-            "ADD CATEGORY",
+            "DESIGNERS",
             style: TextStyle(fontFamily: "tradeWinds", fontSize: 20,color:Color(0xff16403B)),
           ),
           centerTitle: true,
@@ -38,81 +40,58 @@ class VerifyDesignersScreen extends StatelessWidget {
             SizedBox(height: 30,),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                itemCount: 5,
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return  Container(
-                    height: height/4.5,
-                    width: width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: textColor,
-                    ),margin: EdgeInsets.only(bottom: 5),
-                    child: Column(
-                      children: [
-                        Row(
+              child: Consumer<MainProvider>(
+                builder: (context,value,child) {
+                  return ListView.builder(
+                    itemCount: value.designerList.length,
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      var item=value.designerList[index];
+                      return  Container(
+                        height: height/9,
+                        width: width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: textColor,
+                        ),margin: EdgeInsets.only(bottom: 5),
+                        child: Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CircleAvatar(
-                                backgroundImage: AssetImage("assets/PROFILE.jpg"),
-                                radius: 45,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Nithina",style: TextStyle(fontFamily: "philosopher",fontSize: 15),),
-                                  Text("Interior Designer",style: TextStyle(fontFamily: "philosopher",fontSize: 15),),
-                                  Text("Kozhikode",style: TextStyle(fontFamily: "philosopher",fontSize: 15),),
-                                  Text("9876543210",style: TextStyle(fontFamily: "philosopher",fontSize: 15),),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      // SizedBox(height: 5,),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal:70),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: height/18,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.green,
-
-                                ),child: Center(child: Text("Approve")),
-                              ),
-                            ),
-                            SizedBox(width: 30,),
-                            Expanded(
-                              child: Container(
-                                height: height/18,
-
-
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.red,
-
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ClipOval(
+                                    child: Image.network(
+                                      value.designerList[index].userImage,
+                                      fit: BoxFit.fill,
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                  ),
                                 ),
-                                child: Center(child: Text("Reject")),
-                              ),
-                            )
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(item.usersName,style: TextStyle(fontFamily: "philosopher",fontSize: 15),),
+                                      Text(item.usersPlace,style: TextStyle(fontFamily: "philosopher",fontSize: 15),),
+                                      Text(item.usersPhoneNumber,style: TextStyle(fontFamily: "philosopher",fontSize: 15),),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+
+
+
                           ],
                         ),
-                      ),
+                      );
+                    },
 
-
-                      ],
-                    ),
                   );
-                },
-        
+                }
               ),
             )
           ],

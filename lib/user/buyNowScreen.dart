@@ -1,4 +1,5 @@
 import 'package:decora/models/adminModel.dart';
+import 'package:decora/provider/loginProvider.dart';
 import 'package:decora/provider/mainProvider.dart';
 import 'package:decora/user/cartScreen.dart';
 import 'package:decora/user/wishListScreen.dart';
@@ -13,13 +14,13 @@ import 'orderSummaryScreen.dart';
 class BuyNowScreen extends StatefulWidget {
   ProductModel item;
   String userId;
-
+  String userAddress;
 
   BuyNowScreen({
     super.key,
     required this.item,
     required this.userId,
-
+    required this.userAddress
   });
 
   @override
@@ -27,8 +28,11 @@ class BuyNowScreen extends StatefulWidget {
 }
 
 class _BuyNowScreenState extends State<BuyNowScreen> {
-  bool isLiked = false;
+
   @override
+
+
+
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
@@ -55,7 +59,8 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
         ),
       ),
 
-      body: SizedBox.expand(
+      body:
+      SizedBox.expand(
         child: Container(
           decoration: BoxDecoration(gradient: screenGradient),
           child: SingleChildScrollView(
@@ -65,43 +70,51 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
 
                   children: [
                     SizedBox(height: height / 40),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 200),
-                      child: Consumer<MainProvider>(
-                          builder: (context,value,child) {
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isLiked = !isLiked;
-                                });
-                                if (isLiked) {
-                                  // value.addToWishList(
-                                  //     widget.productName,
-                                  //     widget.productImage,
-                                  //     widget.productPrice
-                                  // );
-                                }
-                                const snackBar = SnackBar(content: Text("Added to wishlist"));
-                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                      color: isLiked ? textColor : Colors.transparent,
-                                      gradient: isLiked ? null : cstgradient,
-                                      borderRadius: BorderRadius.circular(30)),
-                                  child:Icon(Icons.favorite_border,color: cstgreen,)
-                                  // Image.asset("assets/icons/like.png",
-                                  //     scale: 5, color: green),
+
+                    Consumer<LoginProvider>(
+                      builder: (context11,likeValue,child) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 200),
+                          child: Consumer<MainProvider>(
+                            builder: (context, value, child) {
+                              return GestureDetector(
+                                onTap: () {
+
+
+
+                                    value.toggleFavorite(widget.userId, widget.item.pid,context);
+                                    print("like..................${value.isLiked}");
+
+                                  // else {
+                                  //   value.removeFromWishList(widget.userId, widget.item.pid
+                                  //   );
+                                  //
+                                  // }
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                      color: likeValue.favProductIdList.contains(widget.item.pid)?textColor:Colors.transparent,
+                                      // color: value.isLiked ? textColor : Colors.transparent,
+                                      gradient: likeValue.favProductIdList.contains(widget.item.pid) ? null : cstgradient,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: Icon(
+                                      likeValue.favProductIdList.contains(widget.item.pid) ? Icons.favorite : Icons.favorite_border,
+                                      color: cstgreen,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            );
-                          }
-                      ),
+                              );
+                            },
+                          ),
+                        );
+                      }
                     ),
+
                     Center(
                       child: Container(
                         height: height / 1.5,
@@ -197,12 +210,18 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
 
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("Perinthalmanna , Angadippuram , \nIn harinagar ,House Number 88,Malappuram,pin :679338,kerala,India",
-                            style: TextStyle(color: Colors.white,
-                                fontFamily:"muktaregular",
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal
-                            ),
+                          child:
+                          Consumer<LoginProvider>(
+                            builder: (context11,logValue,child) {
+                              return Text(logValue.loginAddress,
+                              // Text("Perinthalmanna , Angadippuram , \nIn harinagar ,House Number 88,Malappuram,pin :679338,kerala,India",
+                                style: TextStyle(color: Colors.white,
+                                    fontFamily:"muktaregular",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal
+                                ),
+                              );
+                            }
                           ),
                         )
                       ],
@@ -237,39 +256,15 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
 
                     SizedBox(height: 20,),
 
-
-
-
                     Consumer<MainProvider>(builder: (context, value, child) {
                       return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // GestureDetector(
-                            //   onTap: () {
-                            //     setState(() {
-                            //       isLiked = !isLiked;
-                            //     });
-                            //     if (isLiked) {
-                            //       value.addToWishList(widget.productName,
-                            //           widget.productImage, widget.productPrice);
-                            //     }
-                            //     const snackBar = SnackBar(content: Text("Added to wishlist"));
-                            //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                            //   },
-                            //   child: Container(
-                            //     height: 50,
-                            //     width: 50,
-                            //     decoration: BoxDecoration(
-                            //         color: isLiked ? textColor : Colors.transparent,
-                            //         gradient: isLiked ? null : cstgradient,
-                            //         borderRadius: BorderRadius.circular(30)),
-                            //     child: Image.asset("assets/icons/like.png",
-                            //         scale: 5, color: green),
-                            //   ),
-                            // ),
+
 
                             InkWell(
                               onTap: () {
+                                print(widget.userId+"hhhhhhhhhhhhhhhhhhhhh");
                                 value.addToCart(widget.userId, widget.item.pid,widget.item.productImage,widget.item.price,widget.item.productName,);
                                 Navigator.push(
                                     context,
@@ -293,27 +288,167 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                             // SizedBox(width: 10),
 
                             SizedBox(width: 15),
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => OrderSummaryScreen()));
-                              },
-                              child: Container(
-                                height: 50,
-                                width: width / 3,
-                                decoration: BoxDecoration(
-                                    gradient: cstgradient,
-                                    borderRadius: BorderRadius.circular(30)),
-                                child: Center(
-                                    child: Text("Buy Now",
-                                        style: TextStyle(
-                                            fontFamily: "philosopher",
-                                            fontSize: 20,
-                                            color: green))),
-                              ),
+                            Consumer<MainProvider>(
+                              builder: (context1,mprovider,child) {
+                                return InkWell(
+                                  onTap: () {
+                                    var product=widget.item;
+                                    String productId=product.pid;
+                                    double unitPrice=double.parse(product.price);
+                                    // Initialize controllers for each product
+                                    mprovider.initBuyController(productId, unitPrice);
 
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) => OrderSummaryScreen(userId: widget.userId,)));
+                                  Scaffold.of(context).showBottomSheet((context) {
+                                    return
+                                      Container(
+                                      height: height/3,
+                                      width: width,
+                                      decoration: BoxDecoration(
+                                        gradient: containerGradient,
+                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30))
+                                      ),
+                                      child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          // SizedBox(height: 10,),
+                                          Center(
+                                            child: Text("Are you sure to buy now?",style: TextStyle(fontFamily: "philosopher",
+                                                fontSize: 20,
+                                                color: cstyellow),),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(8),
+                                                child: Container(
+                                                  height: height / 6,
+                                                  width: width / 5,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.grey,
+                                                      image: DecorationImage(image: NetworkImage(product.productImage),fit: BoxFit.fill)
+                                                  ),
+                                                ),
+                                              ),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Text(product.productName,  // Replace with your list data
+                                                    style: TextStyle(fontFamily: "muktamedium", fontSize: 18,color: Colors.black),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        "Qty : ",  // Replace with dynamic data
+                                                        style: TextStyle(fontFamily: "muktamedium", fontSize: 18,color: Colors.black),
+                                                      ),
+                                                      IconButton(
+
+                                                        onPressed: () {
+                                                          mprovider.decrementBuy(productId, unitPrice, widget.userId);
+                                                        },
+                                                        icon: Icon(Icons.remove),
+                                                        color: Colors.red,
+                                                      ),
+                                                      Container(
+                                                        width: width/10,
+                                                        child: TextFormField(
+                                                          controller: mprovider.countBuyController[productId],
+                                                          readOnly: true,
+                                                          style: TextStyle(fontFamily: "muktamedium", fontSize: 18,color: Colors.black),
+                                                          // Make it read-only
+                                                        ),
+                                                      ) ,
+
+                                                      IconButton(
+                                                        onPressed: () {
+
+                                                          mprovider.incrementBuy(productId, unitPrice, widget.userId);
+                                                          print("hhhhhhhhhhgvhgvhg ${value.countBuyController[productId]}");
+                                                        },
+                                                        icon: Icon(Icons.add),
+                                                        color: Colors.green,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Consumer<MainProvider>(
+                                                      builder: (context13,val,child) {
+                                                      return Text("₹ ${ val.totalPriceBuyController[productId]?.text ?? 0.00}",  // Replace with dynamic data
+                                                        style: TextStyle(fontFamily: "muktamedium", fontSize: 18,color: Colors.black),
+                                                      );
+                                                    }
+                                                  ),
+
+                                                  SizedBox(height: 20,),
+                                                  Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    children: [
+                                                      Container(
+                                                        height: height/20,
+                                                        width: width/3,
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.circular(20),
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            "Cancel",style: TextStyle(
+                                                            color: Colors.black,
+                                                          ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 10,),
+                                                      GestureDetector(onTap: () {
+                                                        value.addToBuyNow(product.productImage, product.productName, product.price, widget.userId,productId);
+                                                      },
+
+                                                        child: Container(
+                                                          height: height/20,
+                                                          width: width/3,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.yellow,
+                                                            borderRadius: BorderRadius.circular(20),
+                                                          ),
+                                                          child: Center(
+                                                            child: Text(
+                                                                "Place order"
+                                                            ),
+                                                          ),
+
+                                                        ),
+                                                      ),
+
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },);
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    width: width / 3,
+                                    decoration: BoxDecoration(
+                                        gradient: cstgradient,
+                                        borderRadius: BorderRadius.circular(30)),
+                                    child: Center(
+                                        child: Text("Buy Now",
+                                            style: TextStyle(
+                                                fontFamily: "philosopher",
+                                                fontSize: 20,
+                                                color: green))),
+                                  ),
+
+                                );
+                              }
                             ),
 
 

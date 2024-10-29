@@ -48,6 +48,7 @@ class ProductScreen extends StatelessWidget {
                     return GestureDetector(
                       onTap: () {
                         value.getCategory();
+                        value.clearAddedProduct();
                         Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductScreen(),));
                       },
                       child: Container(
@@ -68,6 +69,7 @@ class ProductScreen extends StatelessWidget {
                     return GestureDetector(
                       onTap: () {
                         value.getAddedProduct();
+                        value.getCategory();
                         Navigator.push(context, MaterialPageRoute(builder: (context) => ViewProductScreen(),));
                       },
                       child: Container(

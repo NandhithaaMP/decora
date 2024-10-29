@@ -1,5 +1,8 @@
+import 'package:decora/constants/call_functions.dart';
+import 'package:decora/provider/mainProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/constant_color.dart';
 import 'designerProfile.dart';
@@ -41,60 +44,65 @@ class ConnectDesigners extends StatelessWidget {
                 children: [
                 SizedBox(height: 20,),
       
-              ListView.builder(
-                shrinkWrap: true,
-                  itemCount: 4,
-                  physics: ScrollPhysics(),
-                  itemBuilder:(context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(5,5,5,5),
-                      child: Container(
+              Consumer<MainProvider>(
+                builder: (context,value,child) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                      itemCount: value.designerList.length,
+                      physics: ScrollPhysics(),
+                      itemBuilder:(context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(5,5,5,5),
+                          child: Container(
 
-                       height: 100,
-                        width: width,
+                           height: 100,
+                            width: width,
 
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: green,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ListTile(
-                            leading: CircleAvatar(
-                              radius: 30,
-                              backgroundImage: AssetImage("assets/PROFILE.jpg"),
-
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: green,
                             ),
-                              title: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Malhotra",style: TextStyle(color: Colors.white,fontFamily: "muktaregular",fontSize: 20),),
-                                  Text("Kozhikode",style: TextStyle(color: Colors.white,fontFamily: "muktaregular",fontSize: 15),),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: (context) => DesignerProfile(),
-                                      ));
-                                    },
-                                    child: Container(
-                                      height: 30,
-                                      width: 100,
-
-                                      decoration: BoxDecoration(
-                                        color: Color(0xffB6A683),
-                                        borderRadius: BorderRadius.circular(20)
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ListTile(
+                                leading: GestureDetector(
+                                  onTap: () {
+                                    value.getDesignerDetails(value.designerList[index].id);
+                                    callNext(context, DesignerProfile());
+                                  },
+                                  child:
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor: Colors.transparent,
+                                    child: ClipOval(
+                                      child: Image.network(
+                                        value.designerList[index].userImage,
+                                        fit: BoxFit.fill,
+                                        width: 60, // same as double the radius
+                                        height: 60,
                                       ),
-                                      child: Center(child: Text("Connect",style: TextStyle(fontFamily: "mukta",fontSize: 15),)),
                                     ),
-                                  )
-                                ],
-                              ),
+                                  ),
+
+                                ),
+                                  title: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(value.designerList[index].usersName,style: TextStyle(color: Colors.white,fontFamily: "muktaregular",fontSize: 20),),
+                                      Text(value.designerList[index].usersPlace,style: TextStyle(color: Colors.white,fontFamily: "muktaregular",fontSize: 15),),
+                                      Text(value.designerList[index].usersPhoneNumber,style: TextStyle(color: Colors.white,fontFamily: "muktaregular",fontSize: 15),),
+
+
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                          ),
+                        );
+                      },
+                  );
+                }
               )
       
       

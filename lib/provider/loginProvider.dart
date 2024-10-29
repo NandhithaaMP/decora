@@ -23,6 +23,8 @@ class LoginProvider extends ChangeNotifier {
   String loginPlace = "";
   String loginAddress = "";
   String loginType="";
+  String loginPhoto="";
+  List<dynamic> favProductIdList=[];
 
   Future<void> usersAuthorized(String? lgphoneNumber, String? lgpassword, BuildContext context) async {
     MainProvider mainPro = Provider.of<MainProvider>(context, listen: false);
@@ -44,16 +46,22 @@ class LoginProvider extends ChangeNotifier {
           loginPassword=map["REGISTER_PASSWORD"]??"";
           loginPlace=map["PLACE"]??"";
           loginAddress=map["ADDRESS"]??"";
+          loginType=map["DESIGNATION"]??"";
+          loginPhoto=map["USERS_IMAGE"]??"";
+          favProductIdList=map["WISHLIST"]??[];
+
 
           if (map['DESIGNATION'].toString() == "ADMIN") {
             print("I entered in admin side");
-            callNextReplacement(context, AdminHomeScreen());
+            callNextReplacement(context, AdminHomeScreen(userId: loginUserId,));
             print("Navigating to Admin Home Screen");
 
             // Optionally add any logic required for the admin
-            //
+
             // mainPro.addCategory();
-            // mainPro.addProduct();
+            mainPro.getCategory();
+            mainPro.getAddedProduct();
+            // mainPro.logOutAlert(context);
             notifyListeners();
 
           }
@@ -61,23 +69,27 @@ class LoginProvider extends ChangeNotifier {
             print("I entered in user side");
             // Navigate to user home screen
             print("Navigating to User Home Page");
+            await mainPro.getAllAddedWork();
             mainPro.getAddedProduct();
             mainPro.getCategory();
-            mainPro.getDesignerWork();
+            mainPro.getDesignerWork(loginUserId);
             mainPro.getAddedCart(loginUserId);
+            mainPro.getDesigners();
+
+            // mainPro.getDesignerDetails(designerID);
             notifyListeners();
             callNextReplacement(context, UserBottomNavigation(user_Name: loginName, phone_Number: loginPhoneNumber, pass_word: loginPhoneNumber, place_: loginPlace, address_: loginPassword, userId: loginUserId,));
 
           }
           else if (map['DESIGNATION'].toString() == "DESIGNER") {
             print("I entered in designer side");
-            mainPro.getDesignerWork();
+            mainPro.getDesignerWork(loginUserId);
 
-            callNextReplacement(context, DesignerBottomNavigation()); // Navigate to designer screen
+            callNextReplacement(context, DesignerBottomNavigation(userId: loginUserId)); // Navigate to designer screen
             print("Navigating to Verify Designers Screen");
 
             // mainPro.addDesignerWork();
-            mainPro.addDesignerWork();
+            mainPro.addDesignerWork(loginUserId);
             notifyListeners();
           }
           else {

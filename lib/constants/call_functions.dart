@@ -7,3 +7,10 @@ callNext(var context,var className){
 callNextReplacement(var context,var className){
   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => className,));
 }
+back(var context) {
+  Navigator.pop(context);
+}
+
+void finish(context) {
+  Navigator.pop(context);
+}

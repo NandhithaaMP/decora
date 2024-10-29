@@ -1,10 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../constants/call_functions.dart';
 import '../constants/constant_color.dart';
+import '../provider/loginProvider.dart';
+import '../provider/mainProvider.dart';
+
 
 class AdminProfileScreen extends StatelessWidget {
-  const AdminProfileScreen({super.key});
+  String user_id;
+  AdminProfileScreen({super.key,required this.user_id});
 
   @override
   Widget build(BuildContext context) {
@@ -38,109 +44,170 @@ class AdminProfileScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height:10,),
-                Stack(
-                  children: [
-                    Center(
-                      child: CircleAvatar(
-                        backgroundColor:Color(0xff16403B),
-                        radius: 50,
+                SizedBox(height: height/20,),
+                Consumer<LoginProvider>(
+                    builder: (context,value,child) {
+                      return Column(
+                        children: [
+                          SizedBox(height: height/10,),
+                          Stack(
+                            children: [
+                              Center(
+                                child: CircleAvatar(
+                                  backgroundColor:Color(0xff16403B),
+                                  radius: 50,
 
-                        child: Container(
-                          height: 70,
-                          width: 60,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image:  AssetImage("assets/icons/profile-thin.png",),
+                                  child: Container(
+                                    height: 70,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image:  AssetImage("assets/icons/profile-thin.png",),
 
+                                        )
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                  padding: const EdgeInsets.only(left: 180,top: 70),
+                                  child:GestureDetector(
+                                    onTap: () {
+                                      showBottomSheet(context);
+                                    },
+                                    child: CircleAvatar(
+                                      backgroundColor: Color(0xff365547),
+                                      maxRadius: 20,
+                                      child: Image.asset("assets/icons/edit.png",scale: 20,),
+                                    ),
+                                  )
+
+                                // IconButton(onPressed:() {
+                                //
+                                // },
+                                //     icon: Image.asset("assets/icons/edit.png",scale: 13,)
+                                //
+                                // ),
                               )
+                            ],
+
                           ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 180,top: 70),
-                      child: IconButton(onPressed:() {
+                          Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  Consumer<MainProvider>(
+                                      builder: (context,value,child) {
+                                        return TextField(
 
-                      },
-                          icon: Icon(Icons.add_a_photo_outlined,color: textColor,)
-                        // Image.asset("assets/icons/edit.png",scale: 13,)
+                                          controller: value.RegisterNameController,
 
-                      ),
-                    )
-                  ],
+                                          decoration: InputDecoration(
+                                              label: Text("UserName",style: TextStyle(fontFamily: "muktaregular",fontSize: 20,color:
+                                              // value.loginName.isNotEmpty?
+                                              cstgreen
+                                                // :Colors.black
+                                              ),),
+                                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                              border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black))
 
+                                          ),
+
+                                        );
+                                      }
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Consumer<MainProvider>(
+                                      builder: (context,value,child) {
+                                        return TextField(
+                                          controller: value.RegisterPhoneController,
+                                          // controller: TextEditingController(),
+                                          decoration: InputDecoration(
+                                              label: Text("Phone Number",style: TextStyle(fontFamily: "muktaregular",fontSize: 20,color:
+                                              // value.loginPhoneNumber.isNotEmpty?
+                                              cstgreen
+                                                // : Colors.black
+                                              ),
+                                              ),
+                                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                              border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black))
+
+                                          ),
+                                          readOnly:true ,
+
+                                        );
+                                      }
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Consumer<MainProvider>(
+                                      builder: (context,value,child) {
+                                        return TextField(
+                                          // controller: TextEditingController(text:value.loginPlace.isNotEmpty?value.loginPlace:""),
+                                          controller: value.PlaceController,
+                                          decoration: InputDecoration(
+                                              label: Text("Add Your Place",style: TextStyle(fontFamily: "muktaregular",fontSize: 20,
+                                                // color:value.loginPlace.isNotEmpty?cstgreen: Colors.black
+                                              ),),
+                                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                              border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black))
+
+                                          ),
+
+                                        );
+                                      }
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Consumer<MainProvider>(
+                                      builder: (context66,value1,child) {
+                                        return TextField(
+                                          // controller: TextEditingController(text: value.loginAddress.isNotEmpty?value.loginAddress:""),
+                                          controller: value1.AddressController,
+                                          decoration: InputDecoration(
+                                              label: Text("Add Your Address",style: TextStyle(fontFamily: "muktaregular",fontSize: 20,color: value.loginAddress.isNotEmpty?cstgreen:Colors.black),),
+                                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                              border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black))
+
+                                          ),
+
+                                        );
+                                      }
+                                  ),
+
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 25,),
+                          Consumer<MainProvider>(
+                              builder: (context,value,child) {
+                                return SizedBox(
+                                  height: height/15,
+                                  width: width/3,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      value.addRegistration(context, "EDIT", user_id);
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("SAVE",style: TextStyle(color: Colors.white),),
+                                    style: ElevatedButton.styleFrom(backgroundColor: green,
+
+                                    ),
+
+                                  ),
+                                );
+                              }
+                          )
+
+
+                        ],
+                      );
+                    }
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20,right: 20),
-                  child: Container(
-
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextField(
-                          decoration: InputDecoration(
-                              label: Text("USER NAME",style: TextStyle(fontFamily: "muktaregular",fontSize: 15,color: Colors.white),),
-                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                              border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black))
-
-                          ),
-
-                        ),
-                        // SizedBox(height: 10,),
-                        TextField(
-                          decoration: InputDecoration(
-                              label: Text("DESIGNATION",style: TextStyle(fontFamily: "muktaregular",fontSize: 15,color: Colors.white),),
-                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                              border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black))
-
-                          ),
-
-                        ),
-                        // SizedBox(height: 10,),
-                        TextField(
-                          decoration: InputDecoration(
-                              label: Text("PLACE",style: TextStyle(fontFamily: "muktaregular",fontSize: 15,color: Colors.white),),
-                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                              border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black))
-
-                          ),
-
-                        ),
-                        TextField(
-                          decoration: InputDecoration(
-                              label: Text("PHONE NUMBER",style: TextStyle(fontFamily: "muktaregular",fontSize: 15,color: Colors.white),),
-                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                              border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black))
-
-                          ),
-
-                        ),
-                        SizedBox(height: 10,),
-
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20,),
-                SizedBox(
-                  height: height/15,
-                  width: width/3,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("SAVE",style: TextStyle(color: Colors.white),),
-                    style: ElevatedButton.styleFrom(backgroundColor: green,
-
-                    ),
-
-                  ),
-                )
-
 
               ],
             ),
@@ -149,4 +216,38 @@ class AdminProfileScreen extends StatelessWidget {
       ),
     );
   }
+}
+void showBottomSheet(BuildContext context) {
+  MainProvider mainprovider =Provider.of<MainProvider>(context,listen:false);
+  showModalBottomSheet(
+      elevation: 10,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10.0),
+            topRight: Radius.circular(10.0),
+          )),
+      context: context,
+      builder: (BuildContext bc) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+                leading:  Icon(
+                  Icons.camera_enhance_sharp,
+                  color: Colors.blue,
+                ),
+                title: const Text('Camera',),
+                onTap: () => {
+                  mainprovider.UsersgetImagecamera(), Navigator.pop(context)
+                }),
+            ListTile(
+                leading:  Icon(Icons.photo, color: Colors.blue),
+                title: const Text('Gallery',),
+                onTap: () => {
+                  mainprovider.UsersgetImagegallery(),Navigator.pop(context)
+                }),
+          ],
+        );
+      });
+  // ImageSource
 }

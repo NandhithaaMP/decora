@@ -1,4 +1,5 @@
 import 'package:decora/Designer/uploadWorkScreen.dart';
+import 'package:decora/constants/refractorwidgets.dart';
 import 'package:decora/provider/loginProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,27 +11,12 @@ import 'editDprofile.dart';
 import 'newEnquiryScreen.dart';
 
 class DesignerProfileScreen extends StatelessWidget {
-  const DesignerProfileScreen({super.key});
+  String userId;
+  DesignerProfileScreen({super.key,required this.userId});
 
   @override
   Widget build(BuildContext context) {
-    // final List<String> images = [
-    //   "assets/living_room.webp",
-    //   "assets/small-monochrome-bedroom.jpg",
-    //   "assets/small-monochrome-bedroom.jpg",
-    //   "assets/small-monochrome-bedroom.jpg",
-    //   "assets/small-monochrome-bedroom.jpg",
-    //   "assets/living_room.webp",
-    //   "assets/living_room.webp",
-    //   "assets/living_room.webp", "assets/living_room.webp",
-    //   "assets/small-monochrome-bedroom.jpg",
-    //   "assets/small-monochrome-bedroom.jpg",
-    //   "assets/small-monochrome-bedroom.jpg",
-    //   "assets/small-monochrome-bedroom.jpg",
-    //   "assets/living_room.webp",
-    //   "assets/living_room.webp",
-    //   "assets/living_room.webp",
-    // ];
+
     var width=MediaQuery.of(context).size.width;
     var height=MediaQuery.of(context).size.height;
     return Container(
@@ -43,19 +29,20 @@ class DesignerProfileScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 0,
 
-          leading: Builder(
-
-            builder: (BuildContext context) {
-              return IconButton(
-                icon:Icon(Icons.arrow_back_sharp),
-                // Image.asset("assets/icons/arrow-back.png",scale: 20, color: green,),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-              );
-            },
-          ),),
+          // leading: Builder(
+          //
+          //   builder: (BuildContext context) {
+          //     return IconButton(
+          //       icon:Icon(Icons.arrow_back_sharp),
+          //       // Image.asset("assets/icons/arrow-back.png",scale: 20, color: green,),
+          //       onPressed: () {
+          //         Navigator.pop(context);
+          //       },
+          //       tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+          //     );
+          //   },
+          // ),
+        ),
 
         body: SizedBox.expand(
           child: Container(
@@ -86,43 +73,48 @@ class DesignerProfileScreen extends StatelessWidget {
                       return Column(crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
 
-                          Stack(
-                            children: [
-                              Container(
-                                height: 100,
-                                width: 100,
-                                child: CircleAvatar(
-                                  radius: 80,
-                                  backgroundColor: Colors.grey,
-                                  backgroundImage: AssetImage("assets/PROFILE.jpg"),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 1, // Adjust the value as needed
-                                right: 6,  // Adjust the value as needed
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(context,MaterialPageRoute(builder: (context) =>EditDProfile() ,));
-                                  },
-                                    child: Image.asset("assets/icons/edit.png",scale: 20,color: Colors.black,)
-                                ),
-                              ),
-                            ],
+                          Consumer<MainProvider>(
+                            builder: (context,value,child) {
+                              return Stack(
+                                children: [
+                                  Container(
+                                    height: 100,
+                                    width: 100,
+                                    child: CircleAvatar(
+                                      radius: 80,
+                                      backgroundColor: Colors.grey,
+                                      backgroundImage: NetworkImage(Pvalue.loginPhoto),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 1, // Adjust the value as needed
+                                    right: 6,  // Adjust the value as needed
+                                    child: InkWell(
+                                      onTap: () {
+                                        value.editUsers(userId);
+                                        Navigator.push(context,MaterialPageRoute(builder: (context) =>EditDProfile(user_id: userId,) ,));
+                                      },
+                                        child: Image.asset("assets/icons/edit.png",scale: 20,color: Colors.black,)
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
                           ),
 
                           // Text("Malhotra",style: TextStyle(fontFamily: "philosopher",fontSize: 30,color: Colors.white),),
                           Text(Pvalue.loginName,style: TextStyle(fontFamily: "philosopher",fontSize: 30,color: Colors.white),),
-                          Text("Interior Designer",style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
+                          Text(Pvalue.loginType,style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
                           Row(mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.location_on_sharp,color: Colors.white,),
-                              Text("Kozhikode",style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
+                              Text(Pvalue.loginPlace,style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
                             ],
                           ),
                           Row(mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.call,color: Colors.white,),
-                              Text("987654321",style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
+                              Text(Pvalue.loginPhoneNumber,style: TextStyle(fontFamily: "philosopher",fontSize: 20,color: Colors.white),),
                             ],
                           ),
                           SizedBox(height: 10,),
@@ -160,6 +152,9 @@ class DesignerProfileScreen extends StatelessWidget {
                                       onTap: () {
                                         _showFullScreenImage(context, value.workList[index].workImage);
                                       },
+                                      onLongPress: (){
+                                        showDeleteConfirmationDialog(context, value.workList[index].wid, "deleteDwork");
+                                      },
                                       child: Container(
 
                                         decoration: BoxDecoration(
@@ -179,32 +174,12 @@ class DesignerProfileScreen extends StatelessWidget {
                               )
                                 :SizedBox(
                                   height: 100,
-                                  child: Center(child: Text("No works")),
+                                  child: Center(child: Text("No works",style: TextStyle(color: Colors.white),)),
                                 );
                             }
                           )
 
-                          // GridView.builder(
-                          //   shrinkWrap: true,
-                          //     itemCount: value.workList.length,
-                          //     physics: ScrollPhysics(),
-                          //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          //         crossAxisCount: 3,
-                          //         crossAxisSpacing: 10,
-                          //       mainAxisSpacing: 10
-                          //     ),
-                          //     itemBuilder: (context, index) {
-                          //       return Container(
-                          //         height: 50,
-                          //         width: 50,
-                          //         decoration: BoxDecoration(
-                          //           image: DecorationImage(image: NetworkImage(value.workList[index].workImage,),fit: BoxFit.fill)
-                          //         ),
-                          //         color: Colors.blueAccent,
-                          //         child: Text("data"),
-                          //       );
-                          //     },
-                          // )
+
                         ],
                       );
                     }
@@ -237,7 +212,7 @@ void _showFullScreenImage(BuildContext context, String imagePath) {
               child: Container(
                 height: height,
                 width: width,
-                color: Colors.red,
+                color: cstgreen,
                 child: Image.network(imagePath,
                   fit: BoxFit.contain,
                   height: height,

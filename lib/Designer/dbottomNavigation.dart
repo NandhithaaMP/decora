@@ -7,9 +7,8 @@ import 'package:flutter/material.dart';
 import 'designerProfileScreen.dart';
 
 class DesignerBottomNavigation extends StatefulWidget {
-
-  DesignerBottomNavigation({super.key,
-
+  String userId;
+  DesignerBottomNavigation({super.key,required this.userId,
   });
 
   @override
@@ -26,9 +25,9 @@ class _DesignerBottomNavigationState extends State<DesignerBottomNavigation> {
   int indexNum=0;
   List<Widget> getScreens(){
     return [
-      NewEnquiryScreen(),
-      UploadWorkScreen(),
-      DesignerProfileScreen(),
+      NewEnquiryScreen(userId: widget.userId,),
+      UploadWorkScreen(designerId: widget.userId,),
+      DesignerProfileScreen(userId: widget.userId,),
     ];
   }
   @override

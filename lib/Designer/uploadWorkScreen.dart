@@ -9,8 +9,8 @@ import 'designerProfileScreen.dart';
 import 'newEnquiryScreen.dart';
 
 class UploadWorkScreen extends StatelessWidget {
-
-  UploadWorkScreen({super.key});
+  String designerId;
+  UploadWorkScreen({super.key,required this.designerId});
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +136,7 @@ class UploadWorkScreen extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 Navigator.of(dialogContext).pop(); // Close the dialog
-                await value.addDesignerWork();// Upload work
+                await value.addDesignerWork(designerId);// Upload work
 
                 // Show the snackbar using the main context
                 ScaffoldMessenger.of(context).showSnackBar(

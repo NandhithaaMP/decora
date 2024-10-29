@@ -1,4 +1,5 @@
 import 'package:decora/constants/constant_color.dart';
+import 'package:decora/constants/refractorwidgets.dart';
 import 'package:decora/provider/mainProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +92,7 @@ class AddCategoryScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           return  GestureDetector(
                             onLongPress: () {
-                              _showDeleteConfirmationDialog(context,value,value.categoryList[index].id.toString());
+                              showDeleteConfirmationDialog(context, value.categoryList[index].id, "deleteCategory");
                             },
                             child: Container(
                               height: height/12,
@@ -121,33 +122,33 @@ class AddCategoryScreen extends StatelessWidget {
 
   }
 
-void _showDeleteConfirmationDialog(BuildContext context, MainProvider provider, String id) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text("Are you sure you want to delete?"),
-        content: Text("This action cannot be undone."),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-            },
-            child: Text("Cancel"),
-          ),
-          Consumer<MainProvider>(
-            builder: (context,value,child) {
-              return ElevatedButton(
-                onPressed: () {
-                  value.deleteCategory(id, context);
-                  Navigator.of(context).pop(); // Close the dialog
-                },
-                child: Text("Delete"),
-              );
-            }
-          ),
-        ],
-      );
-    },
-  );
-}
+// void _showDeleteConfirmationDialog(BuildContext context, MainProvider provider, String id) {
+//   showDialog(
+//     context: context,
+//     builder: (context) {
+//       return AlertDialog(
+//         title: Text("Are you sure you want to delete?"),
+//         content: Text("This action cannot be undone."),
+//         actions: [
+//           TextButton(
+//             onPressed: () {
+//               Navigator.of(context).pop(); // Close the dialog
+//             },
+//             child: Text("Cancel"),
+//           ),
+//           Consumer<MainProvider>(
+//             builder: (context,value,child) {
+//               return ElevatedButton(
+//                 onPressed: () {
+//                   value.deleteCategory(id, context);
+//                   Navigator.of(context).pop(); // Close the dialog
+//                 },
+//                 child: Text("Delete"),
+//               );
+//             }
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }

@@ -8,8 +8,8 @@ import '../constants/constant_color.dart';
 import '../provider/mainProvider.dart';
 
 class CategoryScreen extends StatelessWidget {
-  String userId;
-   CategoryScreen({super.key,required this.userId});
+  String userId,userAddress;
+   CategoryScreen({super.key,required this.userId,required this.userAddress});
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +59,12 @@ class CategoryScreen extends StatelessWidget {
 
                       ),
                       itemBuilder: (context, index) {
+                        final categoryName=value.categoryList[index].categoryName;
+
                         return GestureDetector(
                           onTap: () {
-                            callNext(context, CategoryDetailsScreen( categoryTitle: value.categoryList[index].categoryName, userId: userId,));
+                            value.filteredSelectedCategory(categoryName);
+                            callNext(context, CategoryDetailsScreen( categoryTitle: value.categoryList[index].categoryName, userId: userId, userAddress: userAddress,));
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),

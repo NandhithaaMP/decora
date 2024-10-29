@@ -1,3 +1,7 @@
+import 'package:decora/Designer/editDprofile.dart';
+import 'package:decora/admin/productScreen.dart';
+import 'package:decora/constants/call_functions.dart';
+import 'package:decora/constants/refractorwidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart'; // Import the intl package for DateFormat
@@ -288,8 +292,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       width: width / 3,
                       child: ElevatedButton(
                         onPressed: () {
-                          value.addProduct();
-                          Navigator.pop(context);
+                          showUploadConfirmationDialog(context, value);
                         },
                         child: Text("SAVE", style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(backgroundColor: green),
@@ -376,6 +379,46 @@ class _AddProductScreenState extends State<AddProductScreen> {
           );
         });
     // ImageSource
+  }
+  void showUploadConfirmationDialog(
+      BuildContext context, MainProvider value) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Confirm Upload"),
+          content: const Text("Are you sure you want to upload this work?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close the dialog
+              },
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop(); // Close the dialog
+                await value.addProduct(); // Upload work
+
+                // Show the snackbar using the main context
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Image uploaded successfully!"),
+                    duration: Duration(seconds: 3),
+                  ),
+                );
+
+                // Navigate to ProductScreen after upload and snackbar
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => ProductScreen()),
+                );
+              },
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
 }

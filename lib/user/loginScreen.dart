@@ -205,7 +205,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: phoneController,
                 style: TextStyle(color: Colors.white, fontFamily: "muktaregular"),
                 decoration: InputDecoration(
-                  prefixIcon: Image.asset("assets/icons/email.png", scale: 25,),
+                  prefixIcon: Icon(Icons.call,color: cstyellow,),
+                  // prefixIcon: Image.asset("assets/icons/email.png", scale: 25,),
                   label: Text("PHONE NUMBER", style: TextStyle(color: Colors.white, fontFamily: "muktaregular"),),
                 ),
                 keyboardType: TextInputType.phone,
@@ -250,40 +251,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           value.usersAuthorized(phoneController.text, passwordController.text, context);
 
-                          // callNextReplacement(context, className)
-                          // // value.addRegistration();
-                          // // value.getWishList();
-                          // value.getAddedProduct();
-                          // value.getDesignerWork();
-                          // value.getDesignerData();
-                          // SharedPreferences prefs = await SharedPreferences.getInstance();
-                          // String? registeredPhoneNumber = prefs.getString("REGISTER_PHONENUMBER");
-                          // String? registeredPassword = prefs.getString("REGISTER_PASSWORD");
-                          //
-                          // String inputPhoneNumber = phoneController.text;
-                          // String inputPassword = passwordController.text;
-                          //
-                          // // Debugging outputs
-                          // print("Stored Phone Number: $registeredPhoneNumber");
-                          // print("Stored Password: $registeredPassword");
-                          // print("Input Phone Number: $inputPhoneNumber");
-                          // print("Input Password: $inputPassword");
-                          //
-                          // if (registeredPhoneNumber != null && registeredPassword != null) {
-                          //   if (registeredPhoneNumber == inputPhoneNumber && registeredPassword == inputPassword) {
-                          //     Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(),));
-                          //   } else {
-                          //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          //       content: Text("Invalid phone number or password"),
-                          //       duration: Duration(seconds: 2),
-                          //     ));
-                          //   }
-                          // } else {
-                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          //     content: Text("No registered user found"),
-                          //     duration: Duration(seconds: 2),
-                          //   ));
-                          // }
                         },
                         child: Center(
                           child: Container(

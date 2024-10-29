@@ -8,6 +8,7 @@ environment:
   sdk: '>=3.3.2 <4.0.0'
 
 dependencies:
+
   flutter:
     sdk: flutter
 
@@ -29,6 +30,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+
+
 
 flutter:
   uses-material-design: true
@@ -75,3 +78,4 @@ flutter:
     - family: swash
       fonts:
         - asset: assets/fonts/BerkshireSwash-Regular.ttf
+

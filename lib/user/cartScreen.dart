@@ -74,7 +74,8 @@ class _CartScreenState extends State<CartScreen> {
 
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Container(
+                            child:
+                            Container(
                                 height: height/6,
                                 width: width,
                                 decoration: BoxDecoration(
@@ -129,13 +130,16 @@ class _CartScreenState extends State<CartScreen> {
                                                       width: width/10,
                                                       child: TextFormField(
                                                         controller: value.countController[productId],
-                                                        readOnly: true, // Make it read-only
+                                                        readOnly: true,
+                                                        // Make it read-only
                                                       ),
                                                     ) ,
 
                                                     IconButton(
                                                       onPressed: () {
-                                                        mprovider.increment(productId, unitPrice, widget.userId) ;                                                     },
+                                                        mprovider.increment(productId, unitPrice, widget.userId) ;
+                                                        print("hhhhhhhhhhgvhgvhg ${value.countController[productId]}");
+                                                        },
                                                       icon: Icon(Icons.add),
                                                       color: Colors.green,
                                                     ),
@@ -190,7 +194,8 @@ class _CartScreenState extends State<CartScreen> {
                               child: GestureDetector(
                                 onTap: () {
                                   mprovider.addGrandTotalToUsers(widget.userId);
-                                  callNext(context, OrderSummaryScreen());
+                                  value.getUsers();
+                                  callNext(context, OrderSummaryScreen(userId: widget.userId,));
                                 },
                                 child: Container(
                                   height: 50,
@@ -206,6 +211,7 @@ class _CartScreenState extends State<CartScreen> {
                           ],
                         ),
                       ),
+                      SizedBox(height: 15,)
                     ],
                   );
                 }

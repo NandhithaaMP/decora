@@ -304,7 +304,8 @@ import 'package:provider/provider.dart';
 import '../provider/mainProvider.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+
+ const  RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -642,7 +643,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         );
                       } else {
                         // Registration process
-                        value.addRegistration(context);
+                        value.addRegistration(context, "NEW", "");
                         value.getAddedProduct();
                         // value.getWishList();
                       }

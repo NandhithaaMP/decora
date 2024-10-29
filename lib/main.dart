@@ -1,6 +1,7 @@
 import 'package:decora/admin/verifyDesigners.dart';
 import 'package:decora/provider/loginProvider.dart';
 import 'package:decora/provider/mainProvider.dart';
+import 'package:decora/user/accountScreen.dart';
 import 'package:decora/user/buyNowScreen.dart';
 import 'package:decora/user/cartScreen.dart';
 import 'package:decora/user/chairScreen.dart';
@@ -14,6 +15,7 @@ import 'package:decora/user/homepageScreen.dart';
 import 'package:decora/user/categoryDetailsScreen.dart';
 import 'package:decora/user/loginScreen.dart';
 import 'package:decora/user/myOrderScreen.dart';
+import 'package:decora/user/newDeliveryAddressScreen.dart';
 import 'package:decora/user/orderDetailsScreen.dart';
 import 'package:decora/user/orderSummary.dart';
 
@@ -74,10 +76,8 @@ class MyApp extends StatelessWidget {
         home: SplashScreen(),
         // home: UBottomNavigation(),
         // home: AdminHomeScreen(),
-        // home: UserHomePage(),
         // home:NewEnquiryScreen(),
         // home:RegisterScreen(),
-        // home: MyOrder(),
       ),
     );
   }
