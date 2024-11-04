@@ -1,3 +1,4 @@
+import 'package:decora/admin/addProductScreen.dart';
 import 'package:decora/admin/viewProductDetails.dart';
 import 'package:decora/constants/call_functions.dart';
 import 'package:decora/constants/refractorwidgets.dart';
@@ -9,7 +10,8 @@ import '../constants/constant_color.dart';
 import '../provider/mainProvider.dart';
 
 class ViewProductScreen extends StatelessWidget {
-  const ViewProductScreen({super.key});
+
+  ViewProductScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -127,13 +129,13 @@ class ViewProductScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 GestureDetector(
-                                  onTap: () {
-                                   callNext(context, ViewProductDetails(item: productItem,));
-
-                                  },
+                                  // onTap: () {
+                                  //  callNext(context, ViewProductDetails(item: productItem,));
+                                  //
+                                  // },
                                   onLongPress: () {
-                                    showConfirmationDialog(context, value.productList[index].pid);
-                                  // showDeleteConfirmationDialog(context, value.productList[index].pid, "deleteProduct");
+                                    showConfirmationDialog(context, value.productList[index].pid, productItem);
+                                    // showConfirmationDialog(context, value.productList[index].pid,);
                                   }
                                   ,
                                   child: Container(
@@ -177,47 +179,66 @@ class ViewProductScreen extends StatelessWidget {
           ],
         ),
       ),
+
+    );
+
+  }
+  void showConfirmationDialog(BuildContext context, String productId,var productItem) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Action"),
+          content: Text("Do you want to edit or delete this item?"),
+          actions: <Widget>[
+
+            Consumer<MainProvider>(
+              builder: (context,tValue,child) {
+                return TextButton(onPressed: () {
+                  callNext(context, ViewProductDetails(item: productItem));
+                }, child: Text("View"));
+              }
+            ),
+            Consumer<MainProvider>(
+                builder: (context,dvalue,child) {
+                  return
+                    TextButton(
+                      onPressed: () {
+                        // Navigator.of(context).pop();
+                        // Handle the edit action here
+                        dvalue.editProduct(productId);
+                        callNext(context, AddProductScreen(from: "EDIT", oldid:productId ));
+                        // dvalue.addProduct("EDIT", oldid);
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.green,
+                      ),
+                      child: Text("Edit"),
+                    );
+                }
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Show delete confirmation dialog
+                showDeleteConfirmationDialog(context, productId, "deleteProduct");
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.red,
+              ),
+              child: Text("Delete"),
+            ),
+          ],
+        );
+      },
     );
   }
+
 }
 
 
-void showConfirmationDialog(BuildContext context, String productId) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("Confirm Action"),
-        content: Text("Do you want to edit or delete this item?"),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // Handle the edit action here
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.green,
-            ),
-            child: Text("Edit"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // Show delete confirmation dialog
-              showDeleteConfirmationDialog(context, productId, "deleteProduct");
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.red,
-            ),
-            child: Text("Delete"),
-          ),
-        ],
-      );
-    },
-  );
-}
 
 
 

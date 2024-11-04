@@ -80,6 +80,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                   GestureDetector(
                                     onTap: () {
                                       value.getBuyNow(widget.userId);
+                                      value.getOrder(widget.userId);
                                       callNext(context, MyOrder());
                                     },
                                     child: Container(

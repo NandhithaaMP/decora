@@ -140,9 +140,10 @@ class MainProvider extends ChangeNotifier{
     }
   }
 
-  Future<void> addProduct() async {
+  Future<void> addProduct( String from,String oldid) async {
     String id=DateTime.now().millisecondsSinceEpoch.toString();
     HashMap<String,Object>productDetails=HashMap();
+
     productDetails["PRODUCT_NAME"]=productnameController.text;
     productDetails["CATEROGY_NAME"]=categoryNameController.text;
     productDetails["CATEROGYID"]=productSelectedcategoryid;
@@ -167,7 +168,16 @@ class MainProvider extends ChangeNotifier{
         notifyListeners();
       });
     }
-    db.collection("PRODUCT").doc(id).set(productDetails);
+    if(from=="NEW"){
+      productDetails["PRODUCT_ID"]=id;
+    }
+    if(from=="EDIT"){
+      db.collection("PRODUCT").doc(oldid).set(productDetails,SetOptions(merge: true));
+    }
+    else{
+      db.collection("PRODUCT").doc(id).set(productDetails);
+    }
+
     print("Product added :${productDetails}");
     notifyListeners();
   }
@@ -179,10 +189,38 @@ class MainProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  // Function to retrieve delivery date
-  DateTime getDeliveryDate() {
-    return selectedDate.add(Duration(days: 5)); // Calculate delivery date as needed
+  // // Function to retrieve delivery date
+  // DateTime getDeliveryDate() {
+  //   return selectedDate.add(Duration(days: 5)); // Calculate delivery date as needed
+  // }
+
+  void updateSelectedDate(DateTime date) {
+    selectedDate = date;
+    notifyListeners();
   }
+
+  DateTime getDeliveryDate() {
+    return selectedDate.add(Duration(days: 5));
+  }
+
+
+  void editProduct(String productId){
+    db.collection("PRODUCT").doc(productId).get().then((value) {
+      Map<dynamic,dynamic> editProduct=value.data() as Map;
+      if(value.exists){
+        productnameController.text=editProduct["PRODUCT_NAME"];
+        categoryNameController.text=editProduct["CATEROGY_NAME"];
+        priceController.text=editProduct["PRICE"];
+        productDescriptionController.text=editProduct["PRODUCT_DESCRIPTION"];
+        totalProductController.text=editProduct["TOTAL_NUMBER OF PRODUCTS"];
+        currentStatusContoller.text=editProduct["STATUS"];
+
+        notifyListeners();
+      }
+    },);
+    notifyListeners();
+  }
+
 
 
   List<ProductModel>productList=[];
@@ -235,10 +273,6 @@ class MainProvider extends ChangeNotifier{
     db.collection("PRODUCT").doc(productId).delete();
     productList.removeWhere((element) => element.pid == productId);
     notifyListeners();
-  }
-
-  void editAdminDetails(){
-
   }
 
 
@@ -719,7 +753,6 @@ class MainProvider extends ChangeNotifier{
 
   // -------------------------------------------Add to cart......................................................................
 
-  List<ProductModel>cartList=[];
 
   // Map to hold TextEditingControllers for each product
   Map<String,TextEditingController>countController={};
@@ -734,7 +767,8 @@ class MainProvider extends ChangeNotifier{
     int currentCount = int.parse(countController[productId]?.text ?? '1');
     currentCount++;
     countController[productId]?.text = currentCount.toString();
-
+print("kkkkkkkkkkklllllllllllllllllllllll $productId  $currentCount");
+print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[productId]?.text }  $currentCount");
     // Update total price for that product
     double totalPrice = currentCount * unitPrice;
     totalPriceController[productId]?.text = totalPrice.toStringAsFixed(2);
@@ -762,16 +796,24 @@ class MainProvider extends ChangeNotifier{
       notifyListeners(); // Notify UI about changes
     }
   }
+  void clearCart(){
+    countController.clear();
+    totalPriceController.clear();
+  }
+
   void addToCart(String userId,String productId,String img,String price,String name){
 
     print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq ${countController[productId]}");
     int productCount=0;
     if(countController[productId]!=null) {
+      print("Count-------------------------------------------------");
       productCount = int.parse(countController[productId]!.text);
     }
     double totalPrice=0;
     if(totalPriceController[productId]!=null) {
+      print("tota------------------------------");
       totalPrice = double.parse(totalPriceController[productId]!.text);
+
     }
 
     print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm $productId ${totalPriceController[productId]}");
@@ -783,6 +825,7 @@ class MainProvider extends ChangeNotifier{
     cart["TOTAL_PRICE"]=totalPrice;
 
     print("Total_price ----------${cart["TOTAL_PRICE"]}");
+    print("Total_COUNT ----------${cart["PRODUCT_COUNT"]}");
     db.collection("USERS").doc(userId).collection("CART").doc(productId).set(cart,SetOptions(merge: true));
     print("rrrrrrrr  :"+cartList.length.toString());
     getAddedCart(userId);
@@ -790,6 +833,7 @@ class MainProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  List<ProductModel>cartList=[];
   void getAddedCart(String userId){
     db.collection("USERS").doc(userId).collection("CART").get().then((value){
 
@@ -858,6 +902,7 @@ class MainProvider extends ChangeNotifier{
     if (doc.exists){
       if(doc.data()!=null&&doc["CART_GRANDTOTAL"]!=null){
         grandTotal=doc["CART_GRANDTOTAL"];
+
         notifyListeners();
       }
     }
@@ -874,6 +919,175 @@ class MainProvider extends ChangeNotifier{
     getAddedCart(userId);
     notifyListeners();
   }
+
+
+//
+//      void clearCart(){
+//     countController.clear();
+//     totalPriceController.clear();
+//   }
+//
+//   List<ProductModel>cartList=[];
+//
+//   // Map to hold TextEditingControllers for each product
+//   Map<String,TextEditingController>countController={};
+//   Map<String,TextEditingController>totalPriceController={};
+// // Method to initialize controllers
+//   void initController(String productId, double unitPrice) {
+//     if(!countController.containsKey(productId)){
+//       countController[productId] ??= TextEditingController(text: '1'); // Default quantity 1
+//     }
+//     if(!totalPriceController.containsKey(productId)){
+//       totalPriceController[productId] ??= TextEditingController(text: unitPrice.toStringAsFixed(2));
+//     }
+//
+//   }
+//   // Increment function
+//   void increment(String productId, double unitPrice, String userId) {
+//     int currentCount = int.parse(countController[productId]?.text ?? '1');
+//     currentCount++;
+//     countController[productId]?.text = currentCount.toString();
+//
+//     // Update total price for that product
+//     double totalPrice = currentCount * unitPrice;
+//     totalPriceController[productId]?.text = totalPrice.toStringAsFixed(2);
+//     addToCart(userId, productId, "", unitPrice.toString(), "");
+//     // Call to update the grand total
+//     updateGrandTotal();
+//
+//     notifyListeners(); // Notify UI about changes
+//   }
+//
+//   // Decrement function
+//   void decrement(String productId, double unitPrice, String userId) {
+//     int currentCount = int.parse(countController[productId]?.text ?? '1');
+//     if (currentCount > 1) {
+//       currentCount--;
+//       countController[productId]?.text = currentCount.toString();
+//
+//       // Update total price for that product
+//       double totalPrice = currentCount * unitPrice;
+//       totalPriceController[productId]?.text = totalPrice.toStringAsFixed(2);
+//
+//       // Call to update the grand total
+//       updateGrandTotal();
+//       addToCart(userId, productId, "", unitPrice.toString(), "");
+//       notifyListeners(); // Notify UI about changes
+//     }
+//   }
+//   void addToCart(String userId,String productId,String img,String price,String name){
+//
+//     print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq ${countController[productId]}");
+//     int productCount=0;
+//     if(countController[productId]!=null) {
+//       productCount = int.parse(countController[productId]!.text);
+//     }
+//     double totalPrice=0;
+//     if(totalPriceController[productId]!=null) {
+//       totalPrice = double.parse(totalPriceController[productId]!.text);
+//     }
+//
+//     print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm $productId ${totalPriceController[productId]}");
+//     HashMap<String,dynamic>cart=HashMap();
+//     cart["PRODUCT_NAME"]=name;
+//     cart["PRODUCT_IMAGE"]=img;
+//     cart["PRODUCT_PRICE"]=price; // Save the price as a string with 2 decimal places
+//     // cart["PRODUCT_COUNT"]=countController[productId]==null?0:countController[productId]!.text;
+//     cart["PRODUCT_COUNT"]=productCount;
+//     // cart["TOTAL_PRICE"]=totalPriceController[productId]==null?0:totalPriceController[productId]!.text;
+//     cart["TOTAL_PRICE"]=totalPrice;
+//     print("Total_price ----------${cart["TOTAL_PRICE"]}");
+//     db.collection("USERS").doc(userId).collection("CART").doc(productId).set(cart,SetOptions(merge: true));
+//     print("rrrrrrrr  :"+cartList.length.toString());
+//     getAddedCart(userId);
+//     updateGrandTotal();
+//     notifyListeners();
+//   }
+//
+//   void getAddedCart(String userId){
+//     db.collection("USERS").doc(userId).collection("CART").get().then((value){
+//
+//       if(value.docs.isNotEmpty){
+//         cartList.clear();
+//         for(var element in value.docs){
+//           Map<dynamic,dynamic>cart=element.data();
+//           cartList.add(ProductModel(
+//               element.id,
+//               cart["PRODUCT_NAME"]??"",
+//               cart["PRODUCT_PRICE"]??"",
+//               cart["PRODUCT_DESCRIPTION"]??"",
+//               cart["DELIVERY_DURATION"]??"",
+//               cart["PRODUCT_IMAGE"]??"",
+//               cart["CURRENT_STATUS"]??"",
+//               cart["PRODUCT_COUNT"]??0,
+//               cart["CATEROGYID"]??"",
+//               cart["CATEROGY_NAME"]??"",
+//               cart["TOTAL_NUMBER OF PRODUCTS"]??""
+//           ));
+//           notifyListeners();
+//           print("cart details"+cartList.toString());
+//           print("rrrrrrrr  :"+cartList.length.toString());
+//           print("Product Price:${cart["PRODUCT_PRICE"]}");
+//
+//         }
+//       }
+//     });
+//   }
+//
+//
+//   // Function to calculate and add grand total to Firestore
+//   void addGrandTotalToUsers(String userId){
+//     // First, calculate the grand total
+//     double grandTotal=calculateGrandTotal();
+//     // Prepare the data to store in Firestore
+//     Map<String,dynamic>cart_total={
+//       "CART_GRANDTOTAL":grandTotal
+//     };
+//     db.collection("USERS").doc(userId).set(cart_total,SetOptions(merge: true)).then((value) {
+//       print("GRAND TOTAL UPDATED SUCCESSFULLY!----");
+//     },).catchError((error){
+//       print("FAILED TO UPDATE GRAND TOTAL :$error");
+//     });
+//   }
+//
+//   // Grand total calculation
+//   double calculateGrandTotal() {
+//     double grandTotal = 0.0;
+//     for (var product in cartList) {
+//       String productId = product.pid;
+//       double productTotal = double.parse(totalPriceController[productId]?.text ?? '0');
+//       grandTotal += productTotal;
+//     }
+//     return grandTotal;
+//   }
+//
+//   // Method to update grand total
+//   void updateGrandTotal() {
+//     notifyListeners(); // Notify the UI that the grand total has changed
+//   }
+//   double grandTotal=0.0;
+//   void getGrandTotal(String userId)async{
+//     try{
+//       DocumentSnapshot doc=await db.collection("USERS").doc(userId).get();
+//       if (doc.exists){
+//         if(doc.data()!=null&&doc["CART_GRANDTOTAL"]!=null){
+//           grandTotal=doc["CART_GRANDTOTAL"];
+//           notifyListeners();
+//         }
+//       }
+//     }
+//     catch(e){
+//       print("Failed to fetch grand total:$e");
+//     }
+//
+//   }
+//
+//   void deleteProductFromCart(String userId,String productId){
+//     db.collection("USERS").doc(userId).collection("CART").doc(productId).delete();
+//     print("You deleted product from cart-----------------");
+//     getAddedCart(userId);
+//     notifyListeners();
+//   }
 // ---------------------------------------------ADD TO BUY NOW-----------------------------------------------------------------
 
   // Map to hold TextEditingControllers for each product
@@ -947,6 +1161,47 @@ class MainProvider extends ChangeNotifier{
 
   }
 
+
+
+  // void addToBuyNow(BuildContext context, String pimg, String pname, String price, String userId, String productId) {
+  //   int productCount = 0;
+  //   if (countBuyController[productId] != null) {
+  //     productCount = int.parse(countBuyController[productId]!.text);
+  //   }
+  //
+  //   double totalPrice = 0;
+  //   if (totalPriceBuyController[productId] != null) {
+  //     totalPrice = double.parse(totalPriceBuyController[productId]!.text);
+  //   }
+  //
+  //   HashMap<String, dynamic> buy = HashMap();
+  //   buy["PRODUCT_NAME"] = pname;
+  //   buy["PRODUCT_IMAGE"] = pimg;
+  //   buy["PRODUCT_PRICE"] = price;
+  //   buy["PRODUCT_COUNT"] = productCount;
+  //   buy["TOTAL_PRICE"] = totalPrice;
+  //
+  //   db.collection("USERS").doc(userId).collection("BUY_NOW").doc(productId).set(buy, SetOptions(merge: true)).then((_) {
+  //     // Show Snackbar after successful addition
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('$pname successfully added to order'),
+  //         duration: Duration(seconds: 2), // Duration for how long the snackbar will be visible
+  //       ),
+  //     );
+  //   }).catchError((error) {
+  //     // Handle any errors that occur during the set operation
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Failed to add product: $error'),
+  //         duration: Duration(seconds: 2),
+  //       ),
+  //     );
+  //   });
+  //
+  //   notifyListeners();
+  // }
+
   List<ProductModel>buynowList=[];
 
   void getBuyNow(String userId){
@@ -978,6 +1233,155 @@ class MainProvider extends ChangeNotifier{
       }
     });
   }
+  // ----------------------------------------------------ADD TO ORDER------------------------------------------------------------------------------------
+  Future<void> addToOrder(String userId,String  from) async {
+
+    try {
+
+      // Get documents from the CART collection
+      QuerySnapshot getCart = await db.collection("USERS").doc(userId).collection("CART").get();
+      List<DocumentSnapshot> cartDocs = getCart.docs;
+
+      // Get documents from the BUY_NOW collection
+      QuerySnapshot getBuy = await db.collection("USERS").doc(userId).collection("BUY_NOW").get();
+      List<DocumentSnapshot> buyDocs = getBuy.docs;
+
+      // List to hold all items for the order
+      List<Map<dynamic, dynamic>> orderItems = [];
+
+      // Add items from CART to the order list
+      for (var doc in cartDocs) {
+        orderItems.add({
+          "PRODUCT_NAME": doc["PRODUCT_NAME"],
+          "PRODUCT_COUNT": doc["PRODUCT_COUNT"],
+          "PRODUCT_IMAGE": doc["PRODUCT_IMAGE"],
+          "PRODUCT_PRICE": doc["PRODUCT_PRICE"],
+          "TOTAL_PRICE": doc["TOTAL_PRICE"]
+        });
+      }
+
+      // Add items from BUY_NOW to the order list
+      for (var doc in buyDocs) {
+        orderItems.add({
+          "PRODUCT_NAME": doc["PRODUCT_NAME"],
+          "PRODUCT_COUNT": doc["PRODUCT_COUNT"],
+          "PRODUCT_IMAGE": doc["PRODUCT_IMAGE"],
+          "PRODUCT_PRICE": doc["PRODUCT_PRICE"],
+          "TOTAL_PRICE": doc["TOTAL_PRICE"]
+        });
+      }
+
+      // Save the order items to the ORDER collection
+      if (orderItems.isNotEmpty) {
+        await db.collection("ORDER").doc(userId).set({
+          "USER_ID": userId,
+          "ORDER_ITEMS": orderItems,
+          "ORDER_DATE": FieldValue.serverTimestamp()
+
+        });
+        print("Order added successfully for user: $userId");
+      } else {
+        print("No items found in CART or BUY_NOW to create an order");
+      }
+    } catch (e) {
+      print("Error adding order: $e");
+    }
+  }
+
+  List<dynamic> orderList = [];
+
+  Future<void> getOrder(String userId) async {
+    try {
+      DocumentSnapshot orderDoc = await db.collection("ORDER").doc(userId).get();
+      if (orderDoc.exists) {
+        Map<String, dynamic> orderData = orderDoc.data() as Map<String, dynamic>;
+        orderList = orderData["ORDER_ITEMS"];
+        notifyListeners();
+      } else {
+        print("No order found for user: $userId");
+        orderList = []; // Clear the list if no order is found
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Error retrieving order: $e");
+    }
+  }
+
+  List<Map<String, dynamic>> allordersList = [];
+
+  // Future<List<Map<String, dynamic>>> getAllOrders() async {
+  //   try {
+  //     // Clear the list to avoid accumulating data on multiple calls
+  //     allordersList.clear();
+  //
+  //     // Fetch all documents from the ORDER collection
+  //     QuerySnapshot orderSnap = await db.collection("ORDER").get();
+  //
+  //     // Iterate through each document
+  //     for (var doc in orderSnap.docs) {
+  //       // Safely access the document data
+  //       Map<String, dynamic>? orderData = doc.data() as Map<String, dynamic>?;
+  //
+  //       // Check if orderData is not null before adding to the list
+  //       if (orderData != null) {
+  //         allordersList.add(orderData);
+  //         print("Retrieved ${allordersList.length} orders successfully.");
+  //       } else {
+  //         print("Order data is null for document ID: ${doc.id}");
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("Error retrieving all orders: $e");
+  //   }
+  //   return allordersList;
+  // }
+  // Future<void> getAllOrders() async {
+  //   try {
+  //
+  //     allordersList.clear();
+  //     QuerySnapshot orderSnap = await db.collection("ORDER").get();
+  //     for (var doc in orderSnap.docs) {
+  //       // Safely access the document data
+  //       Map<String, dynamic>? orderData = doc.data() as Map<String, dynamic>?;
+  //
+  //       // Check if orderData is not null before adding to the list
+  //       if (orderData != null) {
+  //         allordersList.add(orderData);
+  //         print("Added order:$orderData");
+  //         print("Current allordersList:");
+  //         print("Retrieved ${allordersList.length} orders successfully.");
+  //         for (var order in allordersList) {
+  //           print(order);
+  //         }
+  //       } else {
+  //         print("Order data is null for document ID: ${doc.id}");
+  //       }
+  //     }
+  //     notifyListeners();
+  //   } catch (e) {
+  //     print("Error retrieving all orders: $e");
+  //   }
+  //
+  // }
+  Future<void> getAllOrders() async {
+    try {
+      allordersList.clear();
+      QuerySnapshot orderSnap = await db.collection("ORDER").get();
+      for (var doc in orderSnap.docs) {
+        Map<String, dynamic>? orderData = doc.data() as Map<String, dynamic>?;
+        if (orderData != null) {
+          allordersList.add(orderData);
+          print("Added order: $orderData");
+        }
+      }
+      print("Fetched ${allordersList.length} orders.");
+      notifyListeners(); // Important: notify after updating the list
+    } catch (e) {
+      print("Error retrieving orders: $e");
+    }
+  }
+
+
 // ------------------------------------- TO GET THE LIKED PRODUCT IN WISHLIST-------------------------------------------------------------------------------------------
   bool isLiked=false;
   void toggleFavorite(String userId, String productId,BuildContext context) {

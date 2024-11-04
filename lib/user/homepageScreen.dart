@@ -126,8 +126,8 @@ class _UserHomePageState extends State<UserHomePage> {
                       ),
                     ),
                     currentAccountPicture: CircleAvatar(
-                      backgroundImage:
-                          AssetImage("assets/icons/profile-thin.png"),
+
+          backgroundImage: NetworkImage(valueDrawer.loginPhoto),
                       backgroundColor: cstgreen,
                     ),
                   ),

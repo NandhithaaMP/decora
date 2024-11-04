@@ -131,6 +131,7 @@ class _CartScreenState extends State<CartScreen> {
                                                       child: TextFormField(
                                                         controller: value.countController[productId],
                                                         readOnly: true,
+                                                        style: TextStyle(fontFamily: "muktamedium", fontSize: 18,color: Colors.black),
                                                         // Make it read-only
                                                       ),
                                                     ) ,
@@ -146,7 +147,7 @@ class _CartScreenState extends State<CartScreen> {
                                                   ],
                                                 ),
                                                 // Text("₹ "+value.cartList[index].price,style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
-                                                Text("Total:₹ ${value.totalPriceController[productId]?.text??"0.00"}",style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
+                                                Text("Total:₹ ${value.totalPriceController[productId]?.text??0.00}",style: TextStyle(fontFamily: "muktamedium",fontSize: 18),),
 
 
                                               ],
@@ -195,6 +196,7 @@ class _CartScreenState extends State<CartScreen> {
                                 onTap: () {
                                   mprovider.addGrandTotalToUsers(widget.userId);
                                   value.getUsers();
+                                  value.addToOrder(widget.userId);
                                   callNext(context, OrderSummaryScreen(userId: widget.userId,));
                                 },
                                 child: Container(

@@ -59,6 +59,7 @@ class LoginProvider extends ChangeNotifier {
             // Optionally add any logic required for the admin
 
             // mainPro.addCategory();
+            mainPro.getAllOrders();
             mainPro.getCategory();
             mainPro.getAddedProduct();
             // mainPro.logOutAlert(context);

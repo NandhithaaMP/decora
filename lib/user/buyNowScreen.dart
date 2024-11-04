@@ -1,7 +1,10 @@
+import 'package:decora/Designer/editDprofile.dart';
+import 'package:decora/constants/call_functions.dart';
 import 'package:decora/models/adminModel.dart';
 import 'package:decora/provider/loginProvider.dart';
 import 'package:decora/provider/mainProvider.dart';
 import 'package:decora/user/cartScreen.dart';
+import 'package:decora/user/successScreen.dart';
 import 'package:decora/user/wishListScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -198,12 +201,17 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                                     fontWeight: FontWeight.bold
                                 ),
                               ),
-                              Text("Change",
-                                style: TextStyle(color: Colors.black,
-                                    fontFamily:"mukta",
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600
-                                ),)
+                              GestureDetector(
+                                onTap: () {
+                                  callNext(context, EditDProfile(user_id: widget.userId));
+                                },
+                                child: Text("Change",
+                                  style: TextStyle(color: Colors.black,
+                                      fontFamily:"mukta",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600
+                                  ),),
+                              )
                             ],
                           ),
                         ),
@@ -265,6 +273,7 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                             InkWell(
                               onTap: () {
                                 print(widget.userId+"hhhhhhhhhhhhhhhhhhhhh");
+                                value.clearCart();
                                 value.addToCart(widget.userId, widget.item.pid,widget.item.productImage,widget.item.price,widget.item.productName,);
                                 Navigator.push(
                                     context,
@@ -402,25 +411,57 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 10,),
-                                                      GestureDetector(onTap: () {
-                                                        value.addToBuyNow(product.productImage, product.productName, product.price, widget.userId,productId);
-                                                      },
-
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          // Show a confirmation dialog when "Place order" is clicked
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext context) {
+                                                              return AlertDialog(
+                                                                title: Text("Confirmation"), // Title of the dialog
+                                                                content: Text("Are you sure to buy this product?"), // Confirmation message
+                                                                actions: <Widget>[
+                                                                  TextButton(
+                                                                    onPressed: () {
+                                                                      // Close the dialog if the user selects "No"
+                                                                      Navigator.of(context).pop();
+                                                                    },
+                                                                    child: Text("No"), // Button to cancel the action
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed: () {
+                                                                      // Place the order if the user selects "Yes"
+                                                                      value.addToBuyNow(
+                                                                        product.productImage, // Product image
+                                                                        product.productName, // Product name
+                                                                        product.price, // Product price
+                                                                        widget.userId, // User ID
+                                                                        productId, // Product ID
+                                                                      );
+                                                                      value.addToOrder(widget.userId,);
+                                                                      // Close the dialog after placing the order
+                                                                      Navigator.of(context).pop();
+                                                                    },
+                                                                    child: Text("Yes"), // Button to confirm the action
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+                                                        },
                                                         child: Container(
-                                                          height: height/20,
-                                                          width: width/3,
+                                                          height: height / 20,
+                                                          width: width / 3,
                                                           decoration: BoxDecoration(
                                                             color: Colors.yellow,
                                                             borderRadius: BorderRadius.circular(20),
                                                           ),
                                                           child: Center(
-                                                            child: Text(
-                                                                "Place order"
-                                                            ),
+                                                            child: Text("Place order"), // Button text
                                                           ),
-
                                                         ),
                                                       ),
+
 
                                                     ],
                                                   ),

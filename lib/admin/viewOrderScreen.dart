@@ -1,7 +1,10 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/constant_color.dart';
+import '../provider/mainProvider.dart';
 
 class ViewOrderScreen extends StatelessWidget {
   const ViewOrderScreen({super.key});
@@ -10,65 +13,111 @@ class ViewOrderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: green,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(40),
         child: AppBar(
-          backgroundColor:  Color(0xff16403B),
-
+          backgroundColor: Color(0xff16403B),
           flexibleSpace: Container(
             decoration: BoxDecoration(
-                gradient: cstgradient,
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20))),
+              gradient: cstgradient,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
           ),
           title: Text(
             "VIEW ORDERS",
-            style: TextStyle(fontFamily: "tradeWinds", fontSize: 20,color:Color(0xff16403B)),
+            style: TextStyle(
+              fontFamily: "tradeWinds",
+              fontSize: 20,
+              color: Color(0xff16403B),
+            ),
           ),
           centerTitle: true,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add your onPressed code here!
-          print('FAB Pressed!');
-        },
-        child: Icon(Icons.add),
-        // tooltip: 'Increment',
-        backgroundColor: textColor,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SizedBox.expand(
         child: Container(
-          decoration: BoxDecoration(
-              gradient: screenGradient
-          ),
+          decoration: BoxDecoration(gradient: screenGradient),
           child: Column(
             children: [
-              SizedBox(height: 30,),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListView.builder(
-                  itemCount: 5,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return  Container(
-                      height: height/12,
-                      width: width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: textColor,
-                      ),margin: EdgeInsets.only(bottom: 5),
-                      child: Center(child: Text("Lamp",style: TextStyle(fontFamily: "philosopher",fontSize: 20),)),
-                    );
-                  },
-
-                ),
-              )
+              SizedBox(height: 10),
+              Consumer<MainProvider>(
+                builder: (context, oValue, child) {
+                  return Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: oValue.allordersList.length,
+                      itemBuilder: (context, index) {
+                        var order = oValue.allordersList[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Container(
+                            height: height / 8,
+                            width: width,
+                            decoration: BoxDecoration(
+                              color: Color(0xffB6A683),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Container(
+                                    height: height / 8,
+                                    width: width / 5,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                    ),
+                                    child: Image.network(
+                                      order["PRODUCT_IMAGE"],
+                                      fit: BoxFit.fill,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Icon(Icons.error, color: Colors.red);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      order["PRODUCT_NAME"] ?? "N/A",
+                                      style: TextStyle(
+                                        fontFamily: "muktamedium",
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Qty: ${order["PRODUCT_COUNT"] ?? '0'}",
+                                      style: TextStyle(
+                                        fontFamily: "muktamedium",
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    Text(
+                                      "\$${(order["TOTAL_PRICE"] as num).toStringAsFixed(2)}",
+                                      style: TextStyle(
+                                        fontFamily: "muktamedium",
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),

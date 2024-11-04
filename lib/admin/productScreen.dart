@@ -49,7 +49,7 @@ class ProductScreen extends StatelessWidget {
                       onTap: () {
                         value.getCategory();
                         value.clearAddedProduct();
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductScreen(),));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductScreen(from: "NEW", oldid: '',),));
                       },
                       child: Container(
                         height: height/12,

@@ -34,7 +34,12 @@ class AdminHomeScreen extends StatelessWidget {
     List<Widget> screens=[
       AddCategoryScreen(),
       ProductScreen(),
-      ViewOrderScreen(),
+      Consumer<MainProvider>(
+        builder: (context,pValue,child) {
+          pValue.getAllOrders();
+          return ViewOrderScreen();
+        }
+      ),
       Consumer<MainProvider>(
         builder: (contex,dValue,child) {
           dValue.getDesigners();

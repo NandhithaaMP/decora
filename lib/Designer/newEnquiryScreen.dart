@@ -1,6 +1,7 @@
 import 'package:decora/Designer/uploadWorkScreen.dart';
 import 'package:decora/constants/constant_color.dart';
 import 'package:decora/constants/constant_color.dart';
+import 'package:decora/provider/loginProvider.dart';
 import 'package:decora/provider/mainProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,109 +41,113 @@ class NewEnquiryScreen extends StatelessWidget {
           centerTitle: true,
         ),
       ),
-      drawer: Drawer(
-        backgroundColor: cstgreen,
-        child: ListView(
-          children: [
+      drawer: Consumer<LoginProvider>(
+        builder: (context,dValue,child) {
+          return Drawer(
+            backgroundColor: cstgreen,
+            child: ListView(
+              children: [
 
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFCBB480),
-                    Color(0xff16403B),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-              child: UserAccountsDrawerHeader(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide.none,
-                  ),
-                  color: Colors.transparent, // Make the background transparent
-                ),
-
-                accountName: Text(
-                  "Nandhitha",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: "muktaregular",
-                    fontSize: 20,
-                  ),
-                ),
-                accountEmail: Text(
-                  "nandhithampnandhu@gmail.com",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: "muktaregular",
-                    fontSize: 16,
-                  ),
-                ),
-                currentAccountPicture: CircleAvatar(
-                  backgroundImage: AssetImage("assets/icons/profile-thin.png"),
-                  backgroundColor: cstgreen,
-                ),
-              ),
-            ),
-            // Container(color: Colors.red,height: 5,),
-            ListTile(
-              leading: Image.asset("assets/icons/profile-thin.png", scale: 15),
-              title: Text(
-                "PROFILE",
-                style: TextStyle(
-                  fontFamily: "philosopher",
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => DesignerProfileScreen(userId: '',),
-                )
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.upload,color: textColor,),
-              title: Text(
-                "UPLOAD WORK",
-                style: TextStyle(
-                  fontFamily: "philosopher",
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder:(context) => UploadWorkScreen(designerId: userId,),
-                )
-                );
-              },
-            ),
-            Consumer<MainProvider>(
-              builder: (context,val,child) {
-                return GestureDetector(
-                  onTap: () {
-                    val.logOutAlert(context);
-                  },
-                  child: ListTile(
-                    leading: Image.asset("assets/icons/signout.png", scale: 5),
-                    title: Text(
-                      "SIGN OUT ",
-                      style: TextStyle(
-                        fontFamily: "philosopher",
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFCBB480),
+                        Color(0xff16403B),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
                   ),
-                );
-              }
+                  child: UserAccountsDrawerHeader(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide.none,
+                      ),
+                      color: Colors.transparent, // Make the background transparent
+                    ),
+
+                    accountName: Text(
+                      dValue.loginName,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: "muktaregular",
+                        fontSize: 20,
+                      ),
+                    ),
+                    accountEmail: Text(
+                      dValue.loginPhoneNumber,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: "muktaregular",
+                        fontSize: 16,
+                      ),
+                    ),
+                    currentAccountPicture: CircleAvatar(
+                      backgroundImage: NetworkImage(dValue.loginPhoto),
+                      backgroundColor: cstgreen,
+                    ),
+                  ),
+                ),
+                // Container(color: Colors.red,height: 5,),
+                ListTile(
+                  leading: Image.asset("assets/icons/profile-thin.png", scale: 15),
+                  title: Text(
+                    "PROFILE",
+                    style: TextStyle(
+                      fontFamily: "philosopher",
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => DesignerProfileScreen(userId: '',),
+                    )
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.upload,color: textColor,),
+                  title: Text(
+                    "UPLOAD WORK",
+                    style: TextStyle(
+                      fontFamily: "philosopher",
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder:(context) => UploadWorkScreen(designerId: userId,),
+                    )
+                    );
+                  },
+                ),
+                Consumer<MainProvider>(
+                  builder: (context,val,child) {
+                    return GestureDetector(
+                      onTap: () {
+                        val.logOutAlert(context);
+                      },
+                      child: ListTile(
+                        leading: Image.asset("assets/icons/signout.png", scale: 5),
+                        title: Text(
+                          "SIGN OUT ",
+                          style: TextStyle(
+                            fontFamily: "philosopher",
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        }
       ),
       body: SingleChildScrollView(
         child: Column(

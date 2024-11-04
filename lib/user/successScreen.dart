@@ -1,10 +1,13 @@
+import 'package:decora/constants/call_functions.dart';
+import 'package:decora/user/cartScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constant_color.dart';
 
-class SuccesScreen extends StatelessWidget {
-  const SuccesScreen({super.key});
+class SuccessScreen extends StatelessWidget {
+  String userID;
+  SuccessScreen({super.key,required this.userID});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +56,11 @@ class SuccesScreen extends StatelessWidget {
                 )
 
             ),
-          )
+          ),
+          SizedBox(height: 20,),
+          ElevatedButton(onPressed: () {
+            callNext(context, CartScreen(userId: userID,));
+          }, child: Text("Done"))
         ],
       ),
     );
