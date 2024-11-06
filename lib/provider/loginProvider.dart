@@ -86,7 +86,7 @@ class LoginProvider extends ChangeNotifier {
             print("I entered in designer side");
             mainPro.getDesignerWork(loginUserId);
 
-            callNextReplacement(context, DesignerBottomNavigation(userId: loginUserId)); // Navigate to designer screen
+            callNextReplacement(context, DesignerBottomNavigation(userId: loginUserId, name: loginName, phone: loginPhoneNumber,)); // Navigate to designer screen
             print("Navigating to Verify Designers Screen");
 
             // mainPro.addDesignerWork();

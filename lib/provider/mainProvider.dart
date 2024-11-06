@@ -1527,34 +1527,87 @@ notifyListeners();
     notifyListeners();
   }
 
-  Future<void> startChat(String senderId,String recieverId,String message) async {
-    String id=DateTime.now().millisecondsSinceEpoch.toString();
-    String chatId=senderId.compareTo(recieverId)<0?"$senderId-$recieverId":"$recieverId-$senderId";
-    Map<String,dynamic>chatData={
-      "CREATED_AT":FieldValue.serverTimestamp(),
-      "LAST_MESSAGE":{
-        "SENT_BY":senderId,
-        "TEXT":message,
-        "TIMPSTAMP":FieldValue.serverTimestamp()
+  // TextEditingController chatTextController=TextEditingController();
+  //
+  // Future<void> startChat(String senderId,String receiverId,String message) async {
+  //   String id=DateTime.now().millisecondsSinceEpoch.toString();
+  //   String chatId=senderId.compareTo(receiverId)<0?"$senderId-$receiverId":"$receiverId-$senderId";
+  //   Map<String,dynamic>chatData={
+  //     "CREATED_AT":id,
+  //     "LAST_MESSAGE":{
+  //       "SENT_BY":senderId,
+  //       "TEXT":message,
+  //       "TIMPSTAMP":id
+  //     },
+  //     "PARTICIPANTS":[senderId,receiverId]
+  //   };
+  //   await db.collection("CHAT").doc(chatId).set(chatData,SetOptions(merge:  true));
+  //
+  //
+  //   Map<String ,dynamic> messageData={
+  //     "CONENT":message,
+  //     "IS_SEEN":false,
+  //     "MESSAGE_TYPE":"TEXT",
+  //     "RECEIVER_ID":receiverId,
+  //     "SENDER_ID":senderId,
+  //     "TIMESTAMP":id
+  //   };
+  //   db.collection("CHAT").doc(chatId).collection("MESSAGE").doc(id).set(messageData);
+  //   notifyListeners();
+  // }
+
+// -----------------------------CHAT--------------------------------------------------------------------------------
+  final TextEditingController messageController = TextEditingController();
+  List<String> messages = [];
+  Future<void> sendMessage(String senderId, String receiverId) async {
+    if (messageController.text.trim().isEmpty) return;
+
+    String message = messageController.text.trim();
+    messageController.clear();
+    await startChat(senderId, receiverId, message);
+  }
+
+  Future<void> startChat(String senderId, String receiverId, String message) async {
+    DateTime date=DateTime.now();
+    String id = date.millisecondsSinceEpoch.toString();
+    String chatId = senderId.compareTo(receiverId) < 0 ? "$senderId-$receiverId" : "$receiverId-$senderId";
+
+    Map<String, dynamic> chatData = {
+      "CREATED_AT": date,
+      "LAST_MESSAGE": {
+        "SENT_BY": senderId,
+        "TEXT": message,
+        "TIMESTAMP": date,
       },
-      "PARTICIPANTS":[senderId,recieverId]
+      "PARTICIPANTS": [senderId, receiverId],
     };
-    await db.collection("CHAT").doc(chatId).set(chatData,SetOptions(merge:  true));
 
+    await db.collection("CHAT").doc(chatId).set(chatData, SetOptions(merge: true));
 
-    Map<String ,dynamic> messageData={
-      "CONENT":message,
-      "IS_SEEN":false,
-      "MESSAGE_TYPE":"TEXT",
-      "RECIVER_ID":recieverId,
-      "SENDER_ID":senderId,
-      "TIMESTAMP":FieldValue.serverTimestamp()
+    Map<String, dynamic> messageData = {
+      "CONTENT": message,
+      "IS_SEEN": false,
+      "MESSAGE_TYPE": "TEXT",
+      "RECEIVER_ID": receiverId,
+      "SENDER_ID": senderId,
+      "TIMESTAMP": date,
     };
-    db.collection("CHAT").doc(chatId).collection("MESSAGE").doc(id).set(messageData);
+    await db.collection("CHAT").doc(chatId).collection("MESSAGE").doc(id).set(messageData);
     notifyListeners();
+  }
+
+  void dispose() {
+    messageController.dispose();
+    super.dispose();
   }
 
 
 }
+
+
+
+
+
+
 
 

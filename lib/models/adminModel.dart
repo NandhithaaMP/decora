@@ -59,3 +59,15 @@ class UsersModel{
   String userImage;
   UsersModel(this.id,this.usersName,this.usersPassword,this.usersPhoneNumber,this.designation,this.usersPlace,this.usersAddress,this.userImage);
 }
+
+// ----------------------------------CHAT--------------------------------------------
+
+class MessageModel{
+  String content;
+  String senderId;
+  String receiverId;
+  DateTime timestamp;
+  bool isSeen;
+  String messageType;
+  MessageModel(this.content,this.senderId,this.receiverId,this.timestamp,this.isSeen,this.messageType);
+}

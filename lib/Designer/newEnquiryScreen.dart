@@ -15,8 +15,8 @@ import '../constants/constant_color.dart';
 import 'designerProfileScreen.dart';
 
 class NewEnquiryScreen extends StatelessWidget {
-  String userId;
-  NewEnquiryScreen({super.key,required this.userId});
+  String userId,name,phone;
+  NewEnquiryScreen({super.key,required this.userId,required this.name,required this.phone});
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +165,7 @@ class NewEnquiryScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      callNext(context, ChatScreen());
+                      callNext(context, ChatScreen(userId: userId, name: '', phone: '',));
                     },
                     child: Container(
                       height: height / 9.5,

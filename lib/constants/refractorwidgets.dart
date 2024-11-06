@@ -91,7 +91,7 @@ void showAlertDialog(BuildContext context, String action) {
                 child: Text("Yes"),
                 onPressed: () {
 
-                  callNext(context, ChatScreen());
+                  callNext(context, ChatScreen(userId: '', name: '', phone: '',));
                   // Navigator.of(context).pop(); // Close the first dialog
                   // showAlertConformationDialog(context, action); // Show the confirmation dialog
                 },
@@ -104,35 +104,35 @@ void showAlertDialog(BuildContext context, String action) {
   );
 }
 
-void showAlertConformationDialog(BuildContext context, String action) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("Final Confirmation"),
-        content: Text("You have chosen to $action. Are you sure?"),
-        actions: <Widget>[
-          TextButton(
-            child: Text("Cancel"),
-            onPressed: () {
-              Navigator.of(context).pop(); // Close this dialog and stay on the same screen
-            },
-          ),
-          TextButton(
-            child: Text("Yes"),
-            onPressed: () {
-              callNext(context, ChatScreen());
-              // Navigator.of(context).pop(); // Close the confirmation dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('You selected to $action!')),
-              );
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+// void showAlertConformationDialog(BuildContext context, String action) {
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         title: Text("Final Confirmation"),
+//         content: Text("You have chosen to $action. Are you sure?"),
+//         actions: <Widget>[
+//           TextButton(
+//             child: Text("Cancel"),
+//             onPressed: () {
+//               Navigator.of(context).pop(); // Close this dialog and stay on the same screen
+//             },
+//           ),
+//           TextButton(
+//             child: Text("Yes"),
+//             onPressed: () {
+//               callNext(context, ChatScreen());
+//               // Navigator.of(context).pop(); // Close the confirmation dialog
+//               ScaffoldMessenger.of(context).showSnackBar(
+//                 SnackBar(content: Text('You selected to $action!')),
+//               );
+//             },
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }
 
 
 void showDeleteConfirmationDialog(BuildContext context, String id,String  from) {
