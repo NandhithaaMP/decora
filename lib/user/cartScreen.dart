@@ -9,24 +9,18 @@ import '../provider/mainProvider.dart';
 import 'orderSummaryScreen.dart';
 
 
-class CartScreen extends StatefulWidget {
+class CartScreen extends StatelessWidget {
   final String userId;
   CartScreen({super.key,
     required this.userId
   });
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends State<CartScreen> {
-
-  @override
   Widget build(BuildContext context) {
     var width=MediaQuery.of(context).size.width;
     var height=MediaQuery.of(context).size.height;
     MainProvider mprovider =Provider.of<MainProvider>(context,listen: false);
-    mprovider.getGrandTotal(widget.userId);
+    mprovider.getGrandTotal(userId);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(40),
@@ -65,12 +59,12 @@ class _CartScreenState extends State<CartScreen> {
                         shrinkWrap: true,
                         itemCount:value.cartList.length ,
                         physics: ScrollPhysics(),
-                        itemBuilder: (context, index) {
+                        itemBuilder: (context44, index)   {
                           var product=value.cartList[index];
                           String productId=product.pid;
-                          double unitPrice=double.parse(product.price);
+                          double unitPrice=double.parse(product.price.toString());
                           // Initialize controllers for each product
-                          mprovider.initController(productId, unitPrice);
+                           mprovider.initController(productId, unitPrice);
 
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -121,7 +115,7 @@ class _CartScreenState extends State<CartScreen> {
                                                     IconButton(
 
                                                       onPressed: () {
-                                                        mprovider.decrement(productId, unitPrice, widget.userId);
+                                                        mprovider.decrement(productId, unitPrice, userId);
                                                       },
                                                       icon: Icon(Icons.remove),
                                                       color: Colors.red,
@@ -138,7 +132,7 @@ class _CartScreenState extends State<CartScreen> {
 
                                                     IconButton(
                                                       onPressed: () {
-                                                        mprovider.increment(productId, unitPrice, widget.userId) ;
+                                                        mprovider.increment(productId, unitPrice, userId) ;
                                                         print("hhhhhhhhhhgvhgvhg ${value.countController[productId]}");
                                                         },
                                                       icon: Icon(Icons.add),
@@ -161,7 +155,7 @@ class _CartScreenState extends State<CartScreen> {
                                       padding: const EdgeInsets.only(right: 10),
                                       child: GestureDetector(
                                           onTap: () {
-                                            _showAlertDialog(context,"Delete",widget.userId,productId);
+                                            _showAlertDialog(context,"Delete",userId,productId);
                                           },
                                           child: Image.asset("assets/icons/delete.png",scale: 20,)),
                                     ),
@@ -194,10 +188,11 @@ class _CartScreenState extends State<CartScreen> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  mprovider.addGrandTotalToUsers(widget.userId);
+                                  mprovider.addGrandTotalToUsers(userId);
                                   value.getUsers();
-                                  value.addToOrder(widget.userId);
-                                  callNext(context, OrderSummaryScreen(userId: widget.userId,));
+                                  // value.addToOrder(userId, "CART", );
+                                  value.addToOrder(userId, );
+                                  callNext(context, OrderSummaryScreen(userId: userId,));
                                 },
                                 child: Container(
                                   height: 50,
@@ -225,6 +220,7 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 }
+
 void _showAlertDialog(BuildContext context,String action,String userId,String productId){
   showDialog(context: context, builder: (BuildContext context){
 

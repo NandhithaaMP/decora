@@ -1,8 +1,10 @@
+import 'package:decora/constants/call_functions.dart';
 import 'package:decora/constants/constant_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../Designer/chatBoxScreen.dart';
 import '../provider/mainProvider.dart';
 
 Widget btn (double height,double width,Color mycolor,double radius ){
@@ -75,7 +77,7 @@ void showAlertDialog(BuildContext context, String action) {
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text("Confirmation"),
-        content: Text("Do you want to connect?"),
+        content: Text("Do you want to connect with designer?"),
         actions: <Widget>[
           TextButton(
             child: Text("Cancel"),
@@ -83,12 +85,18 @@ void showAlertDialog(BuildContext context, String action) {
               Navigator.of(context).pop(); // Close the dialog and stay on the same screen
             },
           ),
-          TextButton(
-            child: Text("Yes"),
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the first dialog
-              showAlertConformationDialog(context, action); // Show the confirmation dialog
-            },
+          Consumer<MainProvider>(
+            builder: (context1,value1,child) {
+              return TextButton(
+                child: Text("Yes"),
+                onPressed: () {
+
+                  callNext(context, ChatScreen());
+                  // Navigator.of(context).pop(); // Close the first dialog
+                  // showAlertConformationDialog(context, action); // Show the confirmation dialog
+                },
+              );
+            }
           ),
         ],
       );
@@ -113,7 +121,8 @@ void showAlertConformationDialog(BuildContext context, String action) {
           TextButton(
             child: Text("Yes"),
             onPressed: () {
-              Navigator.of(context).pop(); // Close the confirmation dialog
+              callNext(context, ChatScreen());
+              // Navigator.of(context).pop(); // Close the confirmation dialog
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('You selected to $action!')),
               );

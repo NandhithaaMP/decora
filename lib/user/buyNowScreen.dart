@@ -156,7 +156,7 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                               ),
                             ),
                             SizedBox(height: 20),
-                            Text("₹ "+widget.item.price,
+                            Text("₹ "+widget.item.price.toString(),
                                 style: TextStyle(
                                     fontFamily: "mukta",
                                     color: Color(0xffE4A951),
@@ -274,7 +274,7 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                               onTap: () {
                                 print(widget.userId+"hhhhhhhhhhhhhhhhhhhhh");
                                 value.clearCart();
-                                value.addToCart(widget.userId, widget.item.pid,widget.item.productImage,widget.item.price,widget.item.productName,);
+                                value.addToCart(widget.userId, widget.item.pid,widget.item.productImage,widget.item.price.toString(),widget.item.productName,);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -303,7 +303,7 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                                   onTap: () {
                                     var product=widget.item;
                                     String productId=product.pid;
-                                    double unitPrice=double.parse(product.price);
+                                    double unitPrice=double.parse(product.price.toString());
                                     // Initialize controllers for each product
                                     mprovider.initBuyController(productId, unitPrice);
 
@@ -434,11 +434,12 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                                                                       value.addToBuyNow(
                                                                         product.productImage, // Product image
                                                                         product.productName, // Product name
-                                                                        product.price, // Product price
+                                                                        product.price.toString(), // Product price
                                                                         widget.userId, // User ID
                                                                         productId, // Product ID
                                                                       );
-                                                                      value.addToOrder(widget.userId,);
+                                                                      // value.addToOrder(widget.userId,"BUY");
+                                                                      value.addToOrder(widget.userId);
                                                                       // Close the dialog after placing the order
                                                                       Navigator.of(context).pop();
                                                                     },

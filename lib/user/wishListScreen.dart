@@ -91,12 +91,12 @@ class WishListScreen extends StatelessWidget {
                                       ),
                                       SizedBox(height: 10,),
                                       Text(cdproduct.productName,style: TextStyle(color: Colors.white,fontFamily: "philosopher",fontSize: 15),),
-                                      Text(cdproduct.price,style: TextStyle(color: Colors.white,fontFamily: "mukta",fontSize: 20),),
+                                      Text(cdproduct.price.toString(),style: TextStyle(color: Colors.white,fontFamily: "mukta",fontSize: 20),),
                                       Consumer<MainProvider>(
                                         builder: (context,cartvalue,child) {
                                           return GestureDetector(
                                             onTap: () {
-                                              cartvalue.addToCart(userId, cdproduct.pid, cdproduct.productImage, cdproduct.price, cdproduct.productName);
+                                              cartvalue.addToCart(userId, cdproduct.pid, cdproduct.productImage, cdproduct.price.toString(), cdproduct.productName);
                                             },
                                             child: Container(
                                               height: height/15,

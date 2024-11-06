@@ -51,9 +51,9 @@ class ViewOrderScreen extends StatelessWidget {
                   return Expanded(
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: oValue.allordersList.length,
+                      itemCount: oValue.allOrdersList.length,
                       itemBuilder: (context, index) {
-                        var order = oValue.allordersList[index];
+                        var order = oValue.allOrdersList[index];
                         return Padding(
                           padding: const EdgeInsets.all(5),
                           child: Container(
@@ -101,7 +101,8 @@ class ViewOrderScreen extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      "\$${(order["TOTAL_PRICE"] as num).toStringAsFixed(2)}",
+                                      // "\$${(order["TOTAL_PRICE"] as num).toStringAsFixed(2)}",
+                                      "\$${(order["TOTAL_PRICE"])}",
                                       style: TextStyle(
                                         fontFamily: "muktamedium",
                                         fontSize: 18,

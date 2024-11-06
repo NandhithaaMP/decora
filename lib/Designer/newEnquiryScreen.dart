@@ -1,4 +1,6 @@
+import 'package:decora/Designer/chatBoxScreen.dart';
 import 'package:decora/Designer/uploadWorkScreen.dart';
+import 'package:decora/constants/call_functions.dart';
 import 'package:decora/constants/constant_color.dart';
 import 'package:decora/constants/constant_color.dart';
 import 'package:decora/provider/loginProvider.dart';
@@ -155,80 +157,82 @@ class NewEnquiryScreen extends StatelessWidget {
             // SizedBox(height: 30,),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                // padding: EdgeInsets.zero,
-                itemCount: 5,
+              child:
+              ListView.builder(
+                itemCount: 2,
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return  Container(
-                    height: height/4.5,
-                    width: width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: textColor,
-                    ),margin: EdgeInsets.only(bottom: 5),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CircleAvatar(
-                                backgroundImage: AssetImage("assets/PROFILE.jpg"),
-                                radius: 45,
-                              ),
+                  return GestureDetector(
+                    onTap: () {
+                      callNext(context, ChatScreen());
+                    },
+                    child: Container(
+                      height: height / 9.5,
+                      width: width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: textColor,
+                      ),
+                      margin: EdgeInsets.only(bottom: 5),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child:
+                            CircleAvatar(
+                              backgroundImage: AssetImage("assets/PROFILE.jpg"),
+                              radius: 25,
                             ),
-                            Padding(
+                          ),
+                          Expanded(
+                            child: Padding(
                               padding: const EdgeInsets.only(left: 10),
-                              child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Nithina",style: TextStyle(fontFamily: "philosopher",fontSize: 18),),
-                                  Text("Kozhikode",style: TextStyle(fontFamily: "philosopher",fontSize: 18),),
-                                  Text("9876543210",style: TextStyle(fontFamily: "philosopher",fontSize: 18),),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Nithina",
+                                        style: TextStyle(
+                                          fontFamily: "philosopher",
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 8.0,right: 8),
+                                        child: Text(
+                                          "8.55 am",
+                                          style: TextStyle(
+                                            fontFamily: "philosopher",
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    "Hello",
+                                    style: TextStyle(
+                                      fontFamily: "philosopher",
+                                      fontSize: 18,
+                                      color: cstgreen,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                        // SizedBox(height: 5,),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal:55),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child:  ElevatedButton(style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.green)),
-                                  child: Text("Approve",style: TextStyle(color: Colors.black,fontFamily: "muktaregular"),),
-
-                                  onPressed: () {
-                                    _showAlertDialog(context,"Approve");
-                                  },
-                                )
-
-                              ),
-                              SizedBox(width: 30,),
-                              Expanded(
-                                child:
-                                ElevatedButton(style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
-                                  child: Text("Reject",style: TextStyle(color: Colors.black,fontFamily: "muktaregular"),),
-
-                                  onPressed: () {
-                                    _showAlertDialog(context,"Reject");
-                                  },
-                                )
-
-                              )
-                            ],
                           ),
-                        ),
-
-
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },
+              )
 
-              ),
             )
           ],
         ),

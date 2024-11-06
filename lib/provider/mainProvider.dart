@@ -238,7 +238,7 @@ class MainProvider extends ChangeNotifier{
             productList.add(ProductModel(
             element.id,
             map["PRODUCT_NAME"].toString()??"",
-            map["PRICE"].toString()??"",
+              double.tryParse(map["PRICE"].toString())??0,
             map["PRODUCT_DESCRIPTION"].toString()??"",
             map["DELIVERY_DURATION"].toString()??"",
             map["PHOTO"].toString()??"",
@@ -313,7 +313,7 @@ class MainProvider extends ChangeNotifier{
                 height: 35,
                 width: 100,
                 decoration: BoxDecoration(
-                  border: Border.all(color:Colors.yellow),
+                  // border: Border.all(color:Colors.yellow),
                   color: Colors.purple,
                   borderRadius: BorderRadius.circular(
                     10,
@@ -758,9 +758,12 @@ class MainProvider extends ChangeNotifier{
   Map<String,TextEditingController>countController={};
   Map<String,TextEditingController>totalPriceController={};
 // Method to initialize controllers
-  void initController(String productId, double unitPrice) {
+  initController(String productId, double unitPrice) async {
     countController[productId] ??= TextEditingController(text: '1'); // Default quantity 1
     totalPriceController[productId] ??= TextEditingController(text: unitPrice.toStringAsFixed(2));
+    print("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz ${countController[productId]?.text}  ");
+    print("xxxxxxxxxxxxxxxxxxxxxx   ${totalPriceController[productId]?.text}");
+    // notifyListeners();
   }
   // Increment function
   void increment(String productId, double unitPrice, String userId) {
@@ -823,6 +826,7 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
     cart["PRODUCT_PRICE"]=price; // Save the price as a string with 2 decimal places
     cart["PRODUCT_COUNT"]=productCount;
     cart["TOTAL_PRICE"]=totalPrice;
+    cart["PRODUCT_ID"]=productId;
 
     print("Total_price ----------${cart["TOTAL_PRICE"]}");
     print("Total_COUNT ----------${cart["PRODUCT_COUNT"]}");
@@ -835,16 +839,19 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
 
   List<ProductModel>cartList=[];
   void getAddedCart(String userId){
+    print("nnnnnnnnnn$userId");
     db.collection("USERS").doc(userId).collection("CART").get().then((value){
-
+      print("ooooooooooooooo");
       if(value.docs.isNotEmpty){
+        print("pppppppppppp");
         cartList.clear();
         for(var element in value.docs){
+          print("qqqqqqcccccccccccccc");
           Map<dynamic,dynamic>cart=element.data();
           cartList.add(ProductModel(
               element.id,
               cart["PRODUCT_NAME"]??"",
-              cart["PRODUCT_PRICE"]??"",
+              double.parse(cart["PRODUCT_PRICE"]??0),
               cart["PRODUCT_DESCRIPTION"]??"",
               cart["DELIVERY_DURATION"]??"",
               cart["PRODUCT_IMAGE"]??"",
@@ -1155,6 +1162,7 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
     buy["PRODUCT_PRICE"]=price;
     buy["PRODUCT_COUNT"]=productCount;
     buy["TOTAL_PRICE"]=totalPrice;
+    buy["PRODUCT_ID"]=productId;
 
     db.collection("USERS").doc(userId).collection("BUY_NOW").doc(productId).set(buy,SetOptions(merge: true));
     notifyListeners();
@@ -1233,153 +1241,143 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
       }
     });
   }
-  // ----------------------------------------------------ADD TO ORDER------------------------------------------------------------------------------------
-  Future<void> addToOrder(String userId,String  from) async {
 
+  Future<void> addToOrder(String userId) async {
+    String id = DateTime.now().millisecondsSinceEpoch.toString();
     try {
-
-      // Get documents from the CART collection
-      QuerySnapshot getCart = await db.collection("USERS").doc(userId).collection("CART").get();
-      List<DocumentSnapshot> cartDocs = getCart.docs;
-
-      // Get documents from the BUY_NOW collection
-      QuerySnapshot getBuy = await db.collection("USERS").doc(userId).collection("BUY_NOW").get();
-      List<DocumentSnapshot> buyDocs = getBuy.docs;
-
       // List to hold all items for the order
-      List<Map<dynamic, dynamic>> orderItems = [];
+      List<Map<String, dynamic>> orderItems = [];
 
-      // Add items from CART to the order list
-      for (var doc in cartDocs) {
+      // Fetch items from the CART collection
+      QuerySnapshot cartSnapshot = await db.collection("USERS").doc(userId).collection("CART").get();
+      for (var doc in cartSnapshot.docs) {
+        orderItems.add({
+          "PRODUCT_NAME": doc["PRODUCT_NAME"],
+          "PRODUCT_COUNT": countController[doc["PRODUCT_ID"]]?.text.toString() ?? doc["PRODUCT_COUNT"],
+          "PRODUCT_IMAGE": doc["PRODUCT_IMAGE"],
+          "PRODUCT_PRICE": doc["PRODUCT_PRICE"],
+          "TOTAL_PRICE": totalPriceController[doc["PRODUCT_ID"]]?.text.toString() ?? doc["TOTAL_PRICE"],
+          "PRODUCT_ID": doc["PRODUCT_ID"]
+        });
+      }
+
+      // Fetch items from the BUY_NOW collection
+      QuerySnapshot buyNowSnapshot = await db.collection("USERS").doc(userId).collection("BUY_NOW").get();
+      for (var doc in buyNowSnapshot.docs) {
         orderItems.add({
           "PRODUCT_NAME": doc["PRODUCT_NAME"],
           "PRODUCT_COUNT": doc["PRODUCT_COUNT"],
           "PRODUCT_IMAGE": doc["PRODUCT_IMAGE"],
           "PRODUCT_PRICE": doc["PRODUCT_PRICE"],
-          "TOTAL_PRICE": doc["TOTAL_PRICE"]
+          "TOTAL_PRICE": doc["TOTAL_PRICE"],
+          "PRODUCT_ID": doc["PRODUCT_ID"]
         });
       }
 
-      // Add items from BUY_NOW to the order list
-      for (var doc in buyDocs) {
-        orderItems.add({
-          "PRODUCT_NAME": doc["PRODUCT_NAME"],
-          "PRODUCT_COUNT": doc["PRODUCT_COUNT"],
-          "PRODUCT_IMAGE": doc["PRODUCT_IMAGE"],
-          "PRODUCT_PRICE": doc["PRODUCT_PRICE"],
-          "TOTAL_PRICE": doc["TOTAL_PRICE"]
-        });
-      }
-
-      // Save the order items to the ORDER collection
+      // Save all collected items to the ORDER collection if any items were added
       if (orderItems.isNotEmpty) {
-        await db.collection("ORDER").doc(userId).set({
+        await db.collection("ORDER").doc(id).set({
           "USER_ID": userId,
           "ORDER_ITEMS": orderItems,
           "ORDER_DATE": FieldValue.serverTimestamp()
-
         });
+
+        // Clear the CART and BUY_NOW collections after order creation
+        await clearOrderedProduct(userId, "CART");
+        await clearOrderedProduct(userId, "BUY_NOW");
+
         print("Order added successfully for user: $userId");
       } else {
-        print("No items found in CART or BUY_NOW to create an order");
+        print("No items found in CART or BUY_NOW to create an order.");
       }
+
+      notifyListeners();
     } catch (e) {
       print("Error adding order: $e");
     }
   }
 
+
+
+  Future<void> clearOrderedProduct(String userId,String from)async {
+    var collection=db.collection("USERS").doc(userId).collection(from);
+    var snapShots=await collection.get();
+    for(var doc in snapShots.docs){
+      await doc.reference.delete();
+    }
+}
+
   List<dynamic> orderList = [];
 
   Future<void> getOrder(String userId) async {
+    print("ccccccccccc");
     try {
-      DocumentSnapshot orderDoc = await db.collection("ORDER").doc(userId).get();
-      if (orderDoc.exists) {
-        Map<String, dynamic> orderData = orderDoc.data() as Map<String, dynamic>;
-        orderList = orderData["ORDER_ITEMS"];
-        notifyListeners();
-      } else {
-        print("No order found for user: $userId");
-        orderList = []; // Clear the list if no order is found
-        notifyListeners();
+      QuerySnapshot orderQuery = await db.collection("ORDER").where("USER_ID",isEqualTo: userId).orderBy("ORDER_DATE",descending: true).get();
+      // Clear the previous order list and populate it with the fetched orders
+
+      orderList.clear();
+      for (var doc in orderQuery.docs){
+        print("jjjjjjjjjjjjjbbbbbb");
+        Map<String,dynamic>orderData=doc.data() as Map<String,dynamic>;
+        orderList.addAll(orderData["ORDER_ITEMS"]);
+
       }
+
+      if(orderList.isEmpty){
+        print(" No orders found for user:$userId");
+      }
+      else{
+        print("Orders retrieved successfully for user:$userId");
+      }
+      notifyListeners();
+
     } catch (e) {
       print("Error retrieving order: $e");
     }
   }
 
-  List<Map<String, dynamic>> allordersList = [];
 
-  // Future<List<Map<String, dynamic>>> getAllOrders() async {
-  //   try {
-  //     // Clear the list to avoid accumulating data on multiple calls
-  //     allordersList.clear();
-  //
-  //     // Fetch all documents from the ORDER collection
-  //     QuerySnapshot orderSnap = await db.collection("ORDER").get();
-  //
-  //     // Iterate through each document
-  //     for (var doc in orderSnap.docs) {
-  //       // Safely access the document data
-  //       Map<String, dynamic>? orderData = doc.data() as Map<String, dynamic>?;
-  //
-  //       // Check if orderData is not null before adding to the list
-  //       if (orderData != null) {
-  //         allordersList.add(orderData);
-  //         print("Retrieved ${allordersList.length} orders successfully.");
-  //       } else {
-  //         print("Order data is null for document ID: ${doc.id}");
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print("Error retrieving all orders: $e");
-  //   }
-  //   return allordersList;
-  // }
-  // Future<void> getAllOrders() async {
-  //   try {
-  //
-  //     allordersList.clear();
-  //     QuerySnapshot orderSnap = await db.collection("ORDER").get();
-  //     for (var doc in orderSnap.docs) {
-  //       // Safely access the document data
-  //       Map<String, dynamic>? orderData = doc.data() as Map<String, dynamic>?;
-  //
-  //       // Check if orderData is not null before adding to the list
-  //       if (orderData != null) {
-  //         allordersList.add(orderData);
-  //         print("Added order:$orderData");
-  //         print("Current allordersList:");
-  //         print("Retrieved ${allordersList.length} orders successfully.");
-  //         for (var order in allordersList) {
-  //           print(order);
-  //         }
-  //       } else {
-  //         print("Order data is null for document ID: ${doc.id}");
-  //       }
-  //     }
-  //     notifyListeners();
-  //   } catch (e) {
-  //     print("Error retrieving all orders: $e");
-  //   }
-  //
-  // }
+
+
+  List<Map<String, dynamic>> allOrdersList = [];
+
   Future<void> getAllOrders() async {
+    // print("Fetching orders...");
     try {
-      allordersList.clear();
-      QuerySnapshot orderSnap = await db.collection("ORDER").get();
-      for (var doc in orderSnap.docs) {
-        Map<String, dynamic>? orderData = doc.data() as Map<String, dynamic>?;
-        if (orderData != null) {
-          allordersList.add(orderData);
-          print("Added order: $orderData");
+      final value = await db.collection("ORDER").get();
+      if (value.docs.isNotEmpty) {
+        allOrdersList.clear();
+        // print("Processing orders...");
+
+        for (var item in value.docs) {
+          // Each document may have an array of orders
+          var orderArray = item.data()['ORDER_ITEMS'] as List<dynamic>?;
+
+          // Check if the 'orders' array exists
+          if (orderArray != null && orderArray.isNotEmpty) {
+            for (var order in orderArray) {
+              // Ensure each order is a map and add it to the list
+              if (order is Map<String, dynamic>) {
+                allOrdersList.add(order);
+              }
+            }
+          } else {
+            print("No orders array found in document ${item.id}");
+          }
         }
+
+        // Print success or no orders found
+        print("Orders retrieved successfully. Total orders: ${allOrdersList.length}");
+      } else {
+        print("No orders found in the collection.");
       }
-      print("Fetched ${allordersList.length} orders.");
-      notifyListeners(); // Important: notify after updating the list
+
+      notifyListeners();
     } catch (e) {
       print("Error retrieving orders: $e");
     }
   }
+
 
 
 // ------------------------------------- TO GET THE LIKED PRODUCT IN WISHLIST-------------------------------------------------------------------------------------------
@@ -1473,7 +1471,7 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
               wishList.add(ProductModel(
                 value.id,
                 map["PRODUCT_NAME"].toString()??"",
-                map["PRICE"].toString()??"",
+                double.tryParse(map["PRICE"].toString())??0.0,
                 map["PRODUCT_DESCRIPTION"].toString()??"",
                 map["DELIVERY_DURATION"].toString()??"",
                 map["PHOTO"].toString()??"",
@@ -1516,6 +1514,7 @@ notifyListeners();
       // Filter the products based on the selected category
       
       filteredProductsList=productList.where((product) => product.categoryName==categoryName,).toList();
+
     }
     notifyListeners();
   }
@@ -1523,9 +1522,39 @@ notifyListeners();
   void updateProductsAndCategories(List<CategoryModel> categories, List<ProductModel> products) {
     categoryList = categories;
     productList = products;
-    filteredProductsList = productList; // Initially, show all products
+    filteredProductsList = productList;
+    // Initially, show all products
     notifyListeners();
   }
 
+  Future<void> startChat(String senderId,String recieverId,String message) async {
+    String id=DateTime.now().millisecondsSinceEpoch.toString();
+    String chatId=senderId.compareTo(recieverId)<0?"$senderId-$recieverId":"$recieverId-$senderId";
+    Map<String,dynamic>chatData={
+      "CREATED_AT":FieldValue.serverTimestamp(),
+      "LAST_MESSAGE":{
+        "SENT_BY":senderId,
+        "TEXT":message,
+        "TIMPSTAMP":FieldValue.serverTimestamp()
+      },
+      "PARTICIPANTS":[senderId,recieverId]
+    };
+    await db.collection("CHAT").doc(chatId).set(chatData,SetOptions(merge:  true));
+
+
+    Map<String ,dynamic> messageData={
+      "CONENT":message,
+      "IS_SEEN":false,
+      "MESSAGE_TYPE":"TEXT",
+      "RECIVER_ID":recieverId,
+      "SENDER_ID":senderId,
+      "TIMESTAMP":FieldValue.serverTimestamp()
+    };
+    db.collection("CHAT").doc(chatId).collection("MESSAGE").doc(id).set(messageData);
+    notifyListeners();
+  }
+
+
 }
+
 

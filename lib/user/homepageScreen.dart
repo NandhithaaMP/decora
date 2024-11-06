@@ -458,7 +458,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                                   color: Colors.white,
                                                   fontSize: 20,
                                                   fontFamily: "philosopher")),
-                                          Text(product.price,
+                                          Text(product.price.toString(),
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 25,

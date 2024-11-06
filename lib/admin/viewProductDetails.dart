@@ -110,7 +110,7 @@ class _ViewProductDetailsState extends State<ViewProductDetails> {
                                 ),
                               ),
                               SizedBox(height: 20),
-                              Text("₹ "+widget.item.price,
+                              Text("₹ "+widget.item.price.toString(),
                                   style: TextStyle(
                                       fontFamily: "mukta",
                                       color: Color(0xffE4A951),

@@ -31,6 +31,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'Designer/chatBoxScreen.dart';
 import 'Designer/dbottomNavigation.dart';
 import 'Designer/designerProfileScreen.dart';
 import 'Designer/newEnquiryScreen.dart';
@@ -74,10 +75,8 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: SplashScreen(),
-        // home: UBottomNavigation(),
-        // home: AdminHomeScreen(),
-        // home:NewEnquiryScreen(),
-        // home:RegisterScreen(),
+        //  home:ChatBoxScreen(),
+        //  home:ChatScreen(),
       ),
     );
   }

@@ -95,7 +95,7 @@ class CategoryDetailsScreen extends StatelessWidget {
                                      ),
                                      SizedBox(height: 10,),
                                      Text(cdproduct.productName,style: TextStyle(color: Colors.white,fontFamily: "philosopher",fontSize: 15),),
-                                     Text(cdproduct.price,style: TextStyle(color: Colors.white,fontFamily: "mukta",fontSize: 20),),
+                                     Text(cdproduct.price.toString(),style: TextStyle(color: Colors.white,fontFamily: "mukta",fontSize: 20),),
                                    ],
                                  ),
                                ),

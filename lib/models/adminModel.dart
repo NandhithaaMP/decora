@@ -15,7 +15,8 @@ class CategoryModel{
 class ProductModel{
   String pid;
   String productName;
-  String price;
+  // String price;
+  double price;
   String productDescription;
   String deliveryDuration;
   String productImage;
