@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:decora/admin/verifyDesigners.dart';
 import 'package:decora/constants/call_functions.dart';
+import 'package:decora/provider/chatProvider.dart';
 import 'package:decora/provider/mainProvider.dart';
 import 'package:decora/user/homepageScreen.dart';
 import 'package:decora/user/userBottomNavigation.dart';
@@ -28,6 +29,7 @@ class LoginProvider extends ChangeNotifier {
 
   Future<void> usersAuthorized(String? lgphoneNumber, String? lgpassword, BuildContext context) async {
     MainProvider mainPro = Provider.of<MainProvider>(context, listen: false);
+
 
     try {
 
@@ -84,9 +86,10 @@ class LoginProvider extends ChangeNotifier {
           }
           else if (map['DESIGNATION'].toString() == "DESIGNER") {
             print("I entered in designer side");
+            // chatPro.fetchRecentMessagesForDesigner(loginUserId);
             mainPro.getDesignerWork(loginUserId);
 
-            callNextReplacement(context, DesignerBottomNavigation(userId: loginUserId, name: loginName, phone: loginPhoneNumber,)); // Navigate to designer screen
+            callNextReplacement(context, DesignerBottomNavigation(userId: loginUserId, name: loginName, phone: loginPhoneNumber, receiver_ID: "", photo: loginPhoto,)); // Navigate to designer screen
             print("Navigating to Verify Designers Screen");
 
             // mainPro.addDesignerWork();

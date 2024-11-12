@@ -1,14 +1,16 @@
 import 'package:decora/Designer/newEnquiryScreen.dart';
 import 'package:decora/Designer/uploadWorkScreen.dart';
 import 'package:decora/constants/constant_color.dart';
+import 'package:decora/provider/chatProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'designerProfileScreen.dart';
 
 class DesignerBottomNavigation extends StatefulWidget {
-  String userId,name,phone;
-  DesignerBottomNavigation({super.key,required this.userId,required this.name,required this.phone
+  String userId,name,phone,receiver_ID,photo;
+  DesignerBottomNavigation({super.key,required this.userId,required this.name,required this.phone,required this.receiver_ID,required this.photo
   });
 
   @override
@@ -25,7 +27,12 @@ class _DesignerBottomNavigationState extends State<DesignerBottomNavigation> {
   int indexNum=0;
   List<Widget> getScreens(){
     return [
-      NewEnquiryScreen(userId: widget.userId, name: widget.name, phone: widget.phone,),
+      Consumer<ChatProvider>(
+        builder: (context,value,child) {
+          value.fetchRecentMessagesForDesigner(widget.userId);
+          return NewEnquiryScreen(userId: widget.userId, name: widget.name, phone: widget.phone, receiverId: '', photo: '',);
+        }
+      ),
       UploadWorkScreen(designerId: widget.userId,),
       DesignerProfileScreen(userId: widget.userId,),
     ];

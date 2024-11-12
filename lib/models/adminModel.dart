@@ -62,12 +62,14 @@ class UsersModel{
 
 // ----------------------------------CHAT--------------------------------------------
 
-class MessageModel{
-  String content;
-  String senderId;
-  String receiverId;
-  DateTime timestamp;
-  bool isSeen;
-  String messageType;
-  MessageModel(this.content,this.senderId,this.receiverId,this.timestamp,this.isSeen,this.messageType);
-}
+// class MessageModel{
+//   String msgid;
+//   String content;
+//   String senderId;
+//   String receiverId;
+//   DateTime timestamp;
+//   bool isSeen;
+//   String messageType;
+//
+//   MessageModel(this.msgid,this.content,this.senderId,this.receiverId,this.timestamp,this.isSeen,this.messageType );
+// }

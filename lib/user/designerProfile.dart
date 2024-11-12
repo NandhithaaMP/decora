@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../Designer/chatBoxScreen.dart';
 import '../constants/constant_color.dart';
 
 class DesignerProfile extends StatelessWidget {
-  const DesignerProfile({super.key});
+  String login_ID,designerId;
+   DesignerProfile({super.key,required this.login_ID,required this.designerId});
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +111,7 @@ class DesignerProfile extends StatelessWidget {
 
                                 ElevatedButton(
                                   onPressed: () {
-                                    showAlertDialog(context, "connect");
+                                    showAlertDialog(context, "connect", login_ID, designerId);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: cstgreen,
@@ -156,4 +158,5 @@ class DesignerProfile extends StatelessWidget {
       ),
     );
   }
+
 }

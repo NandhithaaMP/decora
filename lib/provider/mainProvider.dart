@@ -2,8 +2,10 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:decora/Designer/chatBoxScreen.dart';
 import 'package:decora/Designer/newEnquiryScreen.dart';
 import 'package:decora/constants/call_functions.dart';
+import 'package:decora/models/messages.dart';
 import 'package:decora/provider/loginProvider.dart';
 import 'package:decora/user/homepageScreen.dart';
 import 'package:decora/user/loginScreen.dart';
@@ -19,68 +21,73 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/adminModel.dart';
 
-class MainProvider extends ChangeNotifier{
-  final FirebaseFirestore db=FirebaseFirestore.instance;
+class MainProvider extends ChangeNotifier {
+  final FirebaseFirestore db = FirebaseFirestore.instance;
   firebase_storage.Reference ref = FirebaseStorage.instance.ref("IMAGEURL");
 
 
   //Admin add Category
-  TextEditingController categorynameController=TextEditingController();
+  TextEditingController categorynameController = TextEditingController();
 
-  void addCategory(){
-    String id=DateTime.now().millisecondsSinceEpoch.toString();
-    HashMap<String,Object>category=HashMap();
-    category["CATEGORY_NAME"]=categorynameController.text;
-    category["CATEGORY_ID"]=id;
+  void addCategory() {
+    String id = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
+    HashMap<String, Object>category = HashMap();
+    category["CATEGORY_NAME"] = categorynameController.text;
+    category["CATEGORY_ID"] = id;
     db.collection("CATEGORY").doc(id).set(category);
     clearCategory();
     getCategory();
     notifyListeners();
-
   }
 
-  List<CategoryModel> categoryList=[];
-  void getCategory(){
-    db.collection("CATEGORY").get().then((value){
-      if(value.docs.isNotEmpty){
+  List<CategoryModel> categoryList = [];
+
+  void getCategory() {
+    db.collection("CATEGORY").get().then((value) {
+      if (value.docs.isNotEmpty) {
         categoryList.clear();
-        for(var element in value.docs){
+        for (var element in value.docs) {
           categoryList.add(CategoryModel(
-            element.id,
-            element.get("CATEGORY_NAME")
+              element.id,
+              element.get("CATEGORY_NAME")
           ));
           notifyListeners();
         }
       }
     });
   }
-  void deleteCategory(String id,BuildContext context){
+
+  void deleteCategory(String id, BuildContext context) {
     db.collection("CATEGORY").doc(id).delete();
     categoryList.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 
-  void clearCategory(){
+  void clearCategory() {
     categorynameController.clear();
     notifyListeners();
   }
 
   //-------------------------------------------------------ADD PRODUCT---------------------------------------------------------------------------------
 
-  TextEditingController productnameController=TextEditingController();
-  TextEditingController priceController=TextEditingController();
-  TextEditingController categoryNameController=TextEditingController();
-  TextEditingController productDescriptionController=TextEditingController();
-  TextEditingController totalProductController=TextEditingController();
-  TextEditingController currentStatusContoller=TextEditingController();
-  DateTime selectedDate=DateTime.now();
+  TextEditingController productnameController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  TextEditingController categoryNameController = TextEditingController();
+  TextEditingController productDescriptionController = TextEditingController();
+  TextEditingController totalProductController = TextEditingController();
+  TextEditingController currentStatusContoller = TextEditingController();
+  DateTime selectedDate = DateTime.now();
   String productSelectedcategoryid = "";
-  File?  addProductFileImg;
-  String productFileUrl="";
+  File? addProductFileImg;
+  String productFileUrl = "";
 
   Future getImggallery() async {
     final imagePicker = ImagePicker();
-    final pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+    final pickedImage = await imagePicker.pickImage(
+        source: ImageSource.gallery);
 
     if (pickedImage != null) {
       cropImage(pickedImage.path, "");
@@ -140,24 +147,30 @@ class MainProvider extends ChangeNotifier{
     }
   }
 
-  Future<void> addProduct( String from,String oldid) async {
-    String id=DateTime.now().millisecondsSinceEpoch.toString();
-    HashMap<String,Object>productDetails=HashMap();
+  Future<void> addProduct(String from, String oldid) async {
+    String id = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
+    HashMap<String, Object>productDetails = HashMap();
 
-    productDetails["PRODUCT_NAME"]=productnameController.text;
-    productDetails["CATEROGY_NAME"]=categoryNameController.text;
-    productDetails["CATEROGYID"]=productSelectedcategoryid;
-    productDetails["PRICE"]=priceController.text;
+    productDetails["PRODUCT_NAME"] = productnameController.text;
+    productDetails["CATEROGY_NAME"] = categoryNameController.text;
+    productDetails["CATEROGYID"] = productSelectedcategoryid;
+    productDetails["PRICE"] = priceController.text;
 
     //calcute delivery date
-    productDetails["DELIVERY_DURATION"]=selectedDate.add(Duration(days: 5));
-    productDetails["PRODUCT_DESCRIPTION"]=productDescriptionController.text;
-    productDetails["TOTAL_NUMBER OF PRODUCTS"]=totalProductController.text;
-    productDetails["STATUS"]=currentStatusContoller.text;
+    productDetails["DELIVERY_DURATION"] = selectedDate.add(Duration(days: 5));
+    productDetails["PRODUCT_DESCRIPTION"] = productDescriptionController.text;
+    productDetails["TOTAL_NUMBER OF PRODUCTS"] = totalProductController.text;
+    productDetails["STATUS"] = currentStatusContoller.text;
     // productDetails["STATUS"]="Ongoing";
 
     if (addProductFileImg != null) {
-      String photoId = DateTime.now().millisecondsSinceEpoch.toString();
+      String photoId = DateTime
+          .now()
+          .millisecondsSinceEpoch
+          .toString();
       ref = FirebaseStorage.instance.ref().child(photoId);
       await ref.putFile(addProductFileImg!).whenComplete(() async {
         await ref.getDownloadURL().then((value) {
@@ -168,19 +181,21 @@ class MainProvider extends ChangeNotifier{
         notifyListeners();
       });
     }
-    if(from=="NEW"){
-      productDetails["PRODUCT_ID"]=id;
+    if (from == "NEW") {
+      productDetails["PRODUCT_ID"] = id;
     }
-    if(from=="EDIT"){
-      db.collection("PRODUCT").doc(oldid).set(productDetails,SetOptions(merge: true));
+    if (from == "EDIT") {
+      db.collection("PRODUCT").doc(oldid).set(
+          productDetails, SetOptions(merge: true));
     }
-    else{
+    else {
       db.collection("PRODUCT").doc(id).set(productDetails);
     }
 
     print("Product added :${productDetails}");
     notifyListeners();
   }
+
   // Method to update the product status to sold out when required
   Future<void> markProductAsSoldOut(String productId) async {
     await db.collection("PRODUCT").doc(productId).update({
@@ -204,16 +219,16 @@ class MainProvider extends ChangeNotifier{
   }
 
 
-  void editProduct(String productId){
+  void editProduct(String productId) {
     db.collection("PRODUCT").doc(productId).get().then((value) {
-      Map<dynamic,dynamic> editProduct=value.data() as Map;
-      if(value.exists){
-        productnameController.text=editProduct["PRODUCT_NAME"];
-        categoryNameController.text=editProduct["CATEROGY_NAME"];
-        priceController.text=editProduct["PRICE"];
-        productDescriptionController.text=editProduct["PRODUCT_DESCRIPTION"];
-        totalProductController.text=editProduct["TOTAL_NUMBER OF PRODUCTS"];
-        currentStatusContoller.text=editProduct["STATUS"];
+      Map<dynamic, dynamic> editProduct = value.data() as Map;
+      if (value.exists) {
+        productnameController.text = editProduct["PRODUCT_NAME"];
+        categoryNameController.text = editProduct["CATEROGY_NAME"];
+        priceController.text = editProduct["PRICE"];
+        productDescriptionController.text = editProduct["PRODUCT_DESCRIPTION"];
+        totalProductController.text = editProduct["TOTAL_NUMBER OF PRODUCTS"];
+        currentStatusContoller.text = editProduct["STATUS"];
 
         notifyListeners();
       }
@@ -222,65 +237,69 @@ class MainProvider extends ChangeNotifier{
   }
 
 
+  List<ProductModel>productList = [];
 
-  List<ProductModel>productList=[];
-  void getAddedProduct(){
+  void getAddedProduct() {
     print('fdddd');
     notifyListeners();
     db.collection("PRODUCT").get().then((value) {
       print('ddddd');
       notifyListeners();
-      if(value.docs.isNotEmpty){
+      if (value.docs.isNotEmpty) {
         notifyListeners();
         productList.clear();
-        for(var element in value.docs){
-          Map<dynamic,dynamic>map=element.data();
-            productList.add(ProductModel(
+        for (var element in value.docs) {
+          Map<dynamic, dynamic>map = element.data();
+          productList.add(ProductModel(
             element.id,
-            map["PRODUCT_NAME"].toString()??"",
-              double.tryParse(map["PRICE"].toString())??0,
-            map["PRODUCT_DESCRIPTION"].toString()??"",
-            map["DELIVERY_DURATION"].toString()??"",
-            map["PHOTO"].toString()??"",
-            map["STATUS"].toString()??"",
-            int.tryParse(map["PRODUCT_COUNT"].toString())??0,
-              map["CATEROGYID"].toString()??"",
-              map["CATEROGY_NAME"].toString()??"",
-              map["TOTAL_NUMBER OF PRODUCTS"].toString()??"",
+            map["PRODUCT_NAME"].toString() ?? "",
+            double.tryParse(map["PRICE"].toString()) ?? 0,
+            map["PRODUCT_DESCRIPTION"].toString() ?? "",
+            map["DELIVERY_DURATION"].toString() ?? "",
+            map["PHOTO"].toString() ?? "",
+            map["STATUS"].toString() ?? "",
+            int.tryParse(map["PRODUCT_COUNT"].toString()) ?? 0,
+            map["CATEROGYID"].toString() ?? "",
+            map["CATEROGY_NAME"].toString() ?? "",
+            map["TOTAL_NUMBER OF PRODUCTS"].toString() ?? "",
           )
           );
         }
       }
-
     });
     notifyListeners();
   }
 
-  void clearAddedProduct(){
-   productnameController.clear();
-   categoryNameController.clear();
-   priceController.clear();
-   // selectedDate.add(Duration(days: 5));
-   productDescriptionController.clear();
-   totalProductController.clear();
-   addProductFileImg=null;
-   productFileUrl="";
-   currentStatusContoller.clear();
-   notifyListeners();
+  void clearAddedProduct() {
+    productnameController.clear();
+    categoryNameController.clear();
+    priceController.clear();
+    // selectedDate.add(Duration(days: 5));
+    productDescriptionController.clear();
+    totalProductController.clear();
+    addProductFileImg = null;
+    productFileUrl = "";
+    currentStatusContoller.clear();
+    notifyListeners();
   }
 
-  void deleteProduct(String productId, BuildContext context){
+  void deleteProduct(String productId, BuildContext context) {
     db.collection("PRODUCT").doc(productId).delete();
     productList.removeWhere((element) => element.pid == productId);
     notifyListeners();
   }
 
 
-
-  logOutAlert(BuildContext context, ) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-    AlertDialog alert =AlertDialog(
+  logOutAlert(BuildContext context,) {
+    final height = MediaQuery
+        .of(context)
+        .size
+        .height;
+    final width = MediaQuery
+        .of(context)
+        .size
+        .width;
+    AlertDialog alert = AlertDialog(
       backgroundColor: Colors.white,
       scrollable: true,
       title: const Text(
@@ -303,7 +322,8 @@ class MainProvider extends ChangeNotifier{
                   ),
                 ),
                 child: TextButton(
-                    child: const Text('No', style: TextStyle(color: Colors.black)),
+                    child: const Text(
+                        'No', style: TextStyle(color: Colors.black)),
                     onPressed: () {
                       finish(context);
                       // finish(context);
@@ -325,11 +345,14 @@ class MainProvider extends ChangeNotifier{
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () async {
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      SharedPreferences prefs = await SharedPreferences
+                          .getInstance();
                       prefs.clear();
                       // loginphoneController.clear();
-                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginScreen()), (Route<dynamic> route) => false);
-
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()), (
+                          Route<dynamic> route) => false);
                     }),
               ),
             ],
@@ -345,18 +368,25 @@ class MainProvider extends ChangeNotifier{
       },
     );
   }
+
   // ---------------------------------------------------ADD DESIGNER WORK-------------------------------------------------------------------------------------------------
   File? addWorkFileImg;
-  String workFileUrl="";
+  String workFileUrl = "";
 
   Future<void> addDesignerWork(String designerId) async {
-    String id = DateTime.now().millisecondsSinceEpoch.toString();
+    String id = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
     HashMap<String, Object> addWork = HashMap();
-    addWork["WORK_ID"]=id;
-    addWork["DESIGNER_ID"]=designerId;
+    addWork["WORK_ID"] = id;
+    addWork["DESIGNER_ID"] = designerId;
     if (addWorkFileImg == null) return;
 
-    String photoId = DateTime.now().millisecondsSinceEpoch.toString();
+    String photoId = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
     Reference ref = FirebaseStorage.instance.ref().child(photoId);
 
     await ref.putFile(addWorkFileImg!).whenComplete(() async {
@@ -374,6 +404,7 @@ class MainProvider extends ChangeNotifier{
       });
     });
   }
+
   Future DesignerImgGallery() async {
     final imagePicker = ImagePicker();
     final pickedImage =
@@ -438,23 +469,25 @@ class MainProvider extends ChangeNotifier{
     }
   }
 
-  List<WorkModel>workList=[];
+  List<WorkModel>workList = [];
 
-  void getDesignerWork(String loginUserId){
-    db.collection("DESIGNER_WORK").where("DESIGNER_ID",isEqualTo:loginUserId ).get().then((value){
-      if(value.docs.isNotEmpty){
+  void getDesignerWork(String loginUserId) {
+    db.collection("DESIGNER_WORK")
+        .where("DESIGNER_ID", isEqualTo: loginUserId)
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
         workList.clear();
-        for(var element in value.docs){
-          Map<dynamic,dynamic>designerwork=element.data();
+        for (var element in value.docs) {
+          Map<dynamic, dynamic>designerwork = element.data();
           workList.add(WorkModel(
               element.id,
-              designerwork["PHOTO"]??"",
-              designerwork["DESIGNER_ID"]??""
+              designerwork["PHOTO"] ?? "",
+              designerwork["DESIGNER_ID"] ?? ""
           )
 
           );
           print("WORKlIST:${wishList}");
-
         }
         notifyListeners();
       }
@@ -462,7 +495,7 @@ class MainProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void deleteDesignerWork(String workId, BuildContext context){
+  void deleteDesignerWork(String workId, BuildContext context) {
     db.collection("DESIGNER_WORK").doc(workId).delete();
     // getDesignerWork(loginUserId);
     workList.removeWhere((element) => element.wid == workId);
@@ -470,32 +503,33 @@ class MainProvider extends ChangeNotifier{
   }
 
 
-
 // -------------------------------------------CAROUSEL -------------------------------------------------
-  int Activeindex=0;
+  int Activeindex = 0;
+
   void carouselIndex(int index) {
-    Activeindex=index;
+    Activeindex = index;
     notifyListeners();
   }
-  List<DesignerWorkModel>allAddedWorkList=[];
 
-   getAllAddedWork() async {
+  List<DesignerWorkModel>allAddedWorkList = [];
+
+  getAllAddedWork() async {
     await db.collection("DESIGNER_WORK").get().then((value) async {
-      if(value.docs.isNotEmpty){
+      if (value.docs.isNotEmpty) {
         allAddedWorkList.clear();
-        for(var element in value.docs){
-          Map<dynamic,dynamic> allWork=element.data();
-          String designer_id=allWork["DESIGNER_ID"];
+        for (var element in value.docs) {
+          Map<dynamic, dynamic> allWork = element.data();
+          String designer_id = allWork["DESIGNER_ID"];
           await db.collection("USERS").doc(designer_id).get().then((value) {
-            if(value.exists){
-              Map<dynamic,dynamic>deswork=value.data() as Map;
+            if (value.exists) {
+              Map<dynamic, dynamic>deswork = value.data() as Map;
               allAddedWorkList.add(DesignerWorkModel(
-                  value.id,
-                  allWork["PHOTO"]??"",
-                  allWork["DESIGNER_ID"]??"",
-                  deswork["REGISTER_NAME"]??"",
-                  deswork["PLACE"]??"",
-                  deswork["USERS_IMAGE"]??"",
+                value.id,
+                allWork["PHOTO"] ?? "",
+                allWork["DESIGNER_ID"] ?? "",
+                deswork["REGISTER_NAME"] ?? "",
+                deswork["PLACE"] ?? "",
+                deswork["USERS_IMAGE"] ?? "",
               ));
             }
           },);
@@ -506,38 +540,35 @@ class MainProvider extends ChangeNotifier{
           // ));
           print("jjjjjjjjjjjjjjjjjjjj+${allAddedWorkList}");
           print("88888888888888888888888888888:${allWork["PHOTO"]}");
-
         }
 
         notifyListeners();
       }
-
     },);
   }
 
-  String designerProfilePic="";
-  String designerName="";
-  String designation="";
-  String designerPlace="";
-  String designerPhone="";
-  List<String>designerWork=[];
+  String designerProfilePic = "";
+  String designerName = "";
+  String designation = "";
+  String designerPlace = "";
+  String designerPhone = "";
+  List<String>designerWork = [];
 
-  void getDesignerDetails(String designerID){
+  void getDesignerDetails(String designerID) {
     db.collection("USERS").doc(designerID).get().then((value) {
-      if(value.exists){
+      if (value.exists) {
         designerWork.clear();
-        Map<dynamic,dynamic>details=value.data() as Map;
-        designerProfilePic=details["USERS_IMAGE"];
-        designerName=details["REGISTER_NAME"];
-        designation=details["DESIGNATION"];
-        designerPlace=details["PLACE"];
-        designerPhone=details["REGISTER_PHONENUMBER"];
-        allAddedWorkList.forEach((element){
-          if(element.designerId == designerID){
+        Map<dynamic, dynamic>details = value.data() as Map;
+        designerProfilePic = details["USERS_IMAGE"];
+        designerName = details["REGISTER_NAME"];
+        designation = details["DESIGNATION"];
+        designerPlace = details["PLACE"];
+        designerPhone = details["REGISTER_PHONENUMBER"];
+        allAddedWorkList.forEach((element) {
+          if (element.designerId == designerID) {
             designerWork.add(element.workImage);
           }
         });
-
       }
       notifyListeners();
     },);
@@ -545,26 +576,32 @@ class MainProvider extends ChangeNotifier{
 
   // /--------------------------------------------------------REGISTRATION-------------------------------------------------------------------------------
 
-  TextEditingController RegisterNameController=TextEditingController();
-  TextEditingController RegisterPhoneController=TextEditingController();
-  TextEditingController RegisterPasswordController=TextEditingController();
-  TextEditingController DesignationController=TextEditingController();
-  TextEditingController PlaceController=TextEditingController();
-  TextEditingController AddressController=TextEditingController();
+  TextEditingController RegisterNameController = TextEditingController();
+  TextEditingController RegisterPhoneController = TextEditingController();
+  TextEditingController RegisterPasswordController = TextEditingController();
+  TextEditingController DesignationController = TextEditingController();
+  TextEditingController PlaceController = TextEditingController();
+  TextEditingController AddressController = TextEditingController();
+
   // TextEditingController ProfilePictureController=TextEditingController();
 
   File? addUsersImage;
-  String UsersImageURL="";
+  String UsersImageURL = "";
+
   // List<File> imagefileList = [];
 
 
-  Future<void> addRegistration(BuildContext context, String from,String oldid) async {
+  Future<void> addRegistration(BuildContext context, String from,
+      String oldid) async {
     LoginProvider loginPro = Provider.of<LoginProvider>(context, listen: false);
     try {
       String id = oldid;
       Map <String, dynamic> regMap = Map();
-      if(from == "NEW"){
-         id = DateTime.now().microsecondsSinceEpoch.toString();
+      if (from == "NEW") {
+        id = DateTime
+            .now()
+            .microsecondsSinceEpoch
+            .toString();
         regMap["REGISTER_ID"] = id;
         regMap["REGISTER_PASSWORD"] = RegisterPasswordController.text;
         regMap["DESIGNATION"] = DesignationController.text;
@@ -575,34 +612,41 @@ class MainProvider extends ChangeNotifier{
       regMap["PLACE"] = PlaceController.text;
       regMap["ADDRESS"] = AddressController.text;
       loginPro.loginAddress = AddressController.text;
-      if(addUsersImage != null){
-        String photoId=DateTime.now().millisecondsSinceEpoch.toString();
-        ref=FirebaseStorage.instance.ref().child(photoId);
-        await ref.putFile(addUsersImage!).whenComplete(() async{
+      if (addUsersImage != null) {
+        String photoId = DateTime
+            .now()
+            .millisecondsSinceEpoch
+            .toString();
+        ref = FirebaseStorage.instance.ref().child(photoId);
+        await ref.putFile(addUsersImage!).whenComplete(() async {
           await ref.getDownloadURL().then((value) {
-            regMap["USERS_IMAGE"]=value;
+            regMap["USERS_IMAGE"] = value;
           },);
         },);
       }
-      else if(UsersImageURL != ""){
-         regMap["USERS_IMAGE"] = UsersImageURL;
-         }
+      else if (UsersImageURL != "") {
+        regMap["USERS_IMAGE"] = UsersImageURL;
+      }
 
-      else{
-        regMap["USERS_IMAGE"]="";
+      else {
+        regMap["USERS_IMAGE"] = "";
       }
 
 
       // Add the registration data to Firestore
-      await db.collection("USERS").doc(id).set(regMap,SetOptions(merge: true));
+      await db.collection("USERS").doc(id).set(regMap, SetOptions(merge: true));
 
       // Save user data in SharedPreferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("REGISTER_NAME", RegisterNameController.text);
-      await prefs.setString("REGISTER_PHONENUMBER", RegisterPhoneController.text);
-      await prefs.setString("REGISTER_PASSWORD", RegisterPasswordController.text);
+      await prefs.setString(
+          "REGISTER_PHONENUMBER", RegisterPhoneController.text);
+      await prefs.setString(
+          "REGISTER_PASSWORD", RegisterPasswordController.text);
 
-      loginPro.usersAuthorized(RegisterPhoneController.text, RegisterPasswordController.text, context);
+      loginPro.usersAuthorized(
+          RegisterPhoneController.text, RegisterPasswordController.text,
+          context);
 
 
       notifyListeners();
@@ -610,16 +654,18 @@ class MainProvider extends ChangeNotifier{
       print("Error during registration: $e");
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: Text("Registration Error"),
-          content: Text("There was an error during registration. Please try again."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("OK"),
+        builder: (context) =>
+            AlertDialog(
+              title: Text("Registration Error"),
+              content: Text(
+                  "There was an error during registration. Please try again."),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("OK"),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     }
   }
@@ -691,59 +737,65 @@ class MainProvider extends ChangeNotifier{
     }
   }
 
-  void editUsers(String userId){
+  void editUsers(String userId) {
     db.collection("USERS").doc(userId).get().then((value) {
-      Map<dynamic,dynamic> editusers=value.data()as Map;
-      if(value.exists){
-        RegisterNameController.text=editusers["REGISTER_NAME"].toString();
-        RegisterPhoneController.text=editusers["REGISTER_PHONENUMBER"].toString();
-        RegisterPasswordController.text=editusers["REGISTER_PASSWORD"].toString();
-        PlaceController.text=editusers["PLACE"].toString();
-        AddressController.text=editusers["ADDRESS"].toString();
+      Map<dynamic, dynamic> editusers = value.data() as Map;
+      if (value.exists) {
+        RegisterNameController.text = editusers["REGISTER_NAME"].toString();
+        RegisterPhoneController.text =
+            editusers["REGISTER_PHONENUMBER"].toString();
+        RegisterPasswordController.text =
+            editusers["REGISTER_PASSWORD"].toString();
+        PlaceController.text = editusers["PLACE"].toString();
+        AddressController.text = editusers["ADDRESS"].toString();
         notifyListeners();
       }
     },);
     notifyListeners();
   }
 
-  List<UsersModel> usersList=[];
-  void getUsers(){
-    db.collection("USERS").get().then((value){
-      if(value.docs.isNotEmpty){
+  List<UsersModel> usersList = [];
+
+  void getUsers() {
+    db.collection("USERS").get().then((value) {
+      if (value.docs.isNotEmpty) {
         usersList.clear();
-        for(var element in value.docs){
-          Map<dynamic,dynamic>userdata=element.data();
-         usersList.add(UsersModel(
-             element.id,
-             userdata["REGISTER_NAME"]??"",
-             userdata["REGISTER_PHONENUMBER"]??"",
-             userdata["REGISTER_PASSWORD"]??"",
-             userdata["DESIGNATION"]??"",
-             userdata["PLACE"]??"",
-             userdata["ADDRESS"]??"",
-             userdata["USERS_IMAGE"]??"",
-         ));
+        for (var element in value.docs) {
+          Map<dynamic, dynamic>userdata = element.data();
+          usersList.add(UsersModel(
+            element.id,
+            userdata["REGISTER_NAME"] ?? "",
+            userdata["REGISTER_PHONENUMBER"] ?? "",
+            userdata["REGISTER_PASSWORD"] ?? "",
+            userdata["DESIGNATION"] ?? "",
+            userdata["PLACE"] ?? "",
+            userdata["ADDRESS"] ?? "",
+            userdata["USERS_IMAGE"] ?? "",
+          ));
         }
       }
     });
   }
 
-  List<UsersModel>designerList=[];
-  void getDesigners(){
-    db.collection("USERS").where("DESIGNATION",isEqualTo: "DESIGNER").get().then((value) {
-      if(value.docs.isNotEmpty){
+  List<UsersModel>designerList = [];
+
+  void getDesigners() {
+    db.collection("USERS").where("DESIGNATION", isEqualTo: "DESIGNER")
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
         designerList.clear();
-        for(var element in value.docs){
-          Map<dynamic,dynamic> designer=element.data();
+        for (var element in value.docs) {
+          Map<dynamic, dynamic> designer = element.data();
           designerList.add(UsersModel(
-              element.id,
-              designer["REGISTER_NAME"]??"",
-              designer["REGISTER_PASSWORD"]??"",
-              designer["REGISTER_PHONENUMBER"]??"",
-              designation,
-              designer["PLACE"]??"",
-              designer["ADDRESS"]??"",
-              designer["USERS_IMAGE"]??"",
+            element.id,
+            designer["REGISTER_NAME"] ?? "",
+            designer["REGISTER_PASSWORD"] ?? "",
+            designer["REGISTER_PHONENUMBER"] ?? "",
+            designation,
+            designer["PLACE"] ?? "",
+            designer["ADDRESS"] ?? "",
+            designer["USERS_IMAGE"] ?? "",
           ));
         }
         notifyListeners();
@@ -755,23 +807,30 @@ class MainProvider extends ChangeNotifier{
 
 
   // Map to hold TextEditingControllers for each product
-  Map<String,TextEditingController>countController={};
-  Map<String,TextEditingController>totalPriceController={};
+  Map<String, TextEditingController>countController = {};
+  Map<String, TextEditingController>totalPriceController = {};
+
 // Method to initialize controllers
   initController(String productId, double unitPrice) async {
-    countController[productId] ??= TextEditingController(text: '1'); // Default quantity 1
-    totalPriceController[productId] ??= TextEditingController(text: unitPrice.toStringAsFixed(2));
-    print("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz ${countController[productId]?.text}  ");
+    countController[productId] ??=
+        TextEditingController(text: '1'); // Default quantity 1
+    totalPriceController[productId] ??=
+        TextEditingController(text: unitPrice.toStringAsFixed(2));
+    print(
+        "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz ${countController[productId]?.text}  ");
     print("xxxxxxxxxxxxxxxxxxxxxx   ${totalPriceController[productId]?.text}");
     // notifyListeners();
   }
+
   // Increment function
   void increment(String productId, double unitPrice, String userId) {
     int currentCount = int.parse(countController[productId]?.text ?? '1');
     currentCount++;
     countController[productId]?.text = currentCount.toString();
-print("kkkkkkkkkkklllllllllllllllllllllll $productId  $currentCount");
-print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[productId]?.text }  $currentCount");
+    print("kkkkkkkkkkklllllllllllllllllllllll $productId  $currentCount");
+    print(
+        "kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[productId]
+            ?.text }  $currentCount");
     // Update total price for that product
     double totalPrice = currentCount * unitPrice;
     totalPriceController[productId]?.text = totalPrice.toStringAsFixed(2);
@@ -799,73 +858,76 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
       notifyListeners(); // Notify UI about changes
     }
   }
-  void clearCart(){
+
+  void clearCart() {
     countController.clear();
     totalPriceController.clear();
   }
 
-  void addToCart(String userId,String productId,String img,String price,String name){
-
+  void addToCart(String userId, String productId, String img, String price,
+      String name) {
     print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq ${countController[productId]}");
-    int productCount=0;
-    if(countController[productId]!=null) {
+    int productCount = 0;
+    if (countController[productId] != null) {
       print("Count-------------------------------------------------");
       productCount = int.parse(countController[productId]!.text);
     }
-    double totalPrice=0;
-    if(totalPriceController[productId]!=null) {
+    double totalPrice = 0;
+    if (totalPriceController[productId] != null) {
       print("tota------------------------------");
       totalPrice = double.parse(totalPriceController[productId]!.text);
-
     }
 
-    print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm $productId ${totalPriceController[productId]}");
-    HashMap<String,dynamic>cart=HashMap();
-    cart["PRODUCT_NAME"]=name;
-    cart["PRODUCT_IMAGE"]=img;
-    cart["PRODUCT_PRICE"]=price; // Save the price as a string with 2 decimal places
-    cart["PRODUCT_COUNT"]=productCount;
-    cart["TOTAL_PRICE"]=totalPrice;
-    cart["PRODUCT_ID"]=productId;
+    print(
+        "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm $productId ${totalPriceController[productId]}");
+    HashMap<String, dynamic>cart = HashMap();
+    cart["PRODUCT_NAME"] = name;
+    cart["PRODUCT_IMAGE"] = img;
+    cart["PRODUCT_PRICE"] =
+        price; // Save the price as a string with 2 decimal places
+    cart["PRODUCT_COUNT"] = productCount;
+    cart["TOTAL_PRICE"] = totalPrice;
+    cart["PRODUCT_ID"] = productId;
 
     print("Total_price ----------${cart["TOTAL_PRICE"]}");
     print("Total_COUNT ----------${cart["PRODUCT_COUNT"]}");
-    db.collection("USERS").doc(userId).collection("CART").doc(productId).set(cart,SetOptions(merge: true));
-    print("rrrrrrrr  :"+cartList.length.toString());
+    db.collection("USERS").doc(userId).collection("CART").doc(productId).set(
+        cart, SetOptions(merge: true));
+    print("rrrrrrrr  :" + cartList.length.toString());
     getAddedCart(userId);
     updateGrandTotal();
     notifyListeners();
   }
 
-  List<ProductModel>cartList=[];
-  void getAddedCart(String userId){
+  List<ProductModel>cartList = [];
+
+  void getAddedCart(String userId) {
     print("nnnnnnnnnn$userId");
-    db.collection("USERS").doc(userId).collection("CART").get().then((value){
+    db.collection("USERS").doc(userId).collection("CART").get().then((value) {
       print("ooooooooooooooo");
-      if(value.docs.isNotEmpty){
+      if (value.docs.isNotEmpty) {
         print("pppppppppppp");
         cartList.clear();
-        for(var element in value.docs){
+        for (var element in value.docs) {
           print("qqqqqqcccccccccccccc");
-          Map<dynamic,dynamic>cart=element.data();
+          Map<dynamic, dynamic>cart = element.data();
           cartList.add(ProductModel(
               element.id,
-              cart["PRODUCT_NAME"]??"",
-              double.parse(cart["PRODUCT_PRICE"]??0),
-              cart["PRODUCT_DESCRIPTION"]??"",
-              cart["DELIVERY_DURATION"]??"",
-              cart["PRODUCT_IMAGE"]??"",
-              cart["CURRENT_STATUS"]??"",
-            cart["PRODUCT_COUNT"]??0,
-            cart["CATEROGYID"]??"",
-            cart["CATEROGY_NAME"]??"",
-            cart["TOTAL_NUMBER OF PRODUCTS"]??""
+              cart["PRODUCT_NAME"] ?? "",
+              double.parse(cart["PRODUCT_PRICE"] ?? 0),
+              cart["PRODUCT_DESCRIPTION"] ?? "",
+              cart["DELIVERY_DURATION"] ?? "",
+              cart["PRODUCT_IMAGE"] ?? "",
+              cart["CURRENT_STATUS"] ?? "",
+              cart["PRODUCT_COUNT"] ?? 0,
+              cart["CATEROGYID"] ?? "",
+              cart["CATEROGY_NAME"] ?? "",
+              cart["TOTAL_NUMBER OF PRODUCTS"] ?? ""
           ));
           notifyListeners();
-          print("cart details"+cartList.toString());
-          print("rrrrrrrr  :"+cartList.length.toString());
+          print("cart details" + cartList.toString());
+          print("rrrrrrrr  :" + cartList.length.toString());
           print("Product Price:${cart["PRODUCT_PRICE"]}");
-
         }
       }
     });
@@ -873,16 +935,18 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
 
 
   // Function to calculate and add grand total to Firestore
-  void addGrandTotalToUsers(String userId){
+  void addGrandTotalToUsers(String userId) {
     // First, calculate the grand total
-    double grandTotal=calculateGrandTotal();
+    double grandTotal = calculateGrandTotal();
     // Prepare the data to store in Firestore
-    Map<String,dynamic>cart_total={
-      "CART_GRANDTOTAL":grandTotal
+    Map<String, dynamic>cart_total = {
+      "CART_GRANDTOTAL": grandTotal
     };
-    db.collection("USERS").doc(userId).set(cart_total,SetOptions(merge: true)).then((value) {
+    db.collection("USERS").doc(userId)
+        .set(cart_total, SetOptions(merge: true))
+        .then((value) {
       print("GRAND TOTAL UPDATED SUCCESSFULLY!----");
-    },).catchError((error){
+    },).catchError((error) {
       print("FAILED TO UPDATE GRAND TOTAL :$error");
     });
   }
@@ -892,7 +956,8 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
     double grandTotal = 0.0;
     for (var product in cartList) {
       String productId = product.pid;
-      double productTotal = double.parse(totalPriceController[productId]?.text ?? '0');
+      double productTotal = double.parse(
+          totalPriceController[productId]?.text ?? '0');
       grandTotal += productTotal;
     }
     return grandTotal;
@@ -902,26 +967,29 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
   void updateGrandTotal() {
     notifyListeners(); // Notify the UI that the grand total has changed
   }
-  double grandTotal=0.0;
-  void getGrandTotal(String userId)async{
-  try{
-    DocumentSnapshot doc=await db.collection("USERS").doc(userId).get();
-    if (doc.exists){
-      if(doc.data()!=null&&doc["CART_GRANDTOTAL"]!=null){
-        grandTotal=doc["CART_GRANDTOTAL"];
 
-        notifyListeners();
+  double grandTotal = 0.0;
+
+  void getGrandTotal(String userId) async {
+    try {
+      DocumentSnapshot doc = await db.collection("USERS").doc(userId).get();
+      if (doc.exists) {
+        if (doc.data() != null && doc["CART_GRANDTOTAL"] != null) {
+          grandTotal = doc["CART_GRANDTOTAL"];
+
+          notifyListeners();
+        }
       }
     }
-  }
-  catch(e){
-    print("Failed to fetch grand total:$e");
-  }
-
+    catch (e) {
+      print("Failed to fetch grand total:$e");
+    }
   }
 
-  void deleteProductFromCart(String userId,String productId){
-    db.collection("USERS").doc(userId).collection("CART").doc(productId).delete();
+  void deleteProductFromCart(String userId, String productId) {
+    db.collection("USERS").doc(userId).collection("CART")
+        .doc(productId)
+        .delete();
     print("You deleted product from cart-----------------");
     getAddedCart(userId);
     notifyListeners();
@@ -1098,22 +1166,24 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
 // ---------------------------------------------ADD TO BUY NOW-----------------------------------------------------------------
 
   // Map to hold TextEditingControllers for each product
-  Map<String,TextEditingController>countBuyController={};
-  Map<String,TextEditingController>totalPriceBuyController={};
+  Map<String, TextEditingController>countBuyController = {};
+  Map<String, TextEditingController>totalPriceBuyController = {};
 
 // Method to initialize controllers
   void initBuyController(String productId, double unitPrice) {
-    countBuyController[productId] ??= TextEditingController(text: '1'); // Default quantity 1
-    totalPriceBuyController[productId] ??= TextEditingController(text: unitPrice.toStringAsFixed(2));
+    countBuyController[productId] ??=
+        TextEditingController(text: '1'); // Default quantity 1
+    totalPriceBuyController[productId] ??=
+        TextEditingController(text: unitPrice.toStringAsFixed(2));
   }
 
   // Increment function
   void incrementBuy(String productId, double unitPrice, String userId) {
-
     int currentCount = int.parse(countBuyController[productId]?.text ?? '1');
     currentCount++;
     countBuyController[productId]?.text = currentCount.toString();
-    print("hhhhhhhhhhhhhhhhhiiiiiiiiiiiiiiiiiiiiiii $unitPrice     $currentCount");
+    print(
+        "hhhhhhhhhhhhhhhhhiiiiiiiiiiiiiiiiiiiiiii $unitPrice     $currentCount");
 
     // Update total price for that product
     double totalPrice = currentCount * unitPrice;
@@ -1146,29 +1216,29 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
   }
 
 
-  void addToBuyNow(String pimg,String pname,String price,String userId,String productId){
-    int productCount=0;
-    if(countBuyController[productId]!=null){
-      productCount=int.parse(countBuyController[productId]!.text);
+  void addToBuyNow(String pimg, String pname, String price, String userId,
+      String productId) {
+    int productCount = 0;
+    if (countBuyController[productId] != null) {
+      productCount = int.parse(countBuyController[productId]!.text);
     }
-    double totalPrice=0;
-    if(totalPriceBuyController[productId]!=null){
-      totalPrice=double.parse(totalPriceBuyController[productId]!.text);
+    double totalPrice = 0;
+    if (totalPriceBuyController[productId] != null) {
+      totalPrice = double.parse(totalPriceBuyController[productId]!.text);
     }
 
-    HashMap<String ,dynamic> buy=HashMap();
-    buy["PRODUCT_NAME"]=pname;
-    buy["PRODUCT_IMAGE"]=pimg;
-    buy["PRODUCT_PRICE"]=price;
-    buy["PRODUCT_COUNT"]=productCount;
-    buy["TOTAL_PRICE"]=totalPrice;
-    buy["PRODUCT_ID"]=productId;
+    HashMap<String, dynamic> buy = HashMap();
+    buy["PRODUCT_NAME"] = pname;
+    buy["PRODUCT_IMAGE"] = pimg;
+    buy["PRODUCT_PRICE"] = price;
+    buy["PRODUCT_COUNT"] = productCount;
+    buy["TOTAL_PRICE"] = totalPrice;
+    buy["PRODUCT_ID"] = productId;
 
-    db.collection("USERS").doc(userId).collection("BUY_NOW").doc(productId).set(buy,SetOptions(merge: true));
+    db.collection("USERS").doc(userId).collection("BUY_NOW").doc(productId).set(
+        buy, SetOptions(merge: true));
     notifyListeners();
-
   }
-
 
 
   // void addToBuyNow(BuildContext context, String pimg, String pname, String price, String userId, String productId) {
@@ -1210,59 +1280,69 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
   //   notifyListeners();
   // }
 
-  List<ProductModel>buynowList=[];
+  List<ProductModel>buynowList = [];
 
-  void getBuyNow(String userId){
-    db.collection("USERS").doc(userId).collection("BUY_NOW").get().then((value){
-
-      if(value.docs.isNotEmpty){
+  void getBuyNow(String userId) {
+    db.collection("USERS").doc(userId).collection("BUY_NOW").get().then((
+        value) {
+      if (value.docs.isNotEmpty) {
         buynowList.clear();
-        for(var element in value.docs){
-          Map<dynamic,dynamic>cart=element.data();
+        for (var element in value.docs) {
+          Map<dynamic, dynamic>cart = element.data();
           buynowList.add(ProductModel(
-              element.id,
-              cart["PRODUCT_NAME"]??"",
-              cart["PRODUCT_PRICE"]??"",
-              cart["PRODUCT_DESCRIPTION"]??"",
-              cart["DELIVERY_DURATION"]??"",
-              cart["PRODUCT_IMAGE"]??"",
-              cart["CURRENT_STATUS"]??"",
-              cart["PRODUCT_COUNT"]??0,
-              cart["CATEROGYID"]??"",
-              cart["CATEROGY_NAME"]??"",
-              cart["TOTAL_NUMBER OF PRODUCTS"]??"",
+            element.id,
+            cart["PRODUCT_NAME"] ?? "",
+            cart["PRODUCT_PRICE"] ?? "",
+            cart["PRODUCT_DESCRIPTION"] ?? "",
+            cart["DELIVERY_DURATION"] ?? "",
+            cart["PRODUCT_IMAGE"] ?? "",
+            cart["CURRENT_STATUS"] ?? "",
+            cart["PRODUCT_COUNT"] ?? 0,
+            cart["CATEROGYID"] ?? "",
+            cart["CATEROGY_NAME"] ?? "",
+            cart["TOTAL_NUMBER OF PRODUCTS"] ?? "",
           ));
           notifyListeners();
-          print("cart details"+buynowList.toString());
-          print("rrrrrrrr  :"+buynowList.length.toString());
+          print("cart details" + buynowList.toString());
+          print("rrrrrrrr  :" + buynowList.length.toString());
           print("Product Price:${cart["PRODUCT_PRICE"]}");
-
         }
       }
     });
   }
 
   Future<void> addToOrder(String userId) async {
-    String id = DateTime.now().millisecondsSinceEpoch.toString();
+    String id = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
     try {
       // List to hold all items for the order
       List<Map<String, dynamic>> orderItems = [];
 
       // Fetch items from the CART collection
-      QuerySnapshot cartSnapshot = await db.collection("USERS").doc(userId).collection("CART").get();
+      QuerySnapshot cartSnapshot = await db.collection("USERS")
+          .doc(userId)
+          .collection("CART")
+          .get();
       for (var doc in cartSnapshot.docs) {
         orderItems.add({
           "PRODUCT_NAME": doc["PRODUCT_NAME"],
-          "PRODUCT_COUNT": countController[doc["PRODUCT_ID"]]?.text.toString() ?? doc["PRODUCT_COUNT"],
+          "PRODUCT_COUNT": countController[doc["PRODUCT_ID"]]?.text
+              .toString() ?? doc["PRODUCT_COUNT"],
           "PRODUCT_IMAGE": doc["PRODUCT_IMAGE"],
           "PRODUCT_PRICE": doc["PRODUCT_PRICE"],
-          "TOTAL_PRICE": totalPriceController[doc["PRODUCT_ID"]]?.text.toString() ?? doc["TOTAL_PRICE"],
+          "TOTAL_PRICE": totalPriceController[doc["PRODUCT_ID"]]?.text
+              .toString() ?? doc["TOTAL_PRICE"],
           "PRODUCT_ID": doc["PRODUCT_ID"]
         });
       }
 
       // Fetch items from the BUY_NOW collection
-      QuerySnapshot buyNowSnapshot = await db.collection("USERS").doc(userId).collection("BUY_NOW").get();
+      QuerySnapshot buyNowSnapshot = await db.collection("USERS")
+          .doc(userId)
+          .collection("BUY_NOW")
+          .get();
       for (var doc in buyNowSnapshot.docs) {
         orderItems.add({
           "PRODUCT_NAME": doc["PRODUCT_NAME"],
@@ -1298,45 +1378,43 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
   }
 
 
-
-  Future<void> clearOrderedProduct(String userId,String from)async {
-    var collection=db.collection("USERS").doc(userId).collection(from);
-    var snapShots=await collection.get();
-    for(var doc in snapShots.docs){
+  Future<void> clearOrderedProduct(String userId, String from) async {
+    var collection = db.collection("USERS").doc(userId).collection(from);
+    var snapShots = await collection.get();
+    for (var doc in snapShots.docs) {
       await doc.reference.delete();
     }
-}
+  }
 
   List<dynamic> orderList = [];
 
   Future<void> getOrder(String userId) async {
     print("ccccccccccc");
     try {
-      QuerySnapshot orderQuery = await db.collection("ORDER").where("USER_ID",isEqualTo: userId).orderBy("ORDER_DATE",descending: true).get();
+      QuerySnapshot orderQuery = await db.collection("ORDER").where(
+          "USER_ID", isEqualTo: userId)
+          .orderBy("ORDER_DATE", descending: true)
+          .get();
       // Clear the previous order list and populate it with the fetched orders
 
       orderList.clear();
-      for (var doc in orderQuery.docs){
+      for (var doc in orderQuery.docs) {
         print("jjjjjjjjjjjjjbbbbbb");
-        Map<String,dynamic>orderData=doc.data() as Map<String,dynamic>;
+        Map<String, dynamic>orderData = doc.data() as Map<String, dynamic>;
         orderList.addAll(orderData["ORDER_ITEMS"]);
-
       }
 
-      if(orderList.isEmpty){
+      if (orderList.isEmpty) {
         print(" No orders found for user:$userId");
       }
-      else{
+      else {
         print("Orders retrieved successfully for user:$userId");
       }
       notifyListeners();
-
     } catch (e) {
       print("Error retrieving order: $e");
     }
   }
-
-
 
 
   List<Map<String, dynamic>> allOrdersList = [];
@@ -1367,7 +1445,8 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
         }
 
         // Print success or no orders found
-        print("Orders retrieved successfully. Total orders: ${allOrdersList.length}");
+        print("Orders retrieved successfully. Total orders: ${allOrdersList
+            .length}");
       } else {
         print("No orders found in the collection.");
       }
@@ -1379,11 +1458,11 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
   }
 
 
-
 // ------------------------------------- TO GET THE LIKED PRODUCT IN WISHLIST-------------------------------------------------------------------------------------------
-  bool isLiked=false;
-  void toggleFavorite(String userId, String productId,BuildContext context) {
-    LoginProvider logPro=Provider.of<LoginProvider>(context, listen: false);
+  bool isLiked = false;
+
+  void toggleFavorite(String userId, String productId, BuildContext context) {
+    LoginProvider logPro = Provider.of<LoginProvider>(context, listen: false);
     // Toggle the like state and update the wishlist accordingly
     isLiked = !isLiked;
 
@@ -1392,17 +1471,17 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
       if (value.exists) {
         //get the current wishlist
 
-        List<dynamic> currentWishlist=value.data()?["WISHLIST"]??[];
+        List<dynamic> currentWishlist = value.data()?["WISHLIST"] ?? [];
 
-        if(currentWishlist.contains(productId)){
+        if (currentWishlist.contains(productId)) {
           // if the product is already in the wishlist, remove it
           db.collection("USERS").doc(userId).update({
-            "WISHLIST":FieldValue.arrayRemove([productId])
+            "WISHLIST": FieldValue.arrayRemove([productId])
           });
           // Remove from favourite_product field in the product collection
 
           db.collection("PRODUCT").doc(productId).update({
-            "FAVOURITED_USER":FieldValue.arrayRemove([userId])
+            "FAVOURITED_USER": FieldValue.arrayRemove([userId])
           });
           logPro.favProductIdList.remove(productId);
 
@@ -1410,7 +1489,7 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
           const snackBar = SnackBar(content: Text("Removed from wishlist"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
-        else{
+        else {
           // If the product is not in the wishlist, add it
           db.collection("USERS").doc(userId).set({
             "WISHLIST": FieldValue.arrayUnion([productId])
@@ -1433,61 +1512,60 @@ print("kkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbb $unitPrice  ${countController[product
     });
   }
 
-  void removeFromWishList(String userId,String productId) {
+  void removeFromWishList(String userId, String productId) {
     // Remove the product from the WISHLIST field in the user's document
     db.collection("USERS").doc(userId).update({
-      "WISHLIST":FieldValue.arrayRemove([productId])
+      "WISHLIST": FieldValue.arrayRemove([productId])
     }).then((value) {
       notifyListeners();
     },);
     notifyListeners();
   }
 
-  bool isLoading=true;
-  Future<void> getWishList()async{
-    isLoading=true;
+  bool isLoading = true;
+
+  Future<void> getWishList() async {
+    isLoading = true;
     notifyListeners();
 
-    isLoading=false;
+    isLoading = false;
     notifyListeners();
   }
-
 
 
   List<ProductModel> wishList = [];
 
   Future<void> getFavorite(String userId) async {
     print("hhhhhhhhhhhhhhhhhhhhhhhh");
-     await db.collection("USERS").doc(userId).get().then((value) async {
-      if(value.exists){
+    await db.collection("USERS").doc(userId).get().then((value) async {
+      if (value.exists) {
         wishList.clear();
-        Map<dynamic,dynamic>wishMap=value.data() as Map;
-        List<dynamic> fav=wishMap["WISHLIST"]??[];
-        for(var ele in fav){
-          String proId=ele.toString();
+        Map<dynamic, dynamic>wishMap = value.data() as Map;
+        List<dynamic> fav = wishMap["WISHLIST"] ?? [];
+        for (var ele in fav) {
+          String proId = ele.toString();
           await db.collection("PRODUCT").doc(proId).get().then((value) {
-            if(value.exists){
-              Map<dynamic,dynamic>map=value.data() as Map;
+            if (value.exists) {
+              Map<dynamic, dynamic>map = value.data() as Map;
               wishList.add(ProductModel(
-                value.id,
-                map["PRODUCT_NAME"].toString()??"",
-                double.tryParse(map["PRICE"].toString())??0.0,
-                map["PRODUCT_DESCRIPTION"].toString()??"",
-                map["DELIVERY_DURATION"].toString()??"",
-                map["PHOTO"].toString()??"",
-                map["CURRENT_STATUS"].toString()??"",
-                int.tryParse(map["PRODUCT_COUNT"].toString())??0,
-                map["CATEROGYID"].toString()??"",
-                map["CATEROGY_NAME"].toString()??"",
-                map["TOTAL_NUMBER OF PRODUCTS"].toString()??""
+                  value.id,
+                  map["PRODUCT_NAME"].toString() ?? "",
+                  double.tryParse(map["PRICE"].toString()) ?? 0.0,
+                  map["PRODUCT_DESCRIPTION"].toString() ?? "",
+                  map["DELIVERY_DURATION"].toString() ?? "",
+                  map["PHOTO"].toString() ?? "",
+                  map["CURRENT_STATUS"].toString() ?? "",
+                  int.tryParse(map["PRODUCT_COUNT"].toString()) ?? 0,
+                  map["CATEROGYID"].toString() ?? "",
+                  map["CATEROGY_NAME"].toString() ?? "",
+                  map["TOTAL_NUMBER OF PRODUCTS"].toString() ?? ""
               )
               );
               // notifyListeners();
             }
           },);
         }
-notifyListeners();
-
+        notifyListeners();
       }
     },);
   }
@@ -1495,31 +1573,36 @@ notifyListeners();
 
 // ----------------------------------------------------------------------------------------------------------------------
 
-  MainProvider(){
-    filteredProductsList=productList;
+  MainProvider() {
+    filteredProductsList = productList;
     getUsers();
   }
 
-  String selectedCategory="All";
-  List<ProductModel>filteredProductsList=[];
+  String selectedCategory = "All";
+  List<ProductModel>filteredProductsList = [];
+
   // Function to update the selected category and filter products accordingly
 
-  void filteredSelectedCategory(String categoryName,){
-    selectedCategory=categoryName;
-    if(selectedCategory=="All"){
-      filteredProductsList=productList; // Show all products if "All" is selected
+  void filteredSelectedCategory(String categoryName,) {
+    selectedCategory = categoryName;
+    if (selectedCategory == "All") {
+      filteredProductsList =
+          productList; // Show all products if "All" is selected
 
     }
-    else{
+    else {
       // Filter the products based on the selected category
-      
-      filteredProductsList=productList.where((product) => product.categoryName==categoryName,).toList();
 
+      filteredProductsList =
+          productList.where((product) => product.categoryName == categoryName,)
+              .toList();
     }
     notifyListeners();
   }
+
   // Function to update products and categories from the database
-  void updateProductsAndCategories(List<CategoryModel> categories, List<ProductModel> products) {
+  void updateProductsAndCategories(List<CategoryModel> categories,
+      List<ProductModel> products) {
     categoryList = categories;
     productList = products;
     filteredProductsList = productList;
@@ -1557,57 +1640,226 @@ notifyListeners();
   // }
 
 // -----------------------------CHAT--------------------------------------------------------------------------------
-  final TextEditingController messageController = TextEditingController();
-  List<String> messages = [];
-  Future<void> sendMessage(String senderId, String receiverId) async {
-    if (messageController.text.trim().isEmpty) return;
+// --------------------------------------CHAT--------------------------------------------------------------------------
+//   TextEditingController messageController = TextEditingController();
+//    String getChatId(String userId1,userId2){
+//     List<String> userIDs=[userId1,userId1];
+//     userIDs.sort();
+//     return userIDs.join("-");
+//   }
+//
+//   List<Message> userMessagesList=[];
+//     Future <void> addTextMessage(Message messages)async {
+//      String chatId=getChatId(messages.senderId, messages.receiverId);
+//      if (userMessagesList.isEmpty) {
+//        db.collection("CHATS").doc(chatId).set({
+//          "CREATED_AT": DateTime.now(),
+//          "PARTICIPANTS": [messages.senderId, messages.receiverId],
+//          "LAST_MESSAGE": {
+//            "TEXT": messages.content,
+//            "SENT_BY": messages.senderId,
+//            "TIMESTAMP": DateTime.now(),
+//          }
+//        }, SetOptions(merge: true));
+//      } else {
+//        db.collection("CHATS").doc(chatId).set({
+//          "LAST_MESSAGE": {
+//            "TEXT": messages.content,
+//            "SENT_BY": messages.senderId,
+//            "TIMESTAMP": DateTime.now(),
+//          }
+//        },SetOptions(merge: true));
+//      }
+//
+//      await db.collection("CHATS").doc(chatId).collection("MESSAGES").doc(messages.messageId).set(messages.toJson());
+//      notifyListeners();
+//    }
+//   ScrollController scrollController = ScrollController();
+//   Future<void> fetchUserMessages(String userId,String senderId) async {
+//     String chatId = getChatId(userId, senderId);
+//     userMessagesList.clear();
+//     db.collection("CHATS").doc(chatId).collection("MESSAGES").orderBy("TIMESTAMP",descending: false).snapshots().listen((value){
+//       if(value.docs.isNotEmpty){
+//         userMessagesList.clear();
+//         for(var element in value.docs){
+//           Map<dynamic,dynamic>map=element.data();
+//           DateTime addedDate = DateTime.now();
+//           if (map['TIMESTAMP'] != null) {
+//             Timestamp timestamp = map['TIMESTAMP'];
+//             addedDate = timestamp.toDate(); // Safely converting timestamp
+//           }
+//           userMessagesList.add(Message(
+//             messageId: element.id,
+//             senderId: map["SENDER_ID"]??"",
+//             receiverId:  map["RECEIVER_ID"]??"",
+//             sentTime: addedDate,
+//             content: map["CONTENT"]??"",
+//             isSeen: false,
+//             messageType: map["MESSAGE_TYPE"]??"",));
+//         }
+//
+//         WidgetsBinding.instance.addPostFrameCallback((_) {
+//           scrollController.jumpTo(scrollController.position.maxScrollExtent);
+//         });
+//         notifyListeners();
+//       }
+//
+//     });
+//
+//   }
+//
 
-    String message = messageController.text.trim();
-    messageController.clear();
-    await startChat(senderId, receiverId, message);
-  }
 
-  Future<void> startChat(String senderId, String receiverId, String message) async {
-    DateTime date=DateTime.now();
-    String id = date.millisecondsSinceEpoch.toString();
-    String chatId = senderId.compareTo(receiverId) < 0 ? "$senderId-$receiverId" : "$receiverId-$senderId";
 
-    Map<String, dynamic> chatData = {
-      "CREATED_AT": date,
-      "LAST_MESSAGE": {
-        "SENT_BY": senderId,
-        "TEXT": message,
-        "TIMESTAMP": date,
-      },
-      "PARTICIPANTS": [senderId, receiverId],
-    };
+// TextEditingController messageController = TextEditingController();
+// String designer_Name = "";
+// String designer_Phone = "";
+// String designer_Photo = "";
+//
+// List<MessageModel> messagesList = [];
 
-    await db.collection("CHAT").doc(chatId).set(chatData, SetOptions(merge: true));
+// void setChatPartner(String name, String phone, String photo) {
+//   designer_Name = name;
+//   designer_Phone = phone;
+//   designer_Photo = photo;
+//   notifyListeners();
+// }
+//
+// Future<void> sendMessage(String senderId, String receiverId) async {
+//   if (messageController.text.trim().isEmpty) return;
+//
+//   String message = messageController.text.trim();
+//   messageController.clear();
+//   try {
+//     await startChat(senderId, receiverId, message);
+//   } catch (e) {
+//     print("Error sending message: $e");
+//   }
+// }
 
-    Map<String, dynamic> messageData = {
-      "CONTENT": message,
-      "IS_SEEN": false,
-      "MESSAGE_TYPE": "TEXT",
-      "RECEIVER_ID": receiverId,
-      "SENDER_ID": senderId,
-      "TIMESTAMP": date,
-    };
-    await db.collection("CHAT").doc(chatId).collection("MESSAGE").doc(id).set(messageData);
-    notifyListeners();
-  }
-
-  void dispose() {
-    messageController.dispose();
-    super.dispose();
-  }
-
+  // Future<void> startChat(String senderId, String receiverId,String message) async {
+  //   print("nnnnnnuuuuuuuuuuuu");
+  //   DateTime date = DateTime.now();
+  //   String id = date.millisecondsSinceEpoch.toString();
+  //   String chatId =getChatId(senderId, receiverId);
+  //
+  //   Map<String, dynamic> chatData = {
+  //     "CREATED_AT": date,
+  //     "LAST_MESSAGE": {
+  //       "SENT_BY": senderId,
+  //       "TEXT": message,
+  //       "TIMESTAMP": date,
+  //     },
+  //     "PARTICIPANTS": [senderId, receiverId],
+  //   };
+  //
+  //   try {
+  //     await db.collection("CHAT").doc(chatId).set(
+  //         chatData, SetOptions(merge: true));
+  //
+  //     Map<String, dynamic> messageData = {
+  //       "CONTENT": message,
+  //       "IS_SEEN": false,
+  //       "MESSAGE_TYPE": "TEXT",
+  //       "RECEIVER_ID": receiverId,
+  //       "SENDER_ID": senderId,
+  //       "TIMESTAMP": date,
+  //     };
+  //     await db.collection("CHAT").doc(chatId).collection("MESSAGE").doc(id).set(
+  //         messageData);
+  //     notifyListeners();
+  //   } catch (e) {
+  //     print("Error starting chat: $e");
+  //   }
+  // }
+  //
+  // void onDesignerSelected(BuildContext context, String login_Id, String name,String receiver_Id,
+  //     String phone, String photo) {
+  //   setChatPartner(name, phone, photo);
+  //   callNext(context, ChatScreen(login_Id: login_Id, receiver_Id: receiver_Id,
+  //     ));
+  // }
+  //
+  // void dispose() {
+  //   messageController.dispose();
+  //   super.dispose();
+  // }
+  //
+  //
+  // void getChatDetails(String senderId, receiverId) {
+  //   String chatID = senderId.compareTo(receiverId) < 0
+  //       ? "$senderId-$receiverId"
+  //       : "$receiverId-$senderId";
+  //   db.collection("CHAT").doc(chatID).collection("MESSAGE")
+  //       .orderBy("TIMESTAMP", descending: true)
+  //       .snapshots().listen((value) {
+  //     if (value.docs.isNotEmpty) {
+  //       messagesList.clear();
+  //       for (var element in value.docs) {
+  //         Map<dynamic, dynamic> msg = element.data();
+  //         DateTime timestamp = (msg["TIMESTAMP"] as Timestamp).toDate();
+  //         messagesList.add(MessageModel(
+  //             element.id,
+  //             msg["CONTENT"],
+  //             msg["SENDER_ID"],
+  //             msg["RECEIVER_ID"],
+  //             timestamp,
+  //             msg["IS_SEEN"],
+  //             msg["MESSAGE_TYPE"]
+  //         ));
+  //       }
+  //       notifyListeners();
+  //     }
+  //   },);
+  // }
+  //
+  // List<MessageModel>enquiriesList = [];
+  //
+  // void getEnquiriesForDesigner(String designer_id_) {
+  //   enquiriesList.clear();
+  //   db.collection("CHAT")
+  //       .where("PARTICIPANTS", arrayContains: designer_id_)
+  //       .snapshots()
+  //       .listen((value) async {
+  //     for (var doc in value.docs) {
+  //       var msgSnap = await db.collection("CHAT").doc(doc.id).collection(
+  //           "MESSAGE")
+  //           .orderBy("TIMESTAMP", descending: true).limit(1).get();
+  //
+  //       if (msgSnap.docs.isNotEmpty) {
+  //         var msgDoc = msgSnap.docs.first;
+  //         Map<String, dynamic>msgData = msgDoc.data();
+  //         DateTime timestamp = (msgData["TIMESTAMP"] as Timestamp).toDate();
+  //         // Fetch user details based on the sender or receiver ID
+  //
+  //         String otherUSerId = msgData["SENDER_ID"] == designer_id_
+  //             ? msgData["RECIEVER_ID"]
+  //             : msgData["SENDER_ID"];
+  //         var userSnapShot = await db.collection("USERS")
+  //             .doc(otherUSerId)
+  //             .get();
+  //         Map<String, dynamic>? userData = userSnapShot.data();
+  //         enquiriesList.add(MessageModel(
+  //           msgDoc.id,
+  //           msgData["CONTENT"],
+  //           msgData["SENDER_ID"],
+  //           msgData["RECEIVER_ID"],
+  //           timestamp,
+  //           msgData["IS_SEEN"],
+  //           msgData["MESSAGE_TYPE"],
+  //           // userId: otherUSerId,
+  //           // userName: userData?["name"] ?? "Unknown",
+  //           // // Ensure safe access with fallback
+  //           // userPhone: userData?["phone"] ?? "No phone",
+  //           // userPhoto: userData?["photoUrl"] ?? "default_photo_url",
+  //
+  //         ));
+  //       }
+  //
+  //
+  //       notifyListeners();
+  //     }
+  //   });
+  // }
 
 }
-
-
-
-
-
-
-
-

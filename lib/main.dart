@@ -1,4 +1,5 @@
 import 'package:decora/admin/verifyDesigners.dart';
+import 'package:decora/provider/chatProvider.dart';
 import 'package:decora/provider/loginProvider.dart';
 import 'package:decora/provider/mainProvider.dart';
 import 'package:decora/user/accountScreen.dart';
@@ -35,6 +36,7 @@ import 'Designer/chatBoxScreen.dart';
 import 'Designer/dbottomNavigation.dart';
 import 'Designer/designerProfileScreen.dart';
 import 'Designer/newEnquiryScreen.dart';
+import 'Designer/sample.dart';
 import 'Designer/uploadWorkScreen.dart';
 import 'admin/AdminHomeScreen.dart';
 import 'admin/addCategoryScreen.dart';
@@ -64,7 +66,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => MainProvider(),),
-        ChangeNotifierProvider(create: (context) => LoginProvider(),)
+        ChangeNotifierProvider(create: (context) => LoginProvider(),),
+        ChangeNotifierProvider(create: (context) => ChatProvider(),)
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

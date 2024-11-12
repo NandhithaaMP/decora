@@ -1,8 +1,10 @@
 import 'package:decora/constants/call_functions.dart';
 import 'package:decora/constants/constant_color.dart';
+import 'package:decora/provider/chatProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Designer/chatBoxScreen.dart';
 import '../provider/mainProvider.dart';
@@ -71,39 +73,104 @@ Widget registerField(
 // }
 
 
-void showAlertDialog(BuildContext context, String action) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("Confirmation"),
-        content: Text("Do you want to connect with designer?"),
-        actions: <Widget>[
-          TextButton(
-            child: Text("Cancel"),
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog and stay on the same screen
-            },
-          ),
-          Consumer<MainProvider>(
-            builder: (context1,value1,child) {
-              return TextButton(
-                child: Text("Yes"),
-                onPressed: () {
+// void showAlertDialog(BuildContext context, String action,String login_Id,String receiver_Id) {
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         title: Text("Confirmation"),
+//         content: Text("Do you want to connect with designer?"),
+//         actions: <Widget>[
+//           TextButton(
+//             child: Text("Cancel"),
+//             onPressed: () {
+//               Navigator.of(context).pop(); // Close the dialog and stay on the same screen
+//             },
+//           ),
+//           Consumer<MainProvider>(
+//               builder: (context1,value1,child) {
+//                 return Consumer<ChatProvider>(
+//                   builder: (context2,value2,child) {
+//                     return TextButton(
+//                       child: Text("Yes"),
+//                       onPressed: () {
+//                         value2.fetchUserMessages(login_Id, receiver_Id);
+//                         callNext(context, ChatScreen(login_Id: login_Id, receiver_Id: receiver_Id,));
+//                         // Navigator.of(context).pop(); // Close the first dialog
+//                         // showAlertConformationDialog(context, action); // Show the confirmation dialog
+//                       },
+//                     );
+//                   }
+//                 );
+//               }
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }
 
-                  callNext(context, ChatScreen(userId: '', name: '', phone: '',));
-                  // Navigator.of(context).pop(); // Close the first dialog
-                  // showAlertConformationDialog(context, action); // Show the confirmation dialog
-                },
-              );
-            }
-          ),
-        ],
-      );
-    },
-  );
+// ------------------------------------------------------------------------------------------------
+void showAlertDialog(BuildContext context, String action, String login_Id, String receiver_Id) async {
+
+  // Check if connection exists
+  bool isConnected = await checkIfConnected(login_Id, receiver_Id);
+
+  if (isConnected) {
+    // If already connected, directly navigate to the ChatScreen
+    callNext(context, ChatScreen(login_Id: login_Id, receiver_Id: receiver_Id));
+  } else {
+    // If not connected, show the alert dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirmation"),
+          content: Text("Do you want to connect with the designer?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog and stay on the same screen
+              },
+            ),
+            Consumer<MainProvider>(
+                builder: (context1, value1, child) {
+                  return Consumer<ChatProvider>(
+                      builder: (context2, value2, child) {
+                        return TextButton(
+                          child: Text("Yes"),
+                          onPressed: () async {
+                            // Save the connection to avoid showing the dialog again
+                            await saveConnection(login_Id, receiver_Id);
+                            value2.fetchUserMessages(login_Id, receiver_Id);
+                            callNext(context, ChatScreen(login_Id: login_Id, receiver_Id: receiver_Id));
+                          },
+                        );
+                      }
+                  );
+                }
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
+
+Future<bool> checkIfConnected(String login_Id, String receiver_Id) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('$login_Id-$receiver_Id') ?? false;
+}
+
+Future<void> saveConnection(String login_Id, String receiver_Id) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('$login_Id-$receiver_Id', true);
+}
+
+
+// ------------------------------------------------------------------------------------------------
 // void showAlertConformationDialog(BuildContext context, String action) {
 //   showDialog(
 //     context: context,
