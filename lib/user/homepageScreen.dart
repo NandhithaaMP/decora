@@ -182,7 +182,7 @@ class _UserHomePageState extends State<UserHomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ConnectDesigners(login_ID: widget.userId,),
+                              builder: (context) => ConnectDesigners(login_ID: widget.userId, usname: widget.user_Name, usphone: widget.phone_Number, usphoto: "PHOTO",),
                             ));
                       },
                     );
@@ -313,7 +313,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => DesignerProfile(login_ID: widget.userId, designerId: item.designerId,),
+                                          builder: (context) => DesignerProfile(login_ID: widget.userId, designerId: item.designerId, usname: widget.user_Name, usphone: widget.phone_Number, usphoto: "PHOTO", receiver_name: item.designerName,),
                                         ),
                                       );
                                     },

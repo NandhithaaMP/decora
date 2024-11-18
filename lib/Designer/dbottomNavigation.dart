@@ -27,12 +27,14 @@ class _DesignerBottomNavigationState extends State<DesignerBottomNavigation> {
   int indexNum=0;
   List<Widget> getScreens(){
     return [
-      Consumer<ChatProvider>(
-        builder: (context,value,child) {
-          value.fetchRecentMessagesForDesigner(widget.userId);
-          return NewEnquiryScreen(userId: widget.userId, name: widget.name, phone: widget.phone, receiverId: '', photo: '',);
-        }
-      ),
+      // Consumer<ChatProvider>(
+      //   builder: (context,value,child) {
+      //     // value.fetchMsgFromUser(widget.userId, widget.receiver_ID);
+      //     value.fetchLastMessagesForDesigner(widget.userId);
+      //     return NewEnquiryScreen(userId: widget.userId, name: widget.name, phone: widget.phone, receiverId: widget.receiver_ID, photo: '',);
+      //   }
+      // ),
+      NewEnquiryScreen(userId: widget.userId, name: widget.name, phone: widget.phone, receiverId: widget.receiver_ID, photo: '',),
       UploadWorkScreen(designerId: widget.userId,),
       DesignerProfileScreen(userId: widget.userId,),
     ];

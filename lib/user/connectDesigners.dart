@@ -8,8 +8,8 @@ import '../constants/constant_color.dart';
 import 'designerProfile.dart';
 
 class ConnectDesigners extends StatelessWidget {
-  String login_ID;
-  ConnectDesigners({super.key,required this.login_ID});
+  String login_ID,usname,usphone,usphoto;
+  ConnectDesigners({super.key,required this.login_ID,required this.usname,required this.usphone,required this.usphoto});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class ConnectDesigners extends StatelessWidget {
                                 leading: GestureDetector(
                                   onTap: () {
                                     value.getDesignerDetails(value.designerList[index].id);
-                                    callNext(context, DesignerProfile(login_ID: login_ID, designerId: value.designerList[index].id, ));
+                                    callNext(context, DesignerProfile(login_ID: login_ID, designerId: value.designerList[index].id, usname: usname, usphone: '', usphoto: '', receiver_name: value.designerList[index].usersName, ));
                                   },
                                   child:
                                   CircleAvatar(

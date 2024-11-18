@@ -29,6 +29,7 @@ class LoginProvider extends ChangeNotifier {
 
   Future<void> usersAuthorized(String? lgphoneNumber, String? lgpassword, BuildContext context) async {
     MainProvider mainPro = Provider.of<MainProvider>(context, listen: false);
+    ChatProvider chatPro = Provider.of<ChatProvider>(context, listen: false);
 
 
     try {
@@ -78,7 +79,7 @@ class LoginProvider extends ChangeNotifier {
             mainPro.getDesignerWork(loginUserId);
             mainPro.getAddedCart(loginUserId);
             mainPro.getDesigners();
-
+            // chatPro.updateCurrentUSer(userType: "USER");
             // mainPro.getDesignerDetails(designerID);
             notifyListeners();
             callNextReplacement(context, UserBottomNavigation(user_Name: loginName, phone_Number: loginPhoneNumber, pass_word: loginPhoneNumber, place_: loginPlace, address_: loginPassword, userId: loginUserId,));
@@ -86,9 +87,10 @@ class LoginProvider extends ChangeNotifier {
           }
           else if (map['DESIGNATION'].toString() == "DESIGNER") {
             print("I entered in designer side");
-            // chatPro.fetchRecentMessagesForDesigner(loginUserId);
+            // chatPro.fetchRecentUsersForDesigner(loginUserId);
+            // chatPro.fetchLastMessagesForDesigner(loginUserId);
             mainPro.getDesignerWork(loginUserId);
-
+            // chatPro.updateCurrentUSer(userType: "DESIGNER");
             callNextReplacement(context, DesignerBottomNavigation(userId: loginUserId, name: loginName, phone: loginPhoneNumber, receiver_ID: "", photo: loginPhoto,)); // Navigate to designer screen
             print("Navigating to Verify Designers Screen");
 

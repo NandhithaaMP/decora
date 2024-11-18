@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
         ),
         home: SplashScreen(),
         //  home:ChatBoxScreen(),
-        //  home:ChatScreen(),
+        //  home:ChatTextField(receiverId: '', receiverName: '', senderID: '', senderName: '', from: '',),
       ),
     );
   }

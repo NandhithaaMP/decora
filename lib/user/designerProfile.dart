@@ -8,8 +8,8 @@ import '../Designer/chatBoxScreen.dart';
 import '../constants/constant_color.dart';
 
 class DesignerProfile extends StatelessWidget {
-  String login_ID,designerId;
-   DesignerProfile({super.key,required this.login_ID,required this.designerId});
+  String login_ID,designerId,usname,usphone,usphoto,receiver_name;
+   DesignerProfile({super.key,required this.login_ID,required this.designerId,required this.usname,required this.usphone,required this.usphoto,required this.receiver_name});
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +111,8 @@ class DesignerProfile extends StatelessWidget {
 
                                 ElevatedButton(
                                   onPressed: () {
-                                    showAlertDialog(context, "connect", login_ID, designerId);
+                                    showAlertDialog(context, "connect", login_ID, designerId, usname, usphone, usphoto,receiver_name);
+                                    // showAlertDialog(context, "connect", login_ID, designerId);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: cstgreen,

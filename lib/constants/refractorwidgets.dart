@@ -111,14 +111,14 @@ Widget registerField(
 // }
 
 // ------------------------------------------------------------------------------------------------
-void showAlertDialog(BuildContext context, String action, String login_Id, String receiver_Id) async {
+void showAlertDialog(BuildContext context, String action, String login_Id, String receiver_Id,String uname,String uphone,String uphoto,String receiver_name) async {
 
   // Check if connection exists
   bool isConnected = await checkIfConnected(login_Id, receiver_Id);
 
   if (isConnected) {
     // If already connected, directly navigate to the ChatScreen
-    callNext(context, ChatScreen(login_Id: login_Id, receiver_Id: receiver_Id));
+    callNext(context, ChatScreen(login_Id: login_Id, receiver_Id: receiver_Id, uname: uname, uphone: uphone, uphoto: uphoto, receiver_name: receiver_name,));
   } else {
     // If not connected, show the alert dialog
     showDialog(
@@ -144,7 +144,7 @@ void showAlertDialog(BuildContext context, String action, String login_Id, Strin
                             // Save the connection to avoid showing the dialog again
                             await saveConnection(login_Id, receiver_Id);
                             value2.fetchUserMessages(login_Id, receiver_Id);
-                            callNext(context, ChatScreen(login_Id: login_Id, receiver_Id: receiver_Id));
+                            callNext(context, ChatScreen(login_Id: login_Id, receiver_Id: receiver_Id, uname: uname, uphone: uphone, uphoto: uphoto, receiver_name: receiver_name,));
                           },
                         );
                       }
